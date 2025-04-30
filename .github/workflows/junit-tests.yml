@@ -21,6 +21,4 @@ jobs:
         java-version: '17'
 
     - name: Build and run tests with Maven
-      run: |
-        cd ogp_exam
-        mvn test
+      run: mvn test
