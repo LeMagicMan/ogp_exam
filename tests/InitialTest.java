@@ -15,6 +15,6 @@ public class InitialTest {
     @Test
     public void test() {
         assertFalse(test);
-        //assertTrue(test);
+        assertTrue(test);
     }
 }
