@@ -23,7 +23,7 @@
     </dependencies>
 
     <build>
-        <testSourceDirectory>${project.basedir}/tests</testSourceDirectory>
+        <testSourceDirectory>${basedir}/tests</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
