@@ -1,6 +1,6 @@
-import com.RPG.Entity.Entity;
 import com.RPG.Entity.Hero;
 import com.RPG.Entity.Monster;
+import com.RPG.Exception.InvalidHPException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ public class EntityTest {
     Monster MonsterTest2;
 
     @BeforeEach
-    public void setUpFixture() throws InvalidNameException {
+    public void setUpFixture() throws InvalidNameException, InvalidHPException {
         HeroTest1 = new Hero("Gandalf");
         MonsterTest1 = new Monster("Carcharoth");
         HeroTest2 = new Hero("James: o’Ha’ra");

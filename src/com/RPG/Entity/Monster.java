@@ -3,6 +3,8 @@ package com.RPG.Entity;
 import com.RPG.Exception.InvalidHPException;
 
 import javax.naming.InvalidNameException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Monster extends Entity {
     /**********************************************************
@@ -19,7 +21,13 @@ public class Monster extends Entity {
      *********************************************************/
 
     public Monster(String name) throws InvalidNameException, InvalidHPException {
-        super(name, 1000L);
+        super(name, 1000L, new ArrayList<>(Arrays.asList(
+                AnchorPoint.BELT,
+                AnchorPoint.BACK,
+                AnchorPoint.BODY,
+                AnchorPoint.LEFTHAND,
+                AnchorPoint.RIGHTHAND
+        )));
     }
 
     /**********************************************************

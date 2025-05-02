@@ -111,7 +111,7 @@ public abstract class Entity {
      * @return the MaxHP
      *      | Entity.MaxHP
      */
-    @Basic
+    @Basic @Raw
     public long getMaxHP() {
         return MaxHP;
     }
@@ -160,10 +160,10 @@ public abstract class Entity {
      */
     @Raw
     public Boolean isValidHp(Long HP) {
-        if (MaxHP == 0L){
+        if (this.getMaxHP() == 0L){
             return (HP >= 0 && isPrime(HP));
         }
-        return (HP >= 0 && HP <= MaxHP && isPrime(HP));
+        return (HP >= 0 && HP <= this.getMaxHP() && isPrime(HP));
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.RPG.Entity;
 
 import be.kuleuven.cs.som.annotate.Basic;
-import com.RPG.Item.Item;
 import com.RPG.Item.ItemType;
 
 /**
