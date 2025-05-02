@@ -23,6 +23,7 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>${basedir}/src</sourceDirectory>
         <testSourceDirectory>${basedir}/tests</testSourceDirectory>
         <plugins>
             <plugin>
