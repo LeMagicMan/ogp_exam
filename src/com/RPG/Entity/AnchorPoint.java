@@ -43,8 +43,11 @@ public enum AnchorPoint {
      *
      * @param allowedItemType
      *      The allowed ItemType for that AnchorPoint
+     *
+     * @pre ItemType must be valid
+     *      | (allowedItemType != null)
      */
-    AnchorPoint(ItemType allowedItemType) {
+    private AnchorPoint(ItemType allowedItemType) {
         this.allowedItemType = allowedItemType;
     }
 

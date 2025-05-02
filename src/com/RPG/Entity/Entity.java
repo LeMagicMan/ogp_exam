@@ -158,7 +158,6 @@ public abstract class Entity {
      * @return true if HP is bigger han or equal to zero, is lower than or Equal to its max HP and the Hp is a Prime number
      *      | result == (this.getHP() >= 0 && this.getHP <= this.getMaxHP() && isPrime(getHP()))
      */
-    @Raw
     public Boolean isValidHp(Long HP) {
         if (this.getMaxHP() == 0L){
             return (HP >= 0 && isPrime(HP));
@@ -176,13 +175,13 @@ public abstract class Entity {
      * @return true if HP is prime, otherwise false
      *      //TODO: ask prof for formal
      */
-    @Model @Raw
+    @Model
     private Boolean isPrime(Long HP) {
         if (HP <= 1) {
             return false;
         }
-        for (int i = 2; i <= Math.sqrt(HP); i++) {
-            if (HP % i == 0) {
+        for (int index = 2; index <= Math.sqrt(HP); index++) {
+            if (HP % index == 0) {
                 return false;
             }
         }
