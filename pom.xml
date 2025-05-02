@@ -20,9 +20,17 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>be.kuleuven.cs.som</groupId>
+            <artifactId>annotate</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/AnnotationsDoclets.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
+        <sourceDirectory>${basedir}/src</sourceDirectory>
         <testSourceDirectory>${basedir}/tests</testSourceDirectory>
         <plugins>
             <plugin>
