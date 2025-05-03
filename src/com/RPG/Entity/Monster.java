@@ -28,7 +28,7 @@ public class Monster extends Entity {
 
     //TODO
     public Monster(String name) throws InvalidNameException, InvalidHPException {
-        super(name, 1000L, new ArrayList<>(Arrays.asList(
+        super(name, 997L, new ArrayList<>(Arrays.asList(
                 AnchorPoint.BELT,
                 AnchorPoint.BACK,
                 AnchorPoint.BODY,

@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.naming.InvalidNameException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityTest {
     Hero HeroTest1;
@@ -36,6 +35,27 @@ public class EntityTest {
         assertThrows(InvalidNameException.class, () -> new Hero("Ga’nd’al’f"));
         assertThrows(InvalidNameException.class, () -> new Hero("Gand:alf"));
         assertThrows(InvalidNameException.class, () -> new Hero("Gand&alf"));
+
+        /* HP */
+        //Legal cases
+        assertEquals(997L, HeroTest1.getHP());
+        assertEquals(997L, HeroTest2.getHP());
+        assertTrue(HeroTest1.isValidHp(293L));
+
+        //IllegalCases
+        assertFalse(HeroTest1.isValidHp(-10L));
+        assertFalse(HeroTest2.isValidHp(800L));
+        assertFalse(HeroTest2.isValidHp(-1303L));
+
+        /* Anchorpoints */
+        //Legal cases
+        assertTrue(HeroTest1.hasProperAnchorpoints());
+        assertTrue(HeroTest2.hasProperAnchorpoints());
+
+        //IllegalCases //TODO: make monster and cast it to hero
+
+
+
 
         /* Capacity */
         assertEquals(1000L, HeroTest1.getCapacity());

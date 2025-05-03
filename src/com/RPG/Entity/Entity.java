@@ -105,6 +105,31 @@ public abstract class Entity {
      **********************************************************/
 
     /**
+     * a getter for an anchorpoint at a certain index
+     *
+     * @pre Index must be within range
+     *
+     * @param index the index of the anchorpoint
+     *
+     * @return the anchorpoint at the given Index
+     */
+    public AnchorPoint getAnchorPointAt(int index){
+        if(index >= this.getAmountOfAnchorPoints()){
+            return null;
+        }
+        return AnchorPoints.get(index);
+    }
+
+    /**
+     * a getter for the amount of anchorpoints
+     *
+     * @return amount of anchorpoints
+     */
+    public int getAmountOfAnchorPoints(){
+        return AnchorPoints.size();
+    }
+
+    /**
      * getter for the name of an entity
      *
      * @return the name of an entity

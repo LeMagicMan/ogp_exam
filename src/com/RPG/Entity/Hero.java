@@ -7,12 +7,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * A class representing A Hero entity
  *
  * @invar A Hero must only have the anchorpoints Belt, Back, Body, LeftHand, RightHand
  *      | hasProperAnchorpoints() //TODO
+ *
+ * @invar A hero must have a valid Strength
  *
  * @invar A hero must have a correct StrengthScale
  *      | hasProperStrengthScale()
@@ -66,7 +70,7 @@ public class Hero extends Entity {
      *********************************************************/
 
     public Hero(String name) throws InvalidNameException, InvalidHPException {
-        super(name, 1000L, new ArrayList<>(Arrays.asList(
+        super(name, 997L, new ArrayList<>(Arrays.asList(
                 AnchorPoint.BELT,
                 AnchorPoint.BACK,
                 AnchorPoint.BODY,
@@ -132,5 +136,34 @@ public class Hero extends Entity {
      */
     public boolean isValidProtection(int Protection){
         return Protection >= 0;
+    }
+
+    /**
+     * a checker that checks if a hero has all the needed anchorpoints exactly once
+     *
+     * @return true if a hero has all the needed anchorpoints exactly once, false otherwise
+     *      | TODO: ask about formal
+     */
+    public boolean hasProperAnchorpoints() {
+        // Use a set to track seen anchorpoints
+        Set<AnchorPoint> expected = EnumSet.of(
+                AnchorPoint.BELT,
+                AnchorPoint.BACK,
+                AnchorPoint.BODY,
+                AnchorPoint.LEFTHAND,
+                AnchorPoint.RIGHTHAND
+        );
+
+        Set<AnchorPoint> found = EnumSet.noneOf(AnchorPoint.class);
+
+        for (int index = 0; index < this.getAmountOfAnchorPoints(); index++) {
+            AnchorPoint ap = getAnchorPointAt(index);
+            if (!expected.contains(ap) || !found.add(ap)) {
+                return false;
+            }
+        }
+
+        // Valid only if all expected anchorpoints were found
+        return found.equals(expected);
     }
 }
