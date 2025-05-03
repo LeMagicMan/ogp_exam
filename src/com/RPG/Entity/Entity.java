@@ -57,6 +57,16 @@ public abstract class Entity {
      */
     private static final String nameRegex = "^[A-Z][a-zA-Z ’:]*$"; //"^.*+$"; "^[A-Z][a-zA-Z ':]*$" //TODO: ask prof
 
+    /**
+     * A variable representing the skinType of an entity
+     */
+    private SkinType skinType;
+
+    /**
+     * A variable representing the capacity of an entity
+     */
+    private long Capacity = 0L;
+
     /**********************************************************
      * Constructors
      **********************************************************/
@@ -84,9 +94,9 @@ public abstract class Entity {
             throw new InvalidNameException();
         }
         this.Name = name;
-        MaxHP = maxHP;
-        HP = maxHP;
-        AnchorPoints = Anchorpoints;
+        this.MaxHP = maxHP;
+        this.HP = maxHP;
+        this.AnchorPoints = Anchorpoints;
     }
 
 
@@ -127,9 +137,59 @@ public abstract class Entity {
         return HP;
     }
 
+    /**
+     * setter for the skinType of an entity
+     *
+     * @param skinType
+     *      skintype of that entity
+     */
+    @Raw //TODO: ask @Basic
+    protected void setSkinType(SkinType skinType) {
+        this.skinType = skinType;
+    }
+
+    /**
+     * a getter for the skintype of an entity
+     *
+     * @return skintype of the entity
+     *      | Entity.skinType
+     */
+    @Basic
+    public SkinType getSkinType() {
+        return skinType; //TODO: ask if this is correct or  return skintype.getProtection() is better
+    }
+
+    /**
+     * a setter for the capacity of an entity
+     */
+    @Raw
+    protected void setCapacity() {
+        Capacity = calculateCapacity();
+    }
+
+    /**
+     * a getter for the capacity of an entity
+     *
+     * @return capacity of that entity
+     *      | Entity.Capacity
+     */
+    public long getCapacity() {
+        return Capacity;
+    }
+
     /**********************************************************
      * Methods
      **********************************************************/
+
+    /**
+     * a method to calculate the capacity of an entity
+     *
+     * @return capacity of that entity
+     */
+    @Model @Raw
+    protected long calculateCapacity() {
+        return 0L;
+    }
 
     /**
      * Checks whether the given name is a valid name

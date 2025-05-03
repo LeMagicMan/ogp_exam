@@ -47,14 +47,19 @@ public class Hero extends Entity {
     private static final RoundingMode roundingMode = RoundingMode.HALF_UP;
 
     /**
-     * A regex that the name of an entity needs to follow
+     * A regex that the name of a hero needs to follow
      */
     private static final String nameRegex = "^[A-Z][a-zA-Z ’:]*$";
 
     /**
-     * A variable representing whether an entity can heal
+     * A variable representing whether a hero can heal
      */
     private Boolean Healable = true;
+
+    /**
+     * A variable representing a hero's capacity multiplier
+     */
+    private static final float capacityMultiplier = 20;
 
     /**********************************************************
      * Constructors
@@ -69,6 +74,9 @@ public class Hero extends Entity {
                 AnchorPoint.RIGHTHAND
         )));
         this.Strength = BigDecimal.valueOf(50).setScale(strengthScale, roundingMode);
+        this.Protection = 10;
+        this.setSkinType(SkinType.NORMAL);
+        this.setCapacity();
     }
 
     /**********************************************************
@@ -78,6 +86,16 @@ public class Hero extends Entity {
     /**********************************************************
      * Methods
      **********************************************************/
+
+    /**
+     * a method to calculate the capacity of a Hero
+     *
+     * @return capacity of that hero
+     */
+    @Override
+    protected long calculateCapacity() {
+        return this.Strength.multiply(BigDecimal.valueOf(capacityMultiplier)).longValue(); //TODO: ask if this is what they meant
+    }
 
     /**
      * Checks whether the given name is a valid name

@@ -31,7 +31,7 @@ public enum AnchorPoint {
     /**
      * A representative for the belt of an entity
      */
-    BELT(ItemType.MONEY_POUCH_ONLY);
+    BELT(ItemType.MONEY_POUCH);
 
     /**
      * The allowed ItemType for a certain Anchorpoint

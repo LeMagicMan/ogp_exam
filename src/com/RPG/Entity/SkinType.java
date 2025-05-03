@@ -5,19 +5,24 @@ import be.kuleuven.cs.som.annotate.Basic;
 public enum SkinType {
 
     /**
-     * A skinTYpe for a monster with tough skin
+     * A skinType for an entity with tough skin
      */
     TOUGH(5),
 
     /**
-     * A skinTYpe for a monster with thick skin
+     * A skinType for an entity with thick skin
      */
     THICK(8),
 
     /**
-     * A skinTYpe for a monster with scaled skin
+     * A skinType for an entity with scaled skin
      */
-    SCALED(15);
+    SCALED(15),
+
+    /**
+     * A skinType for an entity with normal skin
+     */
+    NORMAL(0);
 
     /**
      * the protection of a certain skinType
@@ -43,7 +48,7 @@ public enum SkinType {
      * @return the amount of protection
      */
     @Basic
-    public int getProtectionFactor() {
+    public int getProtection() {
         return Protection;
     }
 }

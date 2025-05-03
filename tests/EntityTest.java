@@ -36,6 +36,9 @@ public class EntityTest {
         assertThrows(InvalidNameException.class, () -> new Hero("Ga’nd’al’f"));
         assertThrows(InvalidNameException.class, () -> new Hero("Gand:alf"));
         assertThrows(InvalidNameException.class, () -> new Hero("Gand&alf"));
+
+        /* Capacity */
+        assertEquals(1000L, HeroTest1.getCapacity());
     }
 
     @Test
@@ -49,5 +52,8 @@ public class EntityTest {
         //IllegalCases
         assertThrows(InvalidNameException.class, () -> new Monster("carcharoth"));
         assertThrows(InvalidNameException.class, () -> new Monster("Carchar|oth"));
+
+        /* Skin */
+
     }
 }

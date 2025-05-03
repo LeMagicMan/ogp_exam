@@ -35,12 +35,16 @@ public class Monster extends Entity {
                 AnchorPoint.LEFTHAND,
                 AnchorPoint.RIGHTHAND //TODO: give each part a chance to get an item
         )));
-        DamageTypes = new ArrayList<>(List.of(DamageType.CLAWS));
+        this.DamageTypes = new ArrayList<>(List.of(DamageType.CLAWS));
+        this.setSkinType(SkinType.THICK);
+        this.setCapacity(); //TODO
     }
 
     //TODO
-    public Monster(String name, ArrayList<AnchorPoint> anchorPoints) throws InvalidNameException, InvalidHPException { //TODO: add damageType
+    public Monster(String name, ArrayList<AnchorPoint> anchorPoints, ArrayList<DamageType> damageTypes, SkinType skinType) throws InvalidNameException, InvalidHPException { //TODO: add damageType
         super(name, 1000L, anchorPoints);
+        this.DamageTypes = damageTypes;
+        this.setSkinType(skinType); //check for exceptions
     }
 
     /**********************************************************
@@ -50,6 +54,16 @@ public class Monster extends Entity {
     /**********************************************************
      * Methods
      **********************************************************/
+
+    /**
+     * a method to calculate the capacity of a Hero
+     *
+     * @return capacity of that hero
+     */
+    @Override
+    protected long calculateCapacity() {
+        return 0L; //TODO implement this when item works
+    }
 
     /**
      * Checks whether the given name is a valid name
