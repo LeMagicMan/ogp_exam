@@ -1,13 +1,24 @@
 package com.RPG.Item;
 
 import com.RPG.Entity.Entity;
+import com.RPG.Exception.InvalidHolderException;
+
+import java.util.ArrayList;
 
 public class Backpack extends Item {
+    /**********************************************************
+     * Variables
+     **********************************************************/
+
+    private ArrayList<Item> Content; //TODO: ask about Hashset
+
+    private int Capacity = 0;
+
     /**********************************************************
      * Constructors
      *********************************************************/
 
-    protected Backpack(double weight, int damage, Entity owner) {
-        super(weight, damage, owner);
+    public Backpack(double weight, Entity Holder, ShineLevel ShineLevel, new ArrayList<Item>() Content) throws InvalidHolderException {
+        super(ShineLevel, ItemType.BACKPACK);
     }
 }

@@ -1,6 +1,7 @@
 package com.RPG.Item;
 
 import com.RPG.Entity.Entity;
+import com.RPG.Exception.InvalidHolderException;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -30,20 +31,40 @@ public abstract class Item {
      * Constructors
      **********************************************************/
 
-    protected Item(double weight, int damage, Entity Holder, ShineLevel ShineLevel) {
+    protected Item(double weight, Entity Holder, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException {
         if (!isValidHolder(Holder)){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
+
         if (!isValidWeight(weight)){
             this.Weight =10;
         } else this.Weight = weight;
 
+        this.itemType = itemType;
+        this.ShineLevel = ShineLevel;
+        this.Holder = Holder;
         this.Id = generateUniqueId();
+    }
+
+    protected Item(ShineLevel ShineLevel, ItemType itemType){
+        this.itemType = itemType;
+        this.ShineLevel = ShineLevel;
+        this.Id = generateUniqueId();
+        Weight = 0;
     }
 
     /**********************************************************
      * Getters and Setters
      **********************************************************/
+    /**
+     * getter for the maxValue of an Item
+     *
+     * @return the maxvalue of that Item
+     *      | this.maxValue
+     */
+    public int getMaxValue() {
+        return maxValue;
+    }
 
     /**********************************************************
      * Methods
@@ -76,9 +97,31 @@ public abstract class Item {
         return weight >= 0;
     }
 
+    /**
+     * checks if the holder of an item is a valid one
+     *
+     * @param Holder
+     *      the holder that needs to be checked
+     *
+     * @return true if holder is valid, false otherwise
+     *      | !Holder.isTerminated()
+     */
     public boolean isValidHolder(Entity Holder){
         //return (!Holder.isTerminated);
-        return true;//&& !Holder.isTerminated ; //TODO: add function to
-
+        return true;//&& !Holder.isTerminated() ; //TODO: add function to
     }
+
+    /**
+     * checks if the value of an item is valid
+     *
+     * @param value
+     *      the value that needs to be checked
+     *
+     * @return true if the value is valid, false otherwise
+     *      | result == value >= 0 && value <= this.MaxValue
+     */
+    public boolean isValidValue(int value){
+        return value >= 0 && value <= this.getMaxValue();
+    }
+
 }

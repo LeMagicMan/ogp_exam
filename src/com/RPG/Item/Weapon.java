@@ -1,19 +1,14 @@
 package com.RPG.Item;
 
 import com.RPG.Entity.Entity;
+import com.RPG.Exception.InvalidHolderException;
 
 public class Weapon extends Item {
-
-    private static int maxDamage = 100;
-    private static int valuePerDamageUnit = 2;
-
-    private int damage = 0;
-
     /**********************************************************
      * Constructors
      *********************************************************/
 
-    public Weapon(double weight, int damage, Entity owner) {
-        super(weight, damage, owner);
+    public Weapon(double weight, Entity Holder, ShineLevel ShineLevel) throws InvalidHolderException {
+        super(weight, Holder, ShineLevel, ItemType.ANY);
     }
 }
