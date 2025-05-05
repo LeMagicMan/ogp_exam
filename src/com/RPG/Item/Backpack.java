@@ -18,7 +18,17 @@ public class Backpack extends Item {
      * Constructors
      *********************************************************/
 
-    public Backpack(double weight, Entity Holder, ShineLevel ShineLevel, new ArrayList<Item>() Content) throws InvalidHolderException {
+    public Backpack(double weight, Entity Holder, ShineLevel ShineLevel, ArrayList<Item> Content) throws InvalidHolderException {
         super(ShineLevel, ItemType.BACKPACK);
+
+
     }
+
+    /**********************************************************
+     * Getters and Setters
+     **********************************************************/
+
+    /**********************************************************
+     * Methods
+     **********************************************************/
 }

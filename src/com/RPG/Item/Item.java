@@ -1,7 +1,7 @@
 package com.RPG.Item;
 
 import com.RPG.Entity.Entity;
-import com.RPG.Exception.InvalidHolderException;
+import com.RPG.Exception.*;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -31,13 +31,15 @@ public abstract class Item {
      * Constructors
      **********************************************************/
 
-    protected Item(double weight, Entity Holder, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException {
+    protected Item(double weight, int Value,  Entity Holder, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
         if (!isValidHolder(Holder)){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
-
+        if(!isValidValue(Value)){
+            throw new InvalidValueException("Value cannot be negative");
+        }
         if (!isValidWeight(weight)){
-            this.Weight =10;
+            this.Weight = 10;
         } else this.Weight = weight;
 
         this.itemType = itemType;
