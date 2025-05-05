@@ -8,24 +8,29 @@ import be.kuleuven.cs.som.annotate.Basic;
 public enum DamageType {
 
     /**
-     * DamageType for a monster that fights with its claws
+     * DamageType for an entity that fights with its claws
      */
     CLAWS(100),
 
     /**
-     * DamageType for a monster that fights with its teeth
+     * DamageType for an entity that fights with its teeth
      */
     TEETH(80),
 
     /**
-     * DamageType for a monster that fights with its tail
+     * DamageType for an entity that fights with its tail
      */
     TAIL(60),
 
     /**
-     * DamageType for a monster that fights with its horns
+     * DamageType for an entity that fights with its horns
      */
-    HORNS(70);
+    HORNS(70),
+
+    /**
+     * DamageType for an entity that fights with normal limbs
+     */
+    NORMAL(0);
 
     /**
      * The Damage the DamageType does

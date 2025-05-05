@@ -47,6 +47,15 @@ public class EntityTest {
         assertFalse(HeroTest2.isValidHp(800L));
         assertFalse(HeroTest2.isValidHp(-1303L));
 
+        /* Strength */
+        //Legal cases
+        assertTrue(HeroTest1.isValidStrength(HeroTest1.getStrength()));
+        assertTrue(HeroTest2.isValidStrength(HeroTest2.getStrength()));
+        assertTrue(HeroTest1.isValidStrength(800));
+
+        //IllegalCases
+        assertFalse(HeroTest2.isValidStrength(-800));
+        
         /* Anchorpoints */
         //Legal cases
         assertTrue(HeroTest1.hasProperAnchorpoints());
@@ -54,6 +63,10 @@ public class EntityTest {
 
         //IllegalCases //TODO: make monster and cast it to hero
 
+        /* DamageTypes */
+        //Legal cases
+
+        //IllegalCases
 
 
 

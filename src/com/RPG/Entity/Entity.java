@@ -6,6 +6,8 @@ import be.kuleuven.cs.som.annotate.Raw;
 
 import javax.naming.InvalidNameException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * A class representing all Entity-types
@@ -15,6 +17,9 @@ import java.util.ArrayList;
  *
  * @invar Every entity must have a valid amount of hitpoints
  *      | isValidHP(getHP)
+ *
+ * @invar an entity can have multiple DamageTypes except if one of those is Normal then it can only have the normal type, and can only have 1 of each, and cannot be empty
+ *      | hasValidDamageTypes()
  */
 public abstract class Entity {
 
@@ -67,6 +72,11 @@ public abstract class Entity {
      */
     private long Capacity = 0L;
 
+    /**
+     * A variable representing the DamageType of an entity
+     */
+    private HashSet<DamageType> DamageTypes = new HashSet<>();
+
     /**********************************************************
      * Constructors
      **********************************************************/
@@ -103,6 +113,10 @@ public abstract class Entity {
     /**********************************************************
      * Getters and Setters
      **********************************************************/
+
+    public void setDamageTypes(HashSet<DamageType> damageTypes) {
+        DamageTypes = damageTypes;
+    }
 
     /**
      * a getter for an anchorpoint at a certain index
@@ -213,7 +227,7 @@ public abstract class Entity {
      */
     @Model @Raw
     protected long calculateCapacity() {
-        return 0L;
+        return 0L; //TODO: WAIT UNTIL iTEM IS FINISHED
     }
 
     /**
@@ -282,6 +296,30 @@ public abstract class Entity {
     @Basic
     public boolean isHealable() {
         return Healable;
+    }
+
+    /**
+     * checks whether the given damagetypes are valid
+     *
+     * @param damageTypes
+     *      the damagetypes that need to be checked
+     *
+     * @note we are sure the elements are unique because of the used datatype
+     *
+     * @return true if all damagetypes are different than Normal, if there is a Normal type it must be the only type
+     *      | for each damagetype in damagetypes :
+     *      |       if damagetype == NORMAL
+     *      |       then result == damagetypes.size() == 1
+     *      | result == !DamageTypes.isEmpty()
+     *
+     */
+    public Boolean areValidDamageTypes(HashSet<DamageType> damageTypes) {
+        for (DamageType damageType : damageTypes) {
+            if (Objects.requireNonNull(damageType) == DamageType.NORMAL) {
+                return damageTypes.size() == 1;
+            }
+        }
+        return !DamageTypes.isEmpty();
     }
 
 }

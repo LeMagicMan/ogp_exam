@@ -5,6 +5,7 @@ import com.RPG.Exception.InvalidHPException;
 import javax.naming.InvalidNameException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class Monster extends Entity {
@@ -17,17 +18,12 @@ public class Monster extends Entity {
      */
     private static final String nameRegex = "^[A-Z][a-zA-Z ’:]*$";
 
-    /**
-     * A variable representing the DamageType of a monster
-     */
-    private ArrayList<DamageType> DamageTypes = new ArrayList<>();;
-
     /**********************************************************
      * Constructors
      *********************************************************/
 
     //TODO
-    public Monster(String name) throws InvalidNameException, InvalidHPException {
+    public Monster(String name) throws InvalidNameException, InvalidHPException { //TODO: use less specific one to make this
         super(name, 997L, new ArrayList<>(Arrays.asList(
                 AnchorPoint.BELT,
                 AnchorPoint.BACK,
@@ -35,16 +31,16 @@ public class Monster extends Entity {
                 AnchorPoint.LEFTHAND,
                 AnchorPoint.RIGHTHAND //TODO: give each part a chance to get an item
         )));
-        this.DamageTypes = new ArrayList<>(List.of(DamageType.CLAWS));
+        this.setDamageTypes(new HashSet<>(List.of(DamageType.CLAWS)));
         this.setSkinType(SkinType.THICK);
         this.setCapacity(); //TODO
     }
 
     //TODO
-    public Monster(String name, ArrayList<AnchorPoint> anchorPoints, ArrayList<DamageType> damageTypes, SkinType skinType) throws InvalidNameException, InvalidHPException { //TODO: add damageType
+    public Monster(String name, ArrayList<AnchorPoint> anchorPoints, HashSet<DamageType> damageTypes, SkinType skinType) throws InvalidNameException, InvalidHPException { //TODO: add damageType
         super(name, 1000L, anchorPoints);
-        this.DamageTypes = damageTypes;
-        this.setSkinType(skinType); //check for exceptions
+        this.setDamageTypes(damageTypes);
+        this.setSkinType(skinType); //TODO: check for exceptions
     }
 
     /**********************************************************

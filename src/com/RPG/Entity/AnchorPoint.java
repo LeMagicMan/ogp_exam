@@ -1,6 +1,7 @@
 package com.RPG.Entity;
 
 import be.kuleuven.cs.som.annotate.Basic;
+import com.RPG.Item.Item;
 import com.RPG.Item.ItemType;
 
 /**
@@ -39,6 +40,11 @@ public enum AnchorPoint {
     private final ItemType allowedItemType;
 
     /**
+     * the Item in that anchorpoint
+     */
+    private Item item;
+
+    /**
      * Contructor for an Anchorpoint
      *
      * @param allowedItemType
@@ -49,6 +55,7 @@ public enum AnchorPoint {
      */
     private AnchorPoint(ItemType allowedItemType) {
         this.allowedItemType = allowedItemType;
+        this.item = null;
     }
 
     /**
@@ -63,7 +70,7 @@ public enum AnchorPoint {
     }
 
 //    public boolean canAttach(Item item) {
-//        return allowedItemType == ItemType.ANY || item.getType() == allowedItemType; //TODO: make type
+//       return allowedItemType == ItemType.ANY || item.getType() == allowedItemType; //TODO: make type
 //    }
 
 }

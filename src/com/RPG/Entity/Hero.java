@@ -5,24 +5,25 @@ import com.RPG.Exception.InvalidHPException;
 import javax.naming.InvalidNameException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A class representing A Hero entity
  *
  * @invar A Hero must only have the anchorpoints Belt, Back, Body, LeftHand, RightHand
- *      | hasProperAnchorpoints() //TODO
+ *      | hasProperAnchorpoints()
  *
  * @invar A hero must have a valid Strength
+ *      | isValidStrength()
  *
  * @invar A hero must have a correct StrengthScale
  *      | hasProperStrengthScale()
  *
  * @invar A hero must have a valid Protection
  *      | isValidProtection()
+ *
+ * @invar A hero's skintype must be Normal
+ *      | isValidSkinType()
  */
 public class Hero extends Entity {
 
@@ -80,12 +81,24 @@ public class Hero extends Entity {
         this.Strength = BigDecimal.valueOf(50).setScale(strengthScale, roundingMode);
         this.Protection = 10;
         this.setSkinType(SkinType.NORMAL);
+        this.setDamageTypes(new HashSet<>(List.of(DamageType.CLAWS)));
         this.setCapacity();
     }
 
     /**********************************************************
      * Getters and Setters
      **********************************************************/
+
+    /**
+     * getter for the strength of a Hero
+     *
+     * @return strength of hero
+     *      | this.Strength
+     */
+    //TODO: ask @basic
+    public int getStrength() {
+        return Strength.intValue();
+    }
 
     /**********************************************************
      * Methods
@@ -136,6 +149,32 @@ public class Hero extends Entity {
      */
     public boolean isValidProtection(int Protection){
         return Protection >= 0;
+    }
+
+    /**
+     * A checker to see if the strength is valid
+     *
+     * @param Strength
+     *      the strength that needs to be checked
+     *
+     * @return true if strength is valid, otherwise false
+     *      | result == (strength >= 0)
+     */
+    public boolean isValidStrength(int Strength){
+        return Strength >= 0;
+    }
+
+    /**
+     * checks if the skin of a Hero is Valid
+     *
+     * @param skinType
+     *      The Skintype that needs to be checked
+     *
+     * @return true if skintype ios normal, otherwise false
+     *      | result == skintype == NORMAL
+     */
+    public boolean isValidSkinType(SkinType skinType){
+        return skinType == SkinType.NORMAL;
     }
 
     /**
