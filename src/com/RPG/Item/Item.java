@@ -35,13 +35,12 @@ public abstract class Item {
         if (!isValidHolder(Holder)){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
-        if(!isValidValue(Value)){
-            throw new InvalidValueException("Value cannot be negative");
-        }
+
         if (!isValidWeight(weight)){
             this.Weight = 10;
         } else this.Weight = weight;
 
+        this.setValue(Value);
         this.itemType = itemType;
         this.ShineLevel = ShineLevel;
         this.Holder = Holder;
@@ -64,8 +63,45 @@ public abstract class Item {
      * @return the maxvalue of that Item
      *      | this.maxValue
      */
+    //@Basic //TODO
     public int getMaxValue() {
         return maxValue;
+    }
+
+    /**
+     * getter for the holder of an Item
+     *
+     * @return the holder of the Item
+     *      | this.Holder
+     */
+    //@Basic //TODO
+    public Entity getHolder() {
+        return Holder;
+    }
+
+    /**
+     * setter for the value of an Item
+     *
+     * @param value value that needs to be set
+     *
+     * @pre value needs to be bigger than or equal to 0
+     *      | value >= 0
+     *
+     * @pre value needs to be smaller than or equal to MaxValue
+     *      | value <= MaxValue
+     *
+     * @throws InvalidValueException
+     *      gets thrown when value is smaller than zero or bigger than maxValue
+     *          | result == !(isValidValue())
+     *
+     * @post value is set as th value of the Item
+     *      | this.Value = value
+     */
+    public void setValue(int value) throws InvalidValueException {
+        if(!isValidValue(value)){
+            throw new InvalidValueException("Value cannot be negative");
+        }
+        this.Value = value;
     }
 
     /**********************************************************
