@@ -1,7 +1,9 @@
 package com.RPG.Item;
 
+import be.kuleuven.cs.som.annotate.Basic;
 import com.RPG.Entity.Entity;
-import com.RPG.Exception.*;
+import com.RPG.Exception.InvalidHolderException;
+import com.RPG.Exception.InvalidValueException;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -51,10 +53,6 @@ public abstract class Item {
         this.Id = generateUniqueId();
     }
 
-//    protected Item(double weight, Entity Holder, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
-//        this(weight, 0,Holder, ShineLevel, itemType);
-//    }
-
     /**
      * Auxiliary constructor //TODO
      *
@@ -77,7 +75,7 @@ public abstract class Item {
      * @return the maxvalue of that Item
      *      | this.maxValue
      */
-    //@Basic //TODO
+    @Basic
     public int getMaxValue() {
         return maxValue;
     }
@@ -88,7 +86,7 @@ public abstract class Item {
      * @return the holder of the Item
      *      | this.Holder
      */
-    //@Basic //TODO
+    @Basic
     public Entity getHolder() {
         return Holder;
     }

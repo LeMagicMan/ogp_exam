@@ -4,7 +4,7 @@ public enum ItemType {
     ANY,
     WEAPON,
     ARMOR,
-    MONEY_POUCH_ONLY,
+    MONEY_POUCH,
     BACKPACK;
 
     private ItemType() {
