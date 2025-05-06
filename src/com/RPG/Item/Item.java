@@ -31,12 +31,14 @@ public abstract class Item {
 
     private ShineLevel ShineLevel;
 
+    private Boolean terminated = false;
+
     /**********************************************************
      * Constructors
      **********************************************************/
 
     protected Item(double weight, int Value,  Entity Holder, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
-        if (!isValidHolder(Holder)){
+        if (!hasValidHolder(Holder)){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
         if(!isValidValue(Value)){
@@ -108,7 +110,7 @@ public abstract class Item {
      *      | this.Holder = Holder
      */
     protected void setHolder(Entity Holder) throws InvalidHolderException {
-        if (!isValidHolder(Holder)){
+        if (!hasValidHolder(Holder)){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
         this.Holder = Holder;
@@ -159,6 +161,17 @@ public abstract class Item {
             throw new InvalidValueException("Value cannot be negative");
         }
         this.Value = calculateValue(value);
+    }
+
+    /**
+     * getter for the ItemType of an Item
+     *
+     * @return the ItemType
+     *      | this.itemType
+     */
+    @Basic
+    public ItemType getItemType() {
+        return itemType;
     }
 
     /**********************************************************
@@ -216,9 +229,8 @@ public abstract class Item {
      * @return true if holder is valid, false otherwise
      *      | !Holder.isTerminated()
      */
-    public boolean isValidHolder(Entity Holder){
-        //return (!Holder.isTerminated);
-        return true;//&& !Holder.isTerminated() ; //TODO: add function to
+    public boolean hasValidHolder(Entity Holder){
+        return !Holder.isTerminated(); //TODO: add function to
     }
 
     /**
@@ -234,4 +246,24 @@ public abstract class Item {
         return value >= 0 && value <= this.getMaxValue();
     }
 
+    /**
+     * checks if a given Item is terminated
+     *
+     * @return true if Item is terminated, false otherwise
+     *      | this.Terminated
+     */
+    public boolean isTerminated() {
+        return terminated;
+    }
+
+    /**
+     * checks if the Item is valid
+     *
+     * @return true if Item is not terminated and has a valid Holder, false otherwise
+     *      | if(!isTerminated && hasValidHolder)
+     *      | then result == true
+     */
+    public boolean isValidItem(){
+        return !isTerminated() && hasValidHolder(this.getHolder());
+    }
 }

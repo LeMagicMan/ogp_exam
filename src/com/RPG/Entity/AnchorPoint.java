@@ -1,6 +1,7 @@
 package com.RPG.Entity;
 
 import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Model;
 import com.RPG.Item.Item;
 import com.RPG.Item.ItemType;
 
@@ -69,8 +70,57 @@ public enum AnchorPoint {
         return allowedItemType;
     }
 
-//    public boolean canAttach(Item item) {
-//       return allowedItemType == ItemType.ANY || item.getType() == allowedItemType; //TODO: make type
-//    }
+    /**
+     * getter for the Item in an AnchorPoint
+     *
+     * @return the item in the AnchorPoint
+     *      | this.item
+     */
+    @Basic
+    public Item getItem() {
+        return item;
+    }
+
+    /**
+     * sets the Item of an AnchorPoint
+     *
+     * @pre Item must be Valid
+     *      | Item.isValidItem()
+     *
+     * @param item
+     *      The Item that needs to be set
+     *
+     */
+    @Model
+    void setItem(Item item) {
+        this.item = item;
+    }
+
+    /**
+     * checks whether a certain Item can be attached to the AnchorPoint
+     *
+     * @param item
+     *      The item that needs to be checked
+     *
+     * @return true if the Item can be attached, false otherwise
+     *      | if (ItemType == allowedItemType || allowedItemType == ANY)
+     *      | then result == true
+     */
+    public boolean canAttach(Item item) {
+       return allowedItemType == ItemType.ANY || item.getItemType() == allowedItemType;
+    }
+
+    /**
+     * checks if a given Anchorpoint has a given Item
+     *
+     * @param item
+     *      the item we need to check for
+     *
+     * @return true if AnchorPoint has Item, false otherwise
+     *      | result == (this.getItem() == item)
+     */
+    public boolean hasAsItem(Item item) {
+        return this.item == item;
+    }
 
 }

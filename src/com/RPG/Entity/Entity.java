@@ -3,6 +3,7 @@ package com.RPG.Entity;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
+import com.RPG.Item.Item;
 
 import javax.naming.InvalidNameException;
 import java.util.ArrayList;
@@ -216,9 +217,72 @@ public abstract class Entity {
         return Capacity;
     }
 
+    /**
+     * finds a given Anchorpoint in the hashset
+     *
+     * @pre given Anchorpoint must be in hashset
+     *      | Anchorpoints.contains(anchorpoint)
+     *
+     * @effect if anchorpoint was not found return null //TODO is this redundant
+     *      | if (!AnchorPoints.contains(anchorpoint))
+     *      | then result == null
+     *
+     * @param anchorPoint
+     *      AnchorPoint that needs to be found
+     *
+     * @return The AnchorPoint of the entity if found, null otherwise
+     *      | for each ap in AnchorPoints
+     *      |   if ap.equals(anchorpoint)
+     *      |   then result == ap
+     *      | result null
+     */
+    @Model
+    private AnchorPoint getAnchorPoint(AnchorPoint anchorPoint){
+        for (AnchorPoint ap : this.AnchorPoints) {
+            if (ap.equals(anchorPoint)) {
+                return ap;
+            }
+        }
+        return null;
+    }
+
     /**********************************************************
      * Methods
      **********************************************************/
+
+    /**
+     * equips a given item to a given anchorpoint
+     *
+     * @pre Entity must have anchorpoint
+     *      | hasAnchorPoint()
+     *
+     * @param anchorPoint
+     *      the anchorpoint we want to equip the item to
+     *
+     * @param item
+     *      the item we want to equip to the anchorpoint
+     */
+    public void equip(AnchorPoint anchorPoint, Item item){
+        if (!hasAnchorpoint(anchorPoint) && !item.isValidItem()){
+            return;
+        }
+        if(getAnchorPoint(anchorPoint).getItem() != null){
+            unequip(getAnchorPoint(anchorPoint), getAnchorPoint(anchorPoint).getItem()); //TODO: ask about second param
+        }
+        getAnchorPoint(anchorPoint).setItem(item); //TODO: ask about warning
+        //TODO: ask about adding Holder
+    }
+
+    public void unequip(AnchorPoint anchorPoint, Item item){
+        if (!hasAnchorpoint(anchorPoint)){
+            return;
+        }
+        if (!getAnchorPoint(anchorPoint).hasAsItem(item)){
+            return;
+        }
+        getAnchorPoint(anchorPoint).setItem(null);
+        //TODO: ask about removing Holder
+    }
 
     /**
      * a method to calculate the capacity of an entity
@@ -313,13 +377,36 @@ public abstract class Entity {
      *      | result == !DamageTypes.isEmpty()
      *
      */
-    public Boolean areValidDamageTypes(HashSet<DamageType> damageTypes) {
+    public boolean areValidDamageTypes(HashSet<DamageType> damageTypes) {
         for (DamageType damageType : damageTypes) {
             if (Objects.requireNonNull(damageType) == DamageType.NORMAL) {
                 return damageTypes.size() == 1;
             }
         }
         return !DamageTypes.isEmpty();
+    }
+
+    /**
+     * checks if the entity has give anchorpoint
+     *
+     * @param anchorPoint
+     *      the anchorpoint that needs to be checked
+     *
+     * @return true if the entity has the anchorpoint, false otherwise
+     *      | result == AnchorPoints.contains(anchorPoint) //TODO: ask about formal
+     */
+    public boolean hasAnchorpoint(AnchorPoint anchorPoint) {
+        return AnchorPoints.contains(anchorPoint);
+    }
+
+    /**
+     * checks if a given Entity is terminated
+     *
+     * @return true if Entity is terminated, false otherwise
+     *      | this.Terminated
+     */
+    public boolean isTerminated() {
+        return Terminated;
     }
 
 }
