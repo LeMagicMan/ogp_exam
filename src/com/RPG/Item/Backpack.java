@@ -31,7 +31,7 @@ public class Backpack extends Item {
 
     public Backpack(double weight, int Value, int Capacity, Entity Holder, ShineLevel ShineLevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
         super(ShineLevel, ItemType.BACKPACK); //TODO: ask about checker after super
-        if (!isValidHolder(Holder)){
+        if (!hasValidHolder(Holder)){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
         if(!isValidValue(Value)){

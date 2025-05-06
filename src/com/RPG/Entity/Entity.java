@@ -21,6 +21,9 @@ import java.util.Objects;
  *
  * @invar an entity can have multiple DamageTypes except if one of those is Normal then it can only have the normal type, and can only have 1 of each, and cannot be empty
  *      | hasValidDamageTypes()
+ *
+ * @invar every Item in an anchorpoint of an entity most have this entity as its holder, even the items contained in other items contained in this entity's anchorpoints
+ *      | hasValidItems() //TODO: create checker
  */
 public abstract class Entity {
 
@@ -281,7 +284,7 @@ public abstract class Entity {
             return;
         }
         getAnchorPoint(anchorPoint).setItem(null);
-        //TODO: ask about removing Holder
+        //TODO: ask about removing Holder, LinkerClass in com.RPG?
     }
 
     /**

@@ -25,6 +25,9 @@ public class Weapon extends Item {
 
     public Weapon(double weight, Entity Holder, ShineLevel ShineLevel, int Damage) throws InvalidHolderException, InvalidValueException {
         super(weight, Damage, Holder, ShineLevel, ItemType.WEAPON);
+        if (!isValidDamage(Damage)){
+            this.Damage = DefaultDamage;
+        } else this.Damage = Damage;
     }
 
     /**********************************************************
@@ -53,17 +56,19 @@ public class Weapon extends Item {
      */
     @Override
     protected int calculateValue(int Damage) {
-        if (!isValidDamage()){
+        if (!isValidDamage(Damage)){
             return DefaultDamage * valuePerDamage;
         }
         return Damage * valuePerDamage;
     }
 
     /**
+     * checks if the Damage of a weapon is valid
      *
-     * @return
+     * @return true if Damage is bigger than zero, and smaller than maxDamage, false otherwise
+     *      | result == (Damage > 0 && Damage <= maxDamage)
      */
-    public boolean isValidDamage(){
+    public boolean isValidDamage(int Damage){
         return Damage > 0 && Damage <= maxDamage;
     }
 }

@@ -27,7 +27,7 @@ public abstract class Item {
 
     private int Value = 0;
 
-    private Entity Holder; //TODO kan ook monster zijn?
+    private Entity Holder; //TODO: can be monster?
 
     private ShineLevel ShineLevel;
 
@@ -230,7 +230,7 @@ public abstract class Item {
      *      | !Holder.isTerminated()
      */
     public boolean hasValidHolder(Entity Holder){
-        return !Holder.isTerminated(); //TODO: add function to
+        return !Holder.isTerminated(); //TODO: add function to check if item is somewhere in anchorpoints of entity
     }
 
     /**
