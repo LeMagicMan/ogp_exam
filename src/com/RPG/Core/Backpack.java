@@ -28,26 +28,9 @@ public class Backpack extends Item {
      * Constructors
      *********************************************************/
 
-    public Backpack(double weight, int Value, int Capacity, Entity Holder, com.RPG.Core.ShineLevel ShineLevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
-        super(ShineLevel, ItemType.BACKPACK); //TODO: ask about checker after super
-        if (!hasValidHolder(Holder)){
-            throw new InvalidHolderException("Holder cannot be terminated");
-        }
-        if(!isValidValue(Value)){
-            throw new InvalidValueException("Value cannot be negative");
-        }
-        if(!hasProperItems()){
-            throw new InvalidItemsException("Items of backpack must belong to the same holder as the backpack");
-        }
-        try {
-            this.setHolder(Holder);
-        }catch (InvalidHolderException e){
-            assert false; //Can never happen
-        }
-        this.setWeight(weight);
-        this.setCapacity(Capacity);
-        this.setValue(Value);
-        this.Content = Content;
+    public Backpack(double weight, int Value, int Capacity, Entity Holder, ShineLevel shinelevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
+        super(weight, Value, shinelevel, ); //TODO: ask about checker after super
+        //TODO: work
     }
 
     /**********************************************************

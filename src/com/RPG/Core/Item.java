@@ -36,7 +36,7 @@ public abstract class Item {
      * Constructors
      **********************************************************/
 
-    protected Item(double weight, int Value, Entity Holder, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
+    protected Item(double weight, int Value, Entity Holder, AnchorPoint anchorpoint, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
         if (!hasValidHolder(Holder)){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
@@ -50,8 +50,8 @@ public abstract class Item {
         this.setValue(Value);
         this.itemType = itemType;
         this.ShineLevel = ShineLevel;
-        this.Holder = Holder;
-        this.Id = generateUniqueId();
+        Holder.equip(anchorpoint, this);
+        this.Id = generateUniqueId(); //TODO: overide for weapon and backpack
     }
 
     /**
@@ -60,11 +60,21 @@ public abstract class Item {
      * @param ShineLevel
      * @param itemType
      */
-    protected Item(ShineLevel ShineLevel, ItemType itemType){
+    protected Item(double weight, int Value, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
+        if (!hasValidHolder(Holder)){
+            throw new InvalidHolderException("Holder cannot be terminated");
+        }
+        if(!isValidValue(Value)){
+            throw new InvalidValueException("Value cannot be negative");
+        }
+        if (!isValidWeight(weight)){
+            this.Weight = 10;
+        } else this.Weight = weight;
+
+        this.setValue(Value);
         this.itemType = itemType;
         this.ShineLevel = ShineLevel;
-        this.Id = generateUniqueId();
-        Weight = 0;
+        this.Id = generateUniqueId(); //TODO: overide for weapon and backpack
     }
 
     /**********************************************************

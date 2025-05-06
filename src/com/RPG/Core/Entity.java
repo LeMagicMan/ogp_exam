@@ -3,6 +3,7 @@ package com.RPG.Core;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
+import com.RPG.Exception.InvalidHolderException;
 
 import javax.naming.InvalidNameException;
 import java.util.ArrayList;
@@ -186,7 +187,7 @@ public abstract class Entity {
      * @param skinType
      *      skintype of that entity
      */
-    @Raw //TODO: ask @Basic
+    @Raw
     protected void setSkinType(SkinType skinType) {
         this.skinType = skinType;
     }
@@ -203,11 +204,14 @@ public abstract class Entity {
     }
 
     /**
-     * a setter for the capacity of an entity
+     * setter for the capacity of an entity
+     *
+     * @post Capacity is set to the return of calculateCapacity()
+     *      | this.Capacity == calculateCapacity()
      */
     @Raw
     protected void setCapacity() {
-        Capacity = calculateCapacity();
+        this.Capacity = calculateCapacity();
     }
 
     /**
@@ -272,7 +276,15 @@ public abstract class Entity {
         if(getAnchorPoint(anchorPoint).getItem() != null){
             unequip(getAnchorPoint(anchorPoint), getAnchorPoint(anchorPoint).getItem()); //TODO: ask about second param
         }
-        getAnchorPoint(anchorPoint).setItem(item); //TODO: ask about warning
+        if (this.isTerminated()){
+            return;
+        }
+        getAnchorPoint(anchorPoint).setItem(item);
+        try {
+            item.setHolder(this);
+        } catch (InvalidHolderException e) {
+            assert false;
+        }
     }
 
     public void unequip(AnchorPoint anchorPoint, Item item){
@@ -282,7 +294,15 @@ public abstract class Entity {
         if (!getAnchorPoint(anchorPoint).hasAsItem(item)){
             return;
         }
+        if (this.isTerminated()){
+            return;
+        }
         getAnchorPoint(anchorPoint).setItem(null);
+        try {
+            item.setHolder(this);
+        } catch (InvalidHolderException e) {
+            assert false;
+        }
     }
 
     /**
