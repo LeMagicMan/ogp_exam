@@ -1,9 +1,7 @@
-package com.RPG.Entity;
+package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
-import com.RPG.Item.Item;
-import com.RPG.Item.ItemType;
 
 /**
  * an enumerator containing all types of Anchorpoints

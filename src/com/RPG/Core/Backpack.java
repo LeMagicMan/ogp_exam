@@ -1,6 +1,5 @@
-package com.RPG.Item;
+package com.RPG.Core;
 
-import com.RPG.Entity.Entity;
 import com.RPG.Exception.*;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class Backpack extends Item {
      * Constructors
      *********************************************************/
 
-    public Backpack(double weight, int Value, int Capacity, Entity Holder, ShineLevel ShineLevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
+    public Backpack(double weight, int Value, int Capacity, Entity Holder, com.RPG.Core.ShineLevel ShineLevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
         super(ShineLevel, ItemType.BACKPACK); //TODO: ask about checker after super
         if (!hasValidHolder(Holder)){
             throw new InvalidHolderException("Holder cannot be terminated");

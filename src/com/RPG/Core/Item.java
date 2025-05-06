@@ -1,7 +1,6 @@
-package com.RPG.Item;
+package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
-import com.RPG.Entity.Entity;
 import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidValueException;
 
@@ -37,7 +36,7 @@ public abstract class Item {
      * Constructors
      **********************************************************/
 
-    protected Item(double weight, int Value,  Entity Holder, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
+    protected Item(double weight, int Value, Entity Holder, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
         if (!hasValidHolder(Holder)){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
@@ -230,6 +229,7 @@ public abstract class Item {
      *      | !Holder.isTerminated()
      */
     public boolean hasValidHolder(Entity Holder){
+        if (Holder == null) return true;
         return !Holder.isTerminated(); //TODO: add function to check if item is somewhere in anchorpoints of entity
     }
 

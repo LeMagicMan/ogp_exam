@@ -1,6 +1,5 @@
-package com.RPG.Item;
+package com.RPG.Core;
 
-import com.RPG.Entity.Entity;
 import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidValueException;
 
@@ -23,7 +22,7 @@ public class Weapon extends Item {
      * Constructors
      *********************************************************/
 
-    public Weapon(double weight, Entity Holder, ShineLevel ShineLevel, int Damage) throws InvalidHolderException, InvalidValueException {
+    public Weapon(double weight, Entity Holder, com.RPG.Core.ShineLevel ShineLevel, int Damage) throws InvalidHolderException, InvalidValueException {
         super(weight, Damage, Holder, ShineLevel, ItemType.WEAPON);
         if (!isValidDamage(Damage)){
             this.Damage = DefaultDamage;

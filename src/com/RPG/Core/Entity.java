@@ -1,14 +1,14 @@
-package com.RPG.Entity;
+package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
-import com.RPG.Item.Item;
 
 import javax.naming.InvalidNameException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
+
 
 /**
  * A class representing all Entity-types
@@ -273,7 +273,6 @@ public abstract class Entity {
             unequip(getAnchorPoint(anchorPoint), getAnchorPoint(anchorPoint).getItem()); //TODO: ask about second param
         }
         getAnchorPoint(anchorPoint).setItem(item); //TODO: ask about warning
-        //TODO: ask about adding Holder
     }
 
     public void unequip(AnchorPoint anchorPoint, Item item){
@@ -284,7 +283,6 @@ public abstract class Entity {
             return;
         }
         getAnchorPoint(anchorPoint).setItem(null);
-        //TODO: ask about removing Holder, LinkerClass in com.RPG?
     }
 
     /**
@@ -339,7 +337,10 @@ public abstract class Entity {
      *          | Entity.getHP()
      *
      * @return true if HP is prime, otherwise false
-     *      //TODO: ask prof for formal
+     *      | if HP == 1
+     *      | then result == false
+     *      | for each index until HP-1
+     *      |   HP % index == 0
      */
     @Model
     private Boolean isPrime(Long HP) {

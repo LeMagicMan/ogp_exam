@@ -1,4 +1,4 @@
-package com.RPG.Entity;
+package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
 

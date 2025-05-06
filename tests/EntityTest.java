@@ -1,6 +1,11 @@
-import com.RPG.Entity.Hero;
-import com.RPG.Entity.Monster;
+import com.RPG.Core.AnchorPoint;
+import com.RPG.Core.Hero;
+import com.RPG.Core.Monster;
 import com.RPG.Exception.InvalidHPException;
+import com.RPG.Exception.InvalidHolderException;
+import com.RPG.Exception.InvalidValueException;
+import com.RPG.Core.ShineLevel;
+import com.RPG.Core.Weapon;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

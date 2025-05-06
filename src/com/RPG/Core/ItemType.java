@@ -1,4 +1,4 @@
-package com.RPG.Item;
+package com.RPG.Core;
 
 public enum ItemType {
     ANY,

@@ -1,4 +1,4 @@
-package com.RPG.Item;
+package com.RPG.Core;
 
 //TODO: doc
 public enum ShineLevel {
