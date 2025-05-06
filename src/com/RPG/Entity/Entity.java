@@ -6,6 +6,8 @@ import be.kuleuven.cs.som.annotate.Raw;
 
 import javax.naming.InvalidNameException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * A class representing all Entity-types
@@ -15,6 +17,9 @@ import java.util.ArrayList;
  *
  * @invar Every entity must have a valid amount of hitpoints
  *      | isValidHP(getHP)
+ *
+ * @invar an entity can have multiple DamageTypes except if one of those is Normal then it can only have the normal type, and can only have 1 of each, and cannot be empty
+ *      | hasValidDamageTypes()
  */
 public abstract class Entity {
 
@@ -57,6 +62,21 @@ public abstract class Entity {
      */
     private static final String nameRegex = "^[A-Z][a-zA-Z ’:]*$"; //"^.*+$"; "^[A-Z][a-zA-Z ':]*$" //TODO: ask prof
 
+    /**
+     * A variable representing the skinType of an entity
+     */
+    private SkinType skinType;
+
+    /**
+     * A variable representing the capacity of an entity
+     */
+    private long Capacity = 0L;
+
+    /**
+     * A variable representing the DamageType of an entity
+     */
+    private HashSet<DamageType> DamageTypes = new HashSet<>();
+
     /**********************************************************
      * Constructors
      **********************************************************/
@@ -84,15 +104,44 @@ public abstract class Entity {
             throw new InvalidNameException();
         }
         this.Name = name;
-        MaxHP = maxHP;
-        HP = maxHP;
-        AnchorPoints = Anchorpoints;
+        this.MaxHP = maxHP;
+        this.HP = maxHP;
+        this.AnchorPoints = Anchorpoints;
     }
 
 
     /**********************************************************
      * Getters and Setters
      **********************************************************/
+
+    public void setDamageTypes(HashSet<DamageType> damageTypes) {
+        DamageTypes = damageTypes;
+    }
+
+    /**
+     * a getter for an anchorpoint at a certain index
+     *
+     * @pre Index must be within range
+     *
+     * @param index the index of the anchorpoint
+     *
+     * @return the anchorpoint at the given Index
+     */
+    public AnchorPoint getAnchorPointAt(int index){
+        if(index >= this.getAmountOfAnchorPoints()){
+            return null;
+        }
+        return AnchorPoints.get(index);
+    }
+
+    /**
+     * a getter for the amount of anchorpoints
+     *
+     * @return amount of anchorpoints
+     */
+    public int getAmountOfAnchorPoints(){
+        return AnchorPoints.size();
+    }
 
     /**
      * getter for the name of an entity
@@ -127,9 +176,59 @@ public abstract class Entity {
         return HP;
     }
 
+    /**
+     * setter for the skinType of an entity
+     *
+     * @param skinType
+     *      skintype of that entity
+     */
+    @Raw //TODO: ask @Basic
+    protected void setSkinType(SkinType skinType) {
+        this.skinType = skinType;
+    }
+
+    /**
+     * a getter for the skintype of an entity
+     *
+     * @return skintype of the entity
+     *      | Entity.skinType
+     */
+    @Basic
+    public SkinType getSkinType() {
+        return skinType; //TODO: ask if this is correct or  return skintype.getProtection() is better
+    }
+
+    /**
+     * a setter for the capacity of an entity
+     */
+    @Raw
+    protected void setCapacity() {
+        Capacity = calculateCapacity();
+    }
+
+    /**
+     * a getter for the capacity of an entity
+     *
+     * @return capacity of that entity
+     *      | Entity.Capacity
+     */
+    public long getCapacity() {
+        return Capacity;
+    }
+
     /**********************************************************
      * Methods
      **********************************************************/
+
+    /**
+     * a method to calculate the capacity of an entity
+     *
+     * @return capacity of that entity
+     */
+    @Model @Raw
+    protected long calculateCapacity() {
+        return 0L; //TODO: WAIT UNTIL iTEM IS FINISHED
+    }
 
     /**
      * Checks whether the given name is a valid name
@@ -158,7 +257,6 @@ public abstract class Entity {
      * @return true if HP is bigger han or equal to zero, is lower than or Equal to its max HP and the Hp is a Prime number
      *      | result == (this.getHP() >= 0 && this.getHP <= this.getMaxHP() && isPrime(getHP()))
      */
-    @Raw
     public Boolean isValidHp(Long HP) {
         if (this.getMaxHP() == 0L){
             return (HP >= 0 && isPrime(HP));
@@ -176,13 +274,13 @@ public abstract class Entity {
      * @return true if HP is prime, otherwise false
      *      //TODO: ask prof for formal
      */
-    @Model @Raw
+    @Model
     private Boolean isPrime(Long HP) {
         if (HP <= 1) {
             return false;
         }
-        for (int i = 2; i <= Math.sqrt(HP); i++) {
-            if (HP % i == 0) {
+        for (int index = 2; index <= Math.sqrt(HP); index++) {
+            if (HP % index == 0) {
                 return false;
             }
         }
@@ -198,6 +296,30 @@ public abstract class Entity {
     @Basic
     public boolean isHealable() {
         return Healable;
+    }
+
+    /**
+     * checks whether the given damagetypes are valid
+     *
+     * @param damageTypes
+     *      the damagetypes that need to be checked
+     *
+     * @note we are sure the elements are unique because of the used datatype
+     *
+     * @return true if all damagetypes are different than Normal, if there is a Normal type it must be the only type
+     *      | for each damagetype in damagetypes :
+     *      |       if damagetype == NORMAL
+     *      |       then result == damagetypes.size() == 1
+     *      | result == !DamageTypes.isEmpty()
+     *
+     */
+    public Boolean areValidDamageTypes(HashSet<DamageType> damageTypes) {
+        for (DamageType damageType : damageTypes) {
+            if (Objects.requireNonNull(damageType) == DamageType.NORMAL) {
+                return damageTypes.size() == 1;
+            }
+        }
+        return !DamageTypes.isEmpty();
     }
 
 }
