@@ -17,7 +17,9 @@ public abstract class Item {
 
     private final long Id;
 
-    private final double Weight;
+    private double Weight;
+
+    private static final double defaultWeight = 10;
 
     private final int maxValue = 500;
 
@@ -35,7 +37,9 @@ public abstract class Item {
         if (!isValidHolder(Holder)){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
-
+        if(!isValidValue(Value)){
+            throw new InvalidValueException("Value cannot be negative");
+        }
         if (!isValidWeight(weight)){
             this.Weight = 10;
         } else this.Weight = weight;
@@ -47,6 +51,16 @@ public abstract class Item {
         this.Id = generateUniqueId();
     }
 
+//    protected Item(double weight, Entity Holder, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
+//        this(weight, 0,Holder, ShineLevel, itemType);
+//    }
+
+    /**
+     * Auxiliary constructor //TODO
+     *
+     * @param ShineLevel
+     * @param itemType
+     */
     protected Item(ShineLevel ShineLevel, ItemType itemType){
         this.itemType = itemType;
         this.ShineLevel = ShineLevel;
@@ -80,6 +94,51 @@ public abstract class Item {
     }
 
     /**
+     * sets the holder of an Item
+     *
+     * @pre Holder must be Valid
+     *      | isValidHolder(Holder)
+     *
+     * @param Holder
+     *      the holder it needs to be set to
+     *
+     * @throws InvalidHolderException
+     *      gets thrown when Holder is not valid
+     *          | !isValidHolder(Holder)
+     *
+     * @post the Holder of the Item is set to the given Holder
+     *      | this.Holder = Holder
+     */
+    protected void setHolder(Entity Holder) throws InvalidHolderException {
+        if (!isValidHolder(Holder)){
+            throw new InvalidHolderException("Holder cannot be terminated");
+        }
+        this.Holder = Holder;
+    }
+
+    /**
+     * sets the weight of an Item
+     *
+     * @pre weight must be valid
+     *      | isValidWeight(weight)
+     *
+     * @effect if weight is not valid set weight to the default weight
+     *      | if (!isValidWeight)
+     *      | then this.Weight = defaultWeight
+     *
+     * @param weight
+     *      the weight that needs to be set
+     *
+     * @post the Weight of the Item is set to the given weight
+     *      | this.Weight = weight
+     */
+    protected void setWeight(double weight){
+        if (!isValidWeight(weight)){
+            this.Weight = 10;
+        } else this.Weight = weight;
+    }
+
+    /**
      * setter for the value of an Item
      *
      * @param value value that needs to be set
@@ -97,16 +156,31 @@ public abstract class Item {
      * @post value is set as th value of the Item
      *      | this.Value = value
      */
-    public void setValue(int value) throws InvalidValueException {
+    protected void setValue(int value) throws InvalidValueException {
         if(!isValidValue(value)){
             throw new InvalidValueException("Value cannot be negative");
         }
-        this.Value = value;
+        this.Value = calculateValue(value);
     }
 
     /**********************************************************
      * Methods
      **********************************************************/
+
+    /**
+     * calculates the Value of an Item using a variable the value depends on
+     *
+     * @pre dependedValue cannot be negative
+     *      | dependedValue >= 0
+     *
+     * @param dependendValue
+     *      the variable Value depends on
+     *
+     * @return dependedValue
+     */
+    protected int calculateValue(int dependendValue){
+        return dependendValue;
+    }
 
     /**
      * generates an unique id for every Item
