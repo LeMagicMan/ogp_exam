@@ -32,6 +32,8 @@ public abstract class Item {
 
     private Boolean terminated = false;
 
+    private Backpack backpack = null;
+
     /**********************************************************
      * Constructors
      **********************************************************/
@@ -126,6 +128,17 @@ public abstract class Item {
     }
 
     /**
+     * getter for the weight of an item
+     *
+     * @return the weight of the item
+     *      | this.Weight
+     */
+    @Basic
+    public double getWeight() {
+        return Weight;
+    }
+
+    /**
      * sets the weight of an Item
      *
      * @pre weight must be valid
@@ -181,6 +194,14 @@ public abstract class Item {
     @Basic
     public ItemType getItemType() {
         return itemType;
+    }
+
+    /**
+     * getter for the Backpack of an Item
+     * @return
+     */
+    public Backpack getBackpack() {
+        return backpack;
     }
 
     /**********************************************************

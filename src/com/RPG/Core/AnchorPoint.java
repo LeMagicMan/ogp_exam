@@ -2,6 +2,7 @@ package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
+import com.RPG.Exception.InvalidAnchorPointException;
 
 /**
  * an enumerator containing all types of Anchorpoints
@@ -90,8 +91,10 @@ public enum AnchorPoint {
      *
      */
     @Model
-    void setItem(Item item) {
-        this.item = item;
+    void setItem(Item item) throws InvalidAnchorPointException {
+        if (this.canAttach(item)) {
+            this.item = item;
+        } else throw new InvalidAnchorPointException("cannot attach item to this anchorpoint");
     }
 
     /**

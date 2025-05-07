@@ -1,6 +1,10 @@
 package com.RPG.Core;
 
-import com.RPG.Exception.*;
+import be.kuleuven.cs.som.annotate.Model;
+import be.kuleuven.cs.som.annotate.Raw;
+import com.RPG.Exception.InvalidHolderException;
+import com.RPG.Exception.InvalidItemsException;
+import com.RPG.Exception.InvalidValueException;
 
 import java.util.ArrayList;
 
@@ -28,9 +32,14 @@ public class Backpack extends Item {
      * Constructors
      *********************************************************/
 
-    public Backpack(double weight, int Value, int Capacity, Entity Holder, ShineLevel shinelevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
-        super(weight, Value, shinelevel, ); //TODO: ask about checker after super
-        //TODO: work
+    public Backpack(double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
+        super(weight, Value, shinelevel, ItemType.BACKPACK); //TODO: ask about checker after super
+        if (this.hasProperItems(Content)){
+            throw new InvalidItemsException("all backpack items must belong to this backpack");
+        }
+        this.Content = Content;
+        Holder.equip(anchorPoint, this);
+        this.Capacity = Capacity;
     }
 
     /**********************************************************
@@ -59,9 +68,141 @@ public class Backpack extends Item {
         } else this.Capacity = capacity;
     }
 
+    /**
+     * getter for an item at a given Index
+     *
+     * @param index
+     *      index of the item
+     *
+     * @pre index must be smaller than size of Content
+     *
+     * @return the Item at the given Index
+     *      | this.Content.get(index)
+     */
+    public Item getItemAt(int index){
+        if(index >= this.getAmountOfItems()){
+            return null;
+        }
+        return Content.get(index);
+    }
+
+    /**
+     * getter for the AMount of items in the content of  a backoack
+     *
+     * @return the amount of items in a backpack
+     *      | this.Content.size()
+     */
+    public int getAmountOfItems(){
+        return Content.size();
+    }
+
+    /**
+     * getter for the totalWeight of a backpack
+     *
+     * @return the weight of every item in the backpack combined plus the backpacks own weight
+     *      | TotalWeight == this.getWeight
+     *      | for each item in Content
+     *      |   TotalWeight += item.getWeight
+     *      | result == TotalWeight
+     */
+    public double getTotalWeight(){
+        double totalWeight = this.getWeight();
+        for (Item item : Content){ //TODO: ask about this
+            totalWeight += item.getWeight();
+        }
+        return totalWeight;
+    }
+
     /**********************************************************
      * Methods
      **********************************************************/
+
+    /**
+     * stores an item in a backpack
+     *
+     * @param item
+     *      the item we want to store
+     */
+    @Raw
+    public void storeItem(Item item){
+        this.AddItem(item);
+    }
+
+    /**
+     * unpacks an item from a backpack
+     *
+     * @param item
+     *      item we want to unpack
+     */
+    public void unpackItem(Item item){
+        this.removeItem(item);
+    }
+
+    /**
+     * removes an item from the content of a backpack
+     *
+     * @param item //TODO
+     */
+    private void removeItem(Item item){
+        if (!this.hasAsItem(item)){
+            return;
+        }
+        this.Content.remove(item);
+        try {
+            item.setHolder(null);
+        } catch (InvalidHolderException e) {
+            assert false;
+        }
+    }
+
+    /**
+     * a method to add an item to the content of a backpack
+     *
+     * @pre must be able to store Item
+     *      | canAddItem(item) //TODO: ask if also needed in store
+     *
+     * @param item
+     *      the item we want to add to the content
+     */
+    @Raw @Model
+    private void AddItem(Item item){
+        if (!this.canAddItem(item)){
+            return;
+        }
+        if (item.getBackpack() == this){
+            return;
+        }
+        if (item.getHolder() != null){
+            item.getHolder().unequip(item.getHolder().getAnchorPointWithItem(item), item);
+        }
+        if (item.getBackpack() != null){
+            item.getBackpack().removeItem(item);
+        }
+        try {
+            item.setHolder(this.getHolder());
+        } catch (InvalidHolderException e) {
+            assert false;
+        }
+        Content.add(item);
+    }
+
+    /**
+     * checks if we can add a given item to the content of a backpack
+     *
+     * @param item
+     *      the item we want to check
+     *
+     * @return true if The Holder of the backpack isn't terminated, backpack isn't terminated, item isn't terminated
+     * and if TotalWeight + item's weight is smaller than capacity, false otherwise
+     *      | if (!(this.getTotalWeight() + item.getWeight() >= this.Capacity) || item.isTerminated() || this.isTerminated() || this.getHolder().isTerminated())
+     *      |       result == false
+     */
+    public boolean canAddItem(Item item){
+        if (!(this.getTotalWeight() + item.getWeight() >= this.Capacity)){
+            return false;
+        }
+        return !item.isTerminated() && !this.isTerminated() && !this.getHolder().isTerminated();
+    }
 
     /**
      * checks if all item in the backpack belong the backpacks holder
@@ -72,9 +213,9 @@ public class Backpack extends Item {
      *      |           result == false
      *      | result == true
      */
-    public boolean hasProperItems(){
-        for (Item item : Content){
-            if (item.getHolder() != this.getHolder()){
+    public boolean hasProperItems(ArrayList<Item> content){
+        for (Item item : content){
+            if (item.getHolder() != this.getHolder()){ //TODO: ask if this is enough because i ensure all items in backpack belong to the same Holder
                 return false;
             }
         }
@@ -92,5 +233,14 @@ public class Backpack extends Item {
      */
    public boolean isValidCapacity(int capacity){
        return capacity > 0;
+   }
+
+    /**
+     * //TODO
+     * @param item
+     * @return
+     */
+   public boolean hasAsItem(Item item){
+       return this.Content.contains(item); //TODO: ask about method in public
    }
 }

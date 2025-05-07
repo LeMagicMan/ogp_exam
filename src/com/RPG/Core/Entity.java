@@ -3,6 +3,7 @@ package com.RPG.Core;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
+import com.RPG.Exception.InvalidAnchorPointException;
 import com.RPG.Exception.InvalidHolderException;
 
 import javax.naming.InvalidNameException;
@@ -131,6 +132,7 @@ public abstract class Entity {
      * @param index the index of the anchorpoint
      *
      * @return the anchorpoint at the given Index
+     *      | this.AnchorPoints.get(index)
      */
     public AnchorPoint getAnchorPointAt(int index){
         if(index >= this.getAmountOfAnchorPoints()){
@@ -143,6 +145,7 @@ public abstract class Entity {
      * a getter for the amount of anchorpoints
      *
      * @return amount of anchorpoints
+     *      | this.AnchorPoints.size()
      */
     public int getAmountOfAnchorPoints(){
         return AnchorPoints.size();
@@ -270,16 +273,26 @@ public abstract class Entity {
      *      the item we want to equip to the anchorpoint
      */
     public void equip(AnchorPoint anchorPoint, Item item){
-        if (!hasAnchorpoint(anchorPoint) && !item.isValidItem()){
+        if (!hasAnchorpoint(anchorPoint) && !item.isValidItem()){ //TODO: make checker
             return;
+        }
+        if (this.isTerminated() || item.isTerminated()){
+            return;
+        }
+        if (!anchorPoint.canAttach(item)){
+            return;
+        }
+        if (item.getBackpack() != null){
+            item.getBackpack().unpackItem(item);
         }
         if(getAnchorPoint(anchorPoint).getItem() != null){
             unequip(getAnchorPoint(anchorPoint), getAnchorPoint(anchorPoint).getItem()); //TODO: ask about second param
         }
-        if (this.isTerminated()){
-            return;
+        try {
+            getAnchorPoint(anchorPoint).setItem(item);
+        } catch (InvalidAnchorPointException e) {
+            assert false;
         }
-        getAnchorPoint(anchorPoint).setItem(item);
         try {
             item.setHolder(this);
         } catch (InvalidHolderException e) {
@@ -294,15 +307,31 @@ public abstract class Entity {
         if (!getAnchorPoint(anchorPoint).hasAsItem(item)){
             return;
         }
-        if (this.isTerminated()){
+        if (this.isTerminated() || item.isTerminated()){
             return;
         }
-        getAnchorPoint(anchorPoint).setItem(null);
+        if (!anchorPoint.canAttach(item)){
+            return;
+        }
+        try {
+            getAnchorPoint(anchorPoint).setItem(null);
+        } catch (InvalidAnchorPointException e) {
+            assert false;
+        }
         try {
             item.setHolder(this);
         } catch (InvalidHolderException e) {
             assert false;
         }
+    }
+
+    public AnchorPoint getAnchorPointWithItem(Item item){
+        for (AnchorPoint ap : this.AnchorPoints) {
+            if (ap.getItem().equals(item)){
+                return ap;
+            }
+        }
+        return null;
     }
 
     /**
