@@ -37,7 +37,7 @@ public class Monster extends Entity {
     }
 
     //TODO
-    public Monster(String name) throws InvalidNameException, InvalidValueException, InvalidHolderException { //TODO: use less specific one to make this
+    public Monster(String name) throws InvalidNameException, InvalidValueException, InvalidHolderException {
         this(name, 997L, new ArrayList<>(Arrays.asList(
                 AnchorPoint.BELT,
                 AnchorPoint.BACK,
