@@ -4,10 +4,7 @@ import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidValueException;
 
 import javax.naming.InvalidNameException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Monster extends Entity {
     /**********************************************************
@@ -85,36 +82,30 @@ public class Monster extends Entity {
         return super.isValidName(name);
     }
 
-    private void createLoot() throws InvalidValueException, InvalidHolderException {
+    private final Map<ItemType, MonsterLootFactory> factories = Map.of(
+            ItemType.WEAPON, new WeaponFactory(),
+            ItemType.BACKPACK, new BackpackFactory()
+    );
+
+    private void createLoot() throws InvalidValueException, InvalidHolderException { //TODO: desperately needs testing, and ask professor
         for (int index = 0; index < this.getAmountOfAnchorPoints(); index++) {
             if (Math.random() < itemSpawnChance) {
-                switch (this.getAnchorPointAt(index).getAllowedItemType()){
-                    case ARMOR, MONEY_POUCH -> {
-                        return;
-                    }
+                AnchorPoint anchor = this.getAnchorPointAt(index);
+                ItemType type = anchor.getAllowedItemType();
+
+                switch (type) {
                     case ANY -> {
                         ItemType[] types = {ItemType.WEAPON, ItemType.ARMOR, ItemType.MONEY_POUCH, ItemType.BACKPACK};
-                        ItemType randomType = types[(int) (Math.random() * types.length)];
-                        switch (randomType) {
-                            case WEAPON -> {
-                                Weapon weapon = new Weapon(this, this.getAnchorPointAt(index));
-                            }
-                            case BACKPACK -> {
-                                Backpack backpack = new Backpack(this, this.getAnchorPointAt(index));
-                            }
-                            case ARMOR, MONEY_POUCH -> {
-                                return;
-                            }
-                        }
+                        type = types[(int) (Math.random() * types.length)];
                     }
-                    case BACKPACK -> {
-                        Backpack backpack = new Backpack(this, this.getAnchorPointAt(index));
-                    }
-                    case WEAPON -> {
-                        Weapon weapon = new Weapon(this, this.getAnchorPointAt(index));
-                    }
+                    default -> throw new IllegalArgumentException("Unsupported item type: " + type);
                 }
+
+                MonsterLootFactory factory = factories.get(type);
+
+                Item item = factory.createItem(this, anchor);
             }
         }
     }
+
 }
