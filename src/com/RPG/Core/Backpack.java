@@ -37,7 +37,7 @@ public class Backpack extends Item {
      *********************************************************/
 
     public Backpack(double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
-        super(weight, Value, shinelevel, ItemType.BACKPACK); //TODO: ask about checker after super
+        super(weight, Value, shinelevel, ItemType.BACKPACK);
         if (this.hasProperItems(Content)){
             throw new InvalidItemsException("all backpack items must belong to this backpack");
         }

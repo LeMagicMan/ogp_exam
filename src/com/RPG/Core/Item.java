@@ -53,7 +53,7 @@ public abstract class Item {
         this.itemType = itemType;
         this.ShineLevel = ShineLevel;
         Holder.equip(anchorpoint, this);
-        this.Id = generateUniqueId(); //TODO: overide for weapon and backpack
+        this.Id = generateUniqueId(); //TODO: override for weapon and backpack
     }
 
     /**
@@ -261,7 +261,7 @@ public abstract class Item {
      */
     public boolean hasValidHolder(Entity Holder){
         if (Holder == null) return true;
-        return !Holder.isTerminated(); //TODO: add function to check if item is somewhere in anchorpoints of entity
+        return !Holder.isTerminated() && Holder.hasAsItem(this); //TODO: add function to check if item is somewhere in anchorpoints of entity
     }
 
     /**

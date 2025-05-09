@@ -341,7 +341,7 @@ public abstract class Entity {
      */
     @Model @Raw
     protected long calculateCapacity() {
-        return 0L; //TODO: WAIT UNTIL iTEM IS FINISHED
+        return 0L;
     }
 
     /**
@@ -437,6 +437,15 @@ public abstract class Entity {
             }
         }
         return !DamageTypes.isEmpty();
+    }
+
+    public boolean hasAsItem(Item item){
+       for (AnchorPoint ap : this.AnchorPoints) {
+           if (ap.getItem().equals(item)){
+               return true;
+           }
+       }
+       return false;
     }
 
     /**
