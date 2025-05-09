@@ -16,17 +16,23 @@ public class Weapon extends Item {
 
     private static final int maxDamage = 100;
 
-    private static final int DefaultDamage = 10;
+    private static final int defaultDamage = 10;
+
+    private static final double defaultWeight= 10;
 
     /**********************************************************
      * Constructors
      *********************************************************/
 
-    public Weapon(double weight, Entity Holder, com.RPG.Core.ShineLevel ShineLevel, int Damage) throws InvalidHolderException, InvalidValueException {
-        super(weight, Damage, Holder, ShineLevel, ItemType.WEAPON);
+    public Weapon(double weight, Entity Holder, AnchorPoint anchorPoint, ShineLevel ShineLevel, int Damage) throws InvalidHolderException, InvalidValueException {
+        super(weight, Damage, Holder, anchorPoint, ShineLevel, ItemType.WEAPON);
         if (!isValidDamage(Damage)){
-            this.Damage = DefaultDamage;
+            this.Damage = defaultDamage;
         } else this.Damage = Damage;
+    }
+
+    public Weapon( Entity Holder, AnchorPoint anchorPoint) throws InvalidValueException, InvalidHolderException {
+        this(defaultWeight, Holder, anchorPoint, ShineLevel.LOW, defaultDamage);
     }
 
     /**********************************************************
@@ -56,7 +62,7 @@ public class Weapon extends Item {
     @Override
     protected int calculateValue(int Damage) {
         if (!isValidDamage(Damage)){
-            return DefaultDamage * valuePerDamage;
+            return defaultDamage * valuePerDamage;
         }
         return Damage * valuePerDamage;
     }

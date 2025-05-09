@@ -76,7 +76,7 @@ public abstract class Entity {
     /**
      * A variable representing the capacity of an entity
      */
-    private long Capacity = 0L;
+    private long Capacity = 0;
 
     /**
      * A variable representing the DamageType of an entity

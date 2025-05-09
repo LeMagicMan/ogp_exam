@@ -28,6 +28,10 @@ public class Backpack extends Item {
 
     private static final int defaultCapacity = 20;
 
+    private static final double defaultWeight = 5;
+
+    private static final int defaultValue = 20;
+
     /**********************************************************
      * Constructors
      *********************************************************/
@@ -40,6 +44,16 @@ public class Backpack extends Item {
         this.Content = Content;
         Holder.equip(anchorPoint, this);
         this.Capacity = Capacity;
+    }
+
+    public Backpack( double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel) throws InvalidValueException, InvalidHolderException {
+        super(weight, Value, Holder, anchorPoint, shinelevel, ItemType.BACKPACK);
+        this.Capacity = Capacity;
+        this.Content = new ArrayList<Item>();
+    }
+
+    public Backpack(Entity Holder, AnchorPoint anchorPoint) throws InvalidValueException, InvalidHolderException {
+        this(defaultWeight, defaultValue, defaultCapacity, Holder, anchorPoint, ShineLevel.LOW);
     }
 
     /**********************************************************

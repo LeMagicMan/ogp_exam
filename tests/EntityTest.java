@@ -20,7 +20,7 @@ public class EntityTest {
     Monster MonsterTest2;
 
     @BeforeEach
-    public void setUpFixture() throws InvalidNameException, InvalidHPException {
+    public void setUpFixture() throws InvalidNameException, InvalidHPException, InvalidValueException, InvalidHolderException {
         HeroTest1 = new Hero("Gandalf");
         MonsterTest1 = new Monster("Carcharoth");
         HeroTest2 = new Hero("James: o’Ha’ra");

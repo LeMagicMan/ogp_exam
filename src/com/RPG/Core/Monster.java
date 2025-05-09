@@ -1,6 +1,7 @@
 package com.RPG.Core;
 
-import com.RPG.Exception.InvalidHPException;
+import com.RPG.Exception.InvalidHolderException;
+import com.RPG.Exception.InvalidValueException;
 
 import javax.naming.InvalidNameException;
 import java.util.ArrayList;
@@ -14,6 +15,11 @@ public class Monster extends Entity {
      **********************************************************/
 
     /**
+     * A variable representing the spawn chance of an item on an anchorpoint
+     */
+    private static final float itemSpawnChance = 0.20F;
+
+    /**
      * A regex that the name of an entity needs to follow
      */
     private static final String nameRegex = "^[A-Z][a-zA-Z ’:]*$";
@@ -22,25 +28,23 @@ public class Monster extends Entity {
      * Constructors
      *********************************************************/
 
+    public Monster(String name, Long maxHP, ArrayList<AnchorPoint> anchorPoints, HashSet<DamageType> damageTypes, SkinType skintype) throws InvalidNameException, InvalidValueException, InvalidHolderException {
+        super(name, maxHP, anchorPoints);
+        this.setDamageTypes(damageTypes);
+        this.setSkinType(skintype);
+        createLoot();
+        this.setCapacity();
+    }
+
     //TODO
-    public Monster(String name) throws InvalidNameException, InvalidHPException { //TODO: use less specific one to make this
-        super(name, 997L, new ArrayList<>(Arrays.asList(
+    public Monster(String name) throws InvalidNameException, InvalidValueException, InvalidHolderException { //TODO: use less specific one to make this
+        this(name, 997L, new ArrayList<>(Arrays.asList(
                 AnchorPoint.BELT,
                 AnchorPoint.BACK,
                 AnchorPoint.BODY,
                 AnchorPoint.LEFTHAND,
-                AnchorPoint.RIGHTHAND //TODO: give each part a chance to get an item
-        )));
-        this.setDamageTypes(new HashSet<>(List.of(DamageType.CLAWS)));
-        this.setSkinType(SkinType.THICK);
-        this.setCapacity(); //TODO
-    }
-
-    //TODO
-    public Monster(String name, ArrayList<AnchorPoint> anchorPoints, HashSet<DamageType> damageTypes, SkinType skinType) throws InvalidNameException, InvalidHPException { //TODO: add damageType
-        super(name, 1000L, anchorPoints);
-        this.setDamageTypes(damageTypes);
-        this.setSkinType(skinType); //TODO: check for exceptions
+                AnchorPoint.RIGHTHAND
+        )), new HashSet<>(List.of(DamageType.CLAWS)), SkinType.THICK );
     }
 
     /**********************************************************
@@ -58,7 +62,13 @@ public class Monster extends Entity {
      */
     @Override
     protected long calculateCapacity() {
-        return 0L; //TODO implement this when item works
+        long capacity = 0L;
+        for (int index = 0; index < this.getAmountOfAnchorPoints(); index++){
+            if (this.getAnchorPointAt(index).getItem() != null){
+                capacity += (long) this.getAnchorPointAt(index).getItem().getWeight();
+            }
+        }
+        return capacity;
     }
 
     /**
@@ -73,5 +83,38 @@ public class Monster extends Entity {
     @Override
     public Boolean isValidName(String name) {
         return super.isValidName(name);
+    }
+
+    private void createLoot() throws InvalidValueException, InvalidHolderException {
+        for (int index = 0; index < this.getAmountOfAnchorPoints(); index++) {
+            if (Math.random() < itemSpawnChance) {
+                switch (this.getAnchorPointAt(index).getAllowedItemType()){
+                    case ARMOR, MONEY_POUCH -> {
+                        return;
+                    }
+                    case ANY -> {
+                        ItemType[] types = {ItemType.WEAPON, ItemType.ARMOR, ItemType.MONEY_POUCH, ItemType.BACKPACK};
+                        ItemType randomType = types[(int) (Math.random() * types.length)];
+                        switch (randomType) {
+                            case WEAPON -> {
+                                Weapon weapon = new Weapon(this, this.getAnchorPointAt(index));
+                            }
+                            case BACKPACK -> {
+                                Backpack backpack = new Backpack(this, this.getAnchorPointAt(index));
+                            }
+                            case ARMOR, MONEY_POUCH -> {
+                                return;
+                            }
+                        }
+                    }
+                    case BACKPACK -> {
+                        Backpack backpack = new Backpack(this, this.getAnchorPointAt(index));
+                    }
+                    case WEAPON -> {
+                        Weapon weapon = new Weapon(this, this.getAnchorPointAt(index));
+                    }
+                }
+            }
+        }
     }
 }
