@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main, dev, Item, Mechanics, Entity ]
   pull_request:
-    branches: [ main, dev, Item, Mechanics, Entity ]
+    branches: [ main, dev, Item, Mechanics, Entity, bidirectional ]
 
 jobs:
   test:

@@ -441,8 +441,10 @@ public abstract class Entity {
 
     public boolean hasAsItem(Item item){
        for (AnchorPoint ap : this.AnchorPoints) {
-           if (ap.getItem().equals(item)){
-               return true;
+           if (ap.getItem() != null){
+               if (ap.getItem().equals(item)){
+                   return true;
+               }
            }
        }
        return false;

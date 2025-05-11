@@ -98,12 +98,13 @@ public class Monster extends Entity {
                         ItemType[] types = {ItemType.WEAPON, ItemType.ARMOR, ItemType.MONEY_POUCH, ItemType.BACKPACK};
                         type = types[(int) (Math.random() * types.length)];
                     }
-                    default -> throw new IllegalArgumentException("Unsupported item type: " + type);
                 }
 
                 MonsterLootFactory factory = factories.get(type);
 
-                Item item = factory.createItem(this, anchor);
+                if (factory != null) {
+                    Item item = factory.createItem(this, anchor);
+                }
             }
         }
     }
