@@ -7,6 +7,8 @@ import com.RPG.Exception.InvalidAnchorPointException;
 import com.RPG.Exception.InvalidHolderException;
 
 import javax.naming.InvalidNameException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
@@ -58,6 +60,9 @@ public abstract class Entity {
      */
     private final Boolean Healable = false;
 
+
+    private final Boolean Intelligent = false;
+
     /**
      * A variable representing the terminated status of an entity
      */
@@ -82,6 +87,26 @@ public abstract class Entity {
      * A variable representing the DamageType of an entity
      */
     private HashSet<DamageType> DamageTypes = new HashSet<>();
+
+    /**
+     * A Variable representing the strength of a Hero
+     */
+    private BigDecimal Strength = BigDecimal.valueOf(0);
+
+    /**
+     * A Variable representing the protection of a Hero
+     */
+    private int Protection = 0;
+
+    /**
+     * A variable representing the precision of the strength variable
+     */
+    private static final int strengthScale = 2;
+
+    /**
+     * A variable representing the way to round the strength to the set strengthScale
+     */
+    private static final RoundingMode roundingMode = RoundingMode.HALF_UP;
 
     /**********************************************************
      * Constructors
@@ -120,7 +145,37 @@ public abstract class Entity {
      * Getters and Setters
      **********************************************************/
 
-    public void setDamageTypes(HashSet<DamageType> damageTypes) {
+    protected void setStrength(BigDecimal strength) {
+        this.Strength = strength;
+    }
+
+
+    protected void setProtection(int protection) {
+        if (isValidProtection(protection)){
+            this.Protection = protection;
+        }
+    }
+
+    protected RoundingMode getRoundingMode() {
+        return roundingMode;
+    }
+
+    protected int getStrengthScale() {
+        return strengthScale;
+    }
+
+    /**
+     * getter for the strength of a Hero
+     *
+     * @return strength of hero
+     *      | this.Strength
+     */
+    //TODO: ask @basic
+    public BigDecimal getStrength() {
+        return getStrength();
+    }
+
+    protected void setDamageTypes(HashSet<DamageType> damageTypes) {
         DamageTypes = damageTypes;
     }
 
@@ -184,6 +239,28 @@ public abstract class Entity {
         return HP;
     }
 
+    public long getTotalDamageTypeDamage(){
+        long totalDamage = 0;
+        for (DamageType damageType : DamageTypes) {
+            totalDamage += damageType.getBaseDamage();
+        }
+        return totalDamage;
+    }
+
+    public long getActiveWeaponDamage(){
+        if (this.Intelligent) {
+            long totalDamage = 0;
+            if (this.AnchorPoints.contains(AnchorPoint.LEFTHAND)) {
+                totalDamage = this.getAnchorPoint(AnchorPoint.LEFTHAND).getItem().getDamage();
+            }
+            if (this.AnchorPoints.contains(AnchorPoint.RIGHTHAND)) {
+                totalDamage = this.getAnchorPoint(AnchorPoint.RIGHTHAND).getItem().getDamage();
+            }
+            return totalDamage;
+        }
+        return 0;
+    }
+
     /**
      * setter for the skinType of an entity
      *
@@ -193,6 +270,39 @@ public abstract class Entity {
     @Raw
     protected void setSkinType(SkinType skinType) {
         this.skinType = skinType;
+    }
+
+    public int getProtection(){ //TODO: ok?
+        return Protection;
+    }
+
+    public int getDefense(){
+        return Protection + skinType.getProtection();
+    }
+
+    public long getBaseDamage() { //TODO: ok?
+        BigDecimal totalDamage = BigDecimal.ZERO;
+
+        BigDecimal weaponDamage = BigDecimal.valueOf(this.getActiveWeaponDamage());
+        BigDecimal damageTypeDamage = BigDecimal.valueOf(this.getTotalDamageTypeDamage());
+
+        if (this.Intelligent) {
+            totalDamage = totalDamage.add(Strength).add(weaponDamage).add(damageTypeDamage).subtract(BigDecimal.TEN);
+        }
+
+        totalDamage = totalDamage.max(BigDecimal.ZERO);
+
+        return totalDamage.divide(BigDecimal.valueOf(2), RoundingMode.DOWN).longValue();
+    }
+
+    public ArrayList<Item> getAllItems(){
+        ArrayList<Item> items = new ArrayList<>();
+        for (AnchorPoint anchorPoint : AnchorPoints) {
+            if (anchorPoint.hasItem()) {
+                items.add(anchorPoint.getItem());
+            }
+        }
+        return items;
     }
 
     /**
@@ -256,9 +366,58 @@ public abstract class Entity {
         return null;
     }
 
+    public int getAdjustedRoll(int roll) {
+        // Default logic (no adjustment for most entities)
+        return roll;
+    }
+
+    public void normaliseHP(){
+        makePrime(this.HP);
+    }
+
+    private void setHP(long newHP) {
+        this.HP = Math.min(Math.max(newHP, 0), this.MaxHP);
+    }
+
     /**********************************************************
      * Methods
      **********************************************************/
+
+    //TODO: basic?
+    public boolean isIntelligent() {
+        return Intelligent;
+    }
+
+    private long getNextPrime(long HP) {
+        while (!isPrime(HP)) {
+            HP++;
+        }
+        return HP;
+    }
+
+    private void makePrime(long HP) {
+        this.HP = getNextPrime(HP);
+    }
+
+    private void terminate(){ //TODO: ask if this is enough
+        for (AnchorPoint anchorPoint : AnchorPoints) {
+            if (anchorPoint.hasItem()){
+                this.unequip(anchorPoint, anchorPoint.getItem());
+            }
+        }
+    }
+
+    public void kill(){
+        this.terminate();
+    }
+
+    public void reduceHP(long Damage){
+       setHP(this.getHP() - Damage);
+    }
+
+    public void increaseHP(long healingAmount){
+        setHP(this.getHP() + healingAmount);
+    }
 
     /**
      * equips a given item to a given anchorpoint
@@ -471,6 +630,19 @@ public abstract class Entity {
      */
     public boolean isTerminated() {
         return Terminated;
+    }
+
+    /**
+     * A checker to see if the protection is valid
+     *
+     * @param Protection
+     *      the protection that needs to be checked
+     *
+     * @return true if protection is valid, otherwise false
+     *      | result == (Protection >= 0)
+     */
+    public boolean isValidProtection(int Protection){
+        return Protection >= 0;
     }
 
 }

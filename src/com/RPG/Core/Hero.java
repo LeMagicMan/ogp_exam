@@ -4,7 +4,6 @@ import com.RPG.Exception.InvalidHPException;
 
 import javax.naming.InvalidNameException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -32,26 +31,6 @@ public class Hero extends Entity {
      **********************************************************/
 
     /**
-     * A Variable representing the protection of a Hero
-     */
-    private int Protection = 0;
-
-    /**
-     * A Variable representing the strength of a Hero
-     */
-    private BigDecimal Strength = BigDecimal.valueOf(0);
-
-    /**
-     * A variable representing the precision of the strength variable
-     */
-    private static final int strengthScale = 2;
-
-    /**
-     * A variable representing the way to round the strength to the set strengthScale
-     */
-    private static final RoundingMode roundingMode = RoundingMode.HALF_UP;
-
-    /**
      * A regex that the name of a hero needs to follow
      */
     private static final String nameRegex = "^[A-Z][a-zA-Z ’:]*$";
@@ -60,6 +39,8 @@ public class Hero extends Entity {
      * A variable representing whether a hero can heal
      */
     private Boolean Healable = true;
+
+    private final Boolean Intelligent = true;
 
     /**
      * A variable representing a hero's capacity multiplier
@@ -78,8 +59,8 @@ public class Hero extends Entity {
                 AnchorPoint.LEFTHAND,
                 AnchorPoint.RIGHTHAND
         )));
-        this.Strength = BigDecimal.valueOf(50).setScale(strengthScale, roundingMode);
-        this.Protection = 10;
+        this.setStrength(BigDecimal.valueOf(50).setScale(getStrengthScale(), getRoundingMode()));
+        this.setProtection(10);
         this.setSkinType(SkinType.NORMAL);
         this.setDamageTypes(new HashSet<>(List.of(DamageType.CLAWS)));
         this.setCapacity();
@@ -88,17 +69,6 @@ public class Hero extends Entity {
     /**********************************************************
      * Getters and Setters
      **********************************************************/
-
-    /**
-     * getter for the strength of a Hero
-     *
-     * @return strength of hero
-     *      | this.Strength
-     */
-    //TODO: ask @basic
-    public int getStrength() {
-        return Strength.intValue();
-    }
 
     /**********************************************************
      * Methods
@@ -111,7 +81,7 @@ public class Hero extends Entity {
      */
     @Override
     protected long calculateCapacity() {
-        return this.Strength.multiply(BigDecimal.valueOf(capacityMultiplier)).longValue(); //TODO: ask if this is what they meant
+        return this.getStrength().multiply(BigDecimal.valueOf(capacityMultiplier)).longValue(); //TODO: ask if this is what they meant
     }
 
     /**
@@ -136,19 +106,6 @@ public class Hero extends Entity {
         }
 
         return super.isValidName(name);
-    }
-
-    /**
-     * A checker to see if the protection is valid
-     *
-     * @param Protection
-     *      the protection that needs to be checked
-     *
-     * @return true if protection is valid, otherwise false
-     *      | result == (Protection >= 0)
-     */
-    public boolean isValidProtection(int Protection){
-        return Protection >= 0;
     }
 
     /**

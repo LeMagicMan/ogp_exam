@@ -4,6 +4,7 @@ import be.kuleuven.cs.som.annotate.Basic;
 import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidValueException;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class Item {
@@ -82,6 +83,23 @@ public abstract class Item {
     /**********************************************************
      * Getters and Setters
      **********************************************************/
+
+    public long getId() {
+        return Id;
+    }
+
+    public int getDamage(){
+        return 0;
+    }
+
+    protected ArrayList<Item> getContent(){
+        return null;
+    }
+
+    public ShineLevel getShineLevel(){
+        return ShineLevel;
+    }
+
     /**
      * getter for the maxValue of an Item
      *

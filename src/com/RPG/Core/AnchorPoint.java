@@ -4,6 +4,8 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import com.RPG.Exception.InvalidAnchorPointException;
 
+import java.util.ArrayList;
+
 /**
  * an enumerator containing all types of Anchorpoints
  */
@@ -80,6 +82,13 @@ public enum AnchorPoint {
         return item;
     }
 
+    public ArrayList<Item> getAllItems() {
+        ArrayList<Item> items = new ArrayList<>();
+        items.add(item);
+        items.addAll(item.getContent());
+        return items;
+    }
+
     /**
      * sets the Item of an AnchorPoint
      *
@@ -122,6 +131,10 @@ public enum AnchorPoint {
      */
     public boolean hasAsItem(Item item) {
         return this.item == item;
+    }
+
+    public boolean hasItem(){
+        return item != null;
     }
 
 }

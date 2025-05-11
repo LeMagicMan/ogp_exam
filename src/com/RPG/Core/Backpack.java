@@ -127,6 +127,11 @@ public class Backpack extends Item {
         return totalWeight;
     }
 
+
+    protected ArrayList<Item> getContent(){ //TODO: allowed?
+        return new ArrayList<Item>(Content);
+    }
+
     /**********************************************************
      * Methods
      **********************************************************/
