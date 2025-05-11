@@ -24,11 +24,7 @@ public class DefaultBattleSystem implements BattleSystem {
             target.reduceHP(damage);
 
             if (killingBlow) {
-                if (attacker.isIntelligent()){
-                    TreasureManager.loot(target, attacker, LootStrategy.INTELLIGENT, chosenItems);
-                } else if (!attacker.isIntelligent()) {
-                    TreasureManager.loot(target, attacker, LootStrategy.SHINE_BASED, chosenItems);
-                }
+                TreasureManager.loot(target, attacker, chosenItems);
                 target.kill();
                 HealingSystem healingSystem = new HealingSystem();
                 healingSystem.heal(attacker);

@@ -9,14 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TreasureManager {
-    public static void loot(Entity defeated, Entity looter, LootStrategy mode, ArrayList<Item> desired) {
+    public static void loot(Entity defeated, Entity looter, ArrayList<Item> desired) {
         if (defeated == null || looter == null || defeated.isTerminated() || looter.isTerminated()) return;
 
         ArrayList<Item> defeatedItems = defeated.getAllItems();
 
-        switch (mode) {
-            case INTELLIGENT -> lootIntelligently(looter, defeated, desired);
-            case SHINE_BASED -> lootShiny(looter, defeatedItems);
+        if (looter.isIntelligent()){
+            lootIntelligently(looter, defeated, desired);
+        } else if (!looter.isIntelligent()) {
+            lootShiny(looter,defeatedItems);
         }
     }
 
