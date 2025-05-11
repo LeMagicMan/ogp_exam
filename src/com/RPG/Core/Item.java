@@ -40,8 +40,10 @@ public abstract class Item {
      **********************************************************/
 
     protected Item(double weight, int Value, Entity Holder, AnchorPoint anchorpoint, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
-        if (Holder.isTerminated()){
-            throw new InvalidHolderException("Holder cannot be terminated");
+        if (Holder != null) {
+            if (Holder.isTerminated()) {
+                throw new InvalidHolderException("Holder cannot be terminated");
+            }
         }
         if(!isValidValue(Value)){
             throw new InvalidValueException("Value cannot be negative");
@@ -53,7 +55,9 @@ public abstract class Item {
         this.setValue(Value);
         this.itemType = itemType;
         this.ShineLevel = ShineLevel;
-        Holder.equip(anchorpoint, this);
+        if (Holder != null) {
+            Holder.equip(anchorpoint, this);
+        }
         this.Id = generateUniqueId(); //TODO: override for weapon and backpack
     }
 

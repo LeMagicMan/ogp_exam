@@ -2,6 +2,7 @@ import com.RPG.Core.Hero;
 import com.RPG.Core.Monster;
 import com.RPG.Exception.InvalidHPException;
 import com.RPG.Exception.InvalidHolderException;
+import com.RPG.Exception.InvalidItemsException;
 import com.RPG.Exception.InvalidValueException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ public class EntityTest {
     Monster MonsterTest2;
 
     @BeforeEach
-    public void setUpFixture() throws InvalidNameException, InvalidHPException, InvalidValueException, InvalidHolderException {
+    public void setUpFixture() throws InvalidNameException, InvalidHPException, InvalidValueException, InvalidHolderException, InvalidItemsException {
         HeroTest1 = new Hero("Gandalf");
         MonsterTest1 = new Monster("Carcharoth");
         HeroTest2 = new Hero("James: o’Ha’ra");

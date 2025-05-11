@@ -100,21 +100,41 @@ public class Hero extends Entity {
     private void equipStarterItems(ArrayList<Item> items) throws InvalidItemsException {
         if (items == null || items.isEmpty()) return;
 
+        // 1. Detect backpack (if any)
         Backpack backpack = findBackpack(items);
         ArrayList<Item> sortedItems = sortItemsByWeight(items, backpack);
 
+        // 2. Find free anchor points
         ArrayList<AnchorPoint> freePoints = getFreeAnchorPoints();
         ArrayList<Item> toEquip = new ArrayList<>();
         ArrayList<Item> toStore = new ArrayList<>();
 
-        divideItemsBetweenEquipAndStore(sortedItems, freePoints, toEquip, toStore);
+        // 3. Try to equip items to free anchor points
+        tryToEquipItems(sortedItems, freePoints, toEquip, toStore);
 
+        // 4. Validate total weight (items + backpack)
         validateTotalWeight(items);
-        validateBackpackStorage(backpack, toStore);
 
-        if (backpack != null) equipBackpackFirst(backpack);
+        // 5. If backpack is present, validate storage capacity for remaining items
+        if (backpack != null) {
+            validateBackpackStorage(backpack, toStore);
+        } else if (!toStore.isEmpty()) {
+            // If no backpack, just skip storing items and throw exception if there are remaining items
+            throw new InvalidItemsException("No backpack to store remaining items.");
+        }
+
+        // 6. Equip backpack first (if present)
+        if (backpack != null) {
+            equipBackpackFirst(backpack);
+        }
+
+        // 7. Equip valid items to available anchor points
         equipItems(toEquip);
-        storeRemainingItemsInBackpack(backpack, toStore);
+
+        // 8. Store remaining items in backpack (if backpack is present)
+        if (backpack != null) {
+            storeRemainingItemsInBackpack(backpack, toStore);
+        }
     }
 
     private Backpack findBackpack(List<Item> items) {
@@ -142,19 +162,20 @@ public class Hero extends Entity {
         return free;
     }
 
-    private void divideItemsBetweenEquipAndStore(List<Item> sortedItems, List<AnchorPoint> freePoints,
-                                                 List<Item> toEquip, List<Item> toStore) {
+    private void tryToEquipItems(ArrayList<Item> sortedItems, ArrayList<AnchorPoint> freePoints, ArrayList<Item> toEquip, ArrayList<Item> toStore) {
         for (Item item : sortedItems) {
             boolean matched = false;
-            for (AnchorPoint ap : new ArrayList<>(freePoints)) {
-                if (ap.getAllowedItemType() == item.getItemType()) {
+            for (AnchorPoint ap : freePoints) {
+                if (ap.getAllowedItemType() == ItemType.ANY || ap.getAllowedItemType() == item.getItemType()) {
                     toEquip.add(item);
                     freePoints.remove(ap);
                     matched = true;
                     break;
                 }
             }
-            if (!matched) toStore.add(item);
+            if (!matched) {
+                toStore.add(item);
+            }
         }
     }
 
