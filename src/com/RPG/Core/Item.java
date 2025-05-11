@@ -39,7 +39,7 @@ public abstract class Item {
      **********************************************************/
 
     protected Item(double weight, int Value, Entity Holder, AnchorPoint anchorpoint, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
-        if (!hasValidHolder(Holder)){
+        if (Holder.isTerminated()){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
         if(!isValidValue(Value)){
@@ -121,7 +121,7 @@ public abstract class Item {
      *      | this.Holder = Holder
      */
     protected void setHolder(Entity Holder) throws InvalidHolderException {
-        if (!hasValidHolder(Holder)){
+        if (isTerminated()){ //TODO: ask about this checker and the hasValidHolder
             throw new InvalidHolderException("Holder cannot be terminated");
         }
         this.Holder = Holder;
@@ -261,7 +261,7 @@ public abstract class Item {
      */
     public boolean hasValidHolder(Entity Holder){
         if (Holder == null) return true;
-        return !Holder.isTerminated() && Holder.hasAsItem(this); //TODO: add function to check if item is somewhere in anchorpoints of entity
+        return !Holder.isTerminated() && Holder.hasAsItem(this);
     }
 
     /**
