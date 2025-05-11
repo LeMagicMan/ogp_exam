@@ -50,7 +50,6 @@ public class Monster extends Entity {
 
     @Override
     public int getAdjustedRoll(int roll) {
-        // If roll is lower than the monster's HP, use it. Else, use the monster's HP.
         return (roll < this.getHP()) ? roll : (int) this.getHP();
     }
 

@@ -1,6 +1,8 @@
 package com.RPG.Core;
 
-import com.RPG.Exception.InvalidHPException;
+import com.RPG.Exception.InvalidHolderException;
+import com.RPG.Exception.InvalidItemsException;
+import com.RPG.Exception.InvalidValueException;
 
 import javax.naming.InvalidNameException;
 import java.math.BigDecimal;
@@ -47,23 +49,40 @@ public class Hero extends Entity {
      */
     private static final float capacityMultiplier = 20;
 
+    private static final int defaultStrength = 50;
+
+    private static final int defaultProtection = 10;
+
     /**********************************************************
      * Constructors
      *********************************************************/
 
-    public Hero(String name) throws InvalidNameException, InvalidHPException {
-        super(name, 997L, new ArrayList<>(Arrays.asList(
+    public Hero(String name, long maxHP, BigDecimal strength, ArrayList<Item> items) throws InvalidNameException, InvalidItemsException {
+        super(name, maxHP, new ArrayList<>(Arrays.asList(
                 AnchorPoint.BELT,
                 AnchorPoint.BACK,
                 AnchorPoint.BODY,
                 AnchorPoint.LEFTHAND,
                 AnchorPoint.RIGHTHAND
         )));
-        this.setStrength(BigDecimal.valueOf(50).setScale(getStrengthScale(), getRoundingMode()));
-        this.setProtection(10);
+        this.setStrength(strength.setScale(getStrengthScale(), getRoundingMode()));
+        this.setProtection(defaultProtection);
         this.setSkinType(SkinType.NORMAL);
         this.setDamageTypes(new HashSet<>(List.of(DamageType.CLAWS)));
         this.setCapacity();
+        this.equipStarterItems(items);
+    }
+
+    public Hero(String name) throws InvalidNameException, InvalidItemsException, InvalidValueException, InvalidHolderException {
+        // Use a fixed value or another way to pass strength
+        this(name, 997L, BigDecimal.valueOf(defaultStrength), createDefaultItems());
+    }
+
+    private static ArrayList<Item> createDefaultItems() throws InvalidValueException, InvalidHolderException {
+        // Create and return the default items for the Hero
+        ArrayList<Item> defaultItems = new ArrayList<>();
+        defaultItems.add(new Weapon(null, AnchorPoint.RIGHTHAND));
+        return defaultItems;
     }
 
     /**********************************************************
@@ -73,6 +92,116 @@ public class Hero extends Entity {
     /**********************************************************
      * Methods
      **********************************************************/
+
+    public boolean hasItemAt(AnchorPoint anchorPoint){
+        return anchorPoint.hasItem();
+    }
+
+    private void equipStarterItems(ArrayList<Item> items) throws InvalidItemsException {
+        if (items == null || items.isEmpty()) return;
+
+        Backpack backpack = findBackpack(items);
+        ArrayList<Item> sortedItems = sortItemsByWeight(items, backpack);
+
+        ArrayList<AnchorPoint> freePoints = getFreeAnchorPoints();
+        ArrayList<Item> toEquip = new ArrayList<>();
+        ArrayList<Item> toStore = new ArrayList<>();
+
+        divideItemsBetweenEquipAndStore(sortedItems, freePoints, toEquip, toStore);
+
+        validateTotalWeight(items);
+        validateBackpackStorage(backpack, toStore);
+
+        if (backpack != null) equipBackpackFirst(backpack);
+        equipItems(toEquip);
+        storeRemainingItemsInBackpack(backpack, toStore);
+    }
+
+    private Backpack findBackpack(List<Item> items) {
+        for (Item item : items) {
+            if (item.getItemType() == ItemType.BACKPACK) {
+                return (Backpack) item;
+            }
+        }
+        return null;
+    }
+
+    private ArrayList<Item> sortItemsByWeight(List<Item> items, Backpack backpack) {
+        ArrayList<Item> sorted = new ArrayList<>(items);
+        if (backpack != null) sorted.remove(backpack);
+        sorted.sort((a, b) -> Float.compare((float) b.getWeight(), (float) a.getWeight()));
+        return sorted;
+    }
+
+    private ArrayList<AnchorPoint> getFreeAnchorPoints() {
+        ArrayList<AnchorPoint> free = new ArrayList<>();
+        for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
+            AnchorPoint ap = getAnchorPointAt(i);
+            if (ap.getItem() == null) free.add(ap);
+        }
+        return free;
+    }
+
+    private void divideItemsBetweenEquipAndStore(List<Item> sortedItems, List<AnchorPoint> freePoints,
+                                                 List<Item> toEquip, List<Item> toStore) {
+        for (Item item : sortedItems) {
+            boolean matched = false;
+            for (AnchorPoint ap : new ArrayList<>(freePoints)) {
+                if (ap.getAllowedItemType() == item.getItemType()) {
+                    toEquip.add(item);
+                    freePoints.remove(ap);
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) toStore.add(item);
+        }
+    }
+
+    private void validateTotalWeight(List<Item> items) throws InvalidItemsException {
+        long totalWeight = (long) items.stream().mapToDouble(Item::getWeight).sum();
+        if (totalWeight > this.getCapacity()) {
+            throw new InvalidItemsException("Total weight exceeds hero capacity.");
+        }
+    }
+
+    private void validateBackpackStorage(Backpack backpack, List<Item> toStore) throws InvalidItemsException {
+        if (!toStore.isEmpty()) {
+            if (backpack == null) {
+                throw new InvalidItemsException("No backpack to store remaining items.");
+            }
+            long storeWeight = (long) toStore.stream().mapToDouble(Item::getWeight).sum();
+            if (!backpack.canStoreAll(toStore, storeWeight)) {
+                throw new InvalidItemsException("Backpack cannot store all remaining items.");
+            }
+        }
+    }
+
+    private void equipBackpackFirst(Backpack backpack) {
+        this.equip(AnchorPoint.BACK, backpack);
+    }
+
+    private void equipItems(List<Item> toEquip) {
+        for (Item item : toEquip) {
+            for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
+                AnchorPoint ap = getAnchorPointAt(i);
+                if (ap.getItem() == null && ap.getAllowedItemType() == item.getItemType()) {
+                    this.equip(ap, item);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void storeRemainingItemsInBackpack(Backpack backpack, List<Item> toStore) {
+        if (backpack != null) {
+            for (Item item : toStore) {
+                backpack.storeItem(item);
+            }
+        }
+    }
+
+
 
     /**
      * a method to calculate the capacity of a Hero
