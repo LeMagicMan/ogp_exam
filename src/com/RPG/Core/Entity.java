@@ -172,7 +172,7 @@ public abstract class Entity {
      */
     //TODO: ask @basic
     public BigDecimal getStrength() {
-        return getStrength();
+        return this.Strength;
     }
 
     protected void setDamageTypes(HashSet<DamageType> damageTypes) {
@@ -405,6 +405,7 @@ public abstract class Entity {
                 this.unequip(anchorPoint, anchorPoint.getItem());
             }
         }
+        this.Terminated = true;
     }
 
     public void kill(){
@@ -432,7 +433,7 @@ public abstract class Entity {
      *      the item we want to equip to the anchorpoint
      */
     public void equip(AnchorPoint anchorPoint, Item item){
-        if (!hasAnchorpoint(anchorPoint) && !item.isValidItem()){ //TODO: make checker
+        if (!hasAnchorpoint(anchorPoint) || !item.isValidItem()){ //TODO: make checker
             return;
         }
         if (this.isTerminated() || item.isTerminated()){
@@ -486,7 +487,7 @@ public abstract class Entity {
 
     public AnchorPoint getAnchorPointWithItem(Item item){
         for (AnchorPoint ap : this.AnchorPoints) {
-            if (ap.getItem().equals(item)){
+            if (ap.getItem() != null && ap.getItem().equals(item)){
                 return ap;
             }
         }
@@ -595,7 +596,7 @@ public abstract class Entity {
                 return damageTypes.size() == 1;
             }
         }
-        return !DamageTypes.isEmpty();
+        return !damageTypes.isEmpty();
     }
 
     public boolean hasAsItem(Item item){
@@ -643,6 +644,10 @@ public abstract class Entity {
      */
     public boolean isValidProtection(int Protection){
         return Protection >= 0;
+    }
+
+    public boolean canHeal(){
+        return Healable;
     }
 
 }

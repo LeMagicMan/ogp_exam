@@ -111,14 +111,14 @@ public class Hero extends Entity {
     /**
      * A checker to see if the strength is valid
      *
-     * @param Strength
+     * @param strength
      *      the strength that needs to be checked
      *
      * @return true if strength is valid, otherwise false
      *      | result == (strength >= 0)
      */
-    public boolean isValidStrength(int Strength){
-        return Strength >= 0;
+    public boolean isValidStrength(BigDecimal strength) {
+        return strength.compareTo(BigDecimal.ZERO) >= 0;
     }
 
     /**

@@ -97,7 +97,7 @@ public abstract class Item {
     }
 
     public ShineLevel getShineLevel(){
-        return ShineLevel;
+        return this.ShineLevel;
     }
 
     /**

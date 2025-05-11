@@ -1,21 +1,15 @@
 package com.RPG.Mechanics;
 
 import com.RPG.Core.Entity;
+import com.RPG.Core.Item;
 
-
+import java.util.ArrayList;
 import java.util.Random;
 
 public class DefaultBattleSystem implements BattleSystem {
 
-    private HealingSystem healingSystem;
-
-
-    public DefaultBattleSystem() {
-        this.healingSystem = new HealingSystem();
-    }
-
     @Override
-    public void executeHit(Entity attacker, Entity target) {
+    public void executeHit(Entity attacker, Entity target, ArrayList<Item> chosenItems) { //TODO: ask about overloading
         Random random = new Random();
 
         int roll = random.nextInt(101);
@@ -30,8 +24,13 @@ public class DefaultBattleSystem implements BattleSystem {
             target.reduceHP(damage);
 
             if (killingBlow) {
-                attacker.loot();
+                if (attacker.isIntelligent()){
+                    TreasureManager.loot(target, attacker, LootStrategy.INTELLIGENT, chosenItems);
+                } else if (!attacker.isIntelligent()) {
+                    TreasureManager.loot(target, attacker, LootStrategy.SHINE_BASED, chosenItems);
+                }
                 target.kill();
+                HealingSystem healingSystem = new HealingSystem();
                 healingSystem.heal(attacker);
                 attacker.normaliseHP();
             }
