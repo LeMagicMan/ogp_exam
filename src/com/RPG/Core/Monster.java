@@ -6,6 +6,9 @@ import com.RPG.Exception.InvalidValueException;
 import javax.naming.InvalidNameException;
 import java.util.*;
 
+/**
+ * A class representing a Monster Entity
+ */
 public class Monster extends Entity {
     /**********************************************************
      * Variables

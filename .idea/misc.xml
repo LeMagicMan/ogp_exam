@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="JavadocGenerationManager">
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/javadoc" />
+    <option name="OTHER_OPTIONS" value="-tagletpath D:\AnnotationsDoclets.jar -taglet be.kuleuven.cs.som.taglet.InvarTaglet -taglet be.kuleuven.cs.som.taglet.PreTaglet -taglet be.kuleuven.cs.som.taglet.ThrowsTaglet -taglet be.kuleuven.cs.som.taglet.PostTaglet -taglet be.kuleuven.cs.som.taglet.EffectTaglet -taglet be.kuleuven.cs.som.taglet.NoteTaglet -taglet be.kuleuven.cs.som.taglet.ReturnTaglet -Xdoclint:none -link https://docs.oracle.com/en/java/javase/21/docs/api/" />
+    <option name="OPTION_INCLUDE_LIBS" value="true" />
+  </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>

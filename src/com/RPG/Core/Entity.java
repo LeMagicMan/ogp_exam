@@ -27,8 +27,16 @@ import java.util.Objects;
  *      | hasValidDamageTypes()
  *
  * @invar every Item in an anchorpoint of an entity most have this entity as its holder, even the items contained in other items contained in this entity's anchorpoints
- *      | hasValidItems() //TODO: create checker
+ *      | hasValidItems()
  *
+ * @invar An entity must have a valid Strength
+ *      | isValidStrength()
+ *
+ * @invar an entity musty have a valid capacity
+ *      | isValidCapacity()
+ *
+ * @invar an entity can not hold more items than its capacity can hold
+ *      | canHoldItems()
  */
 public abstract class Entity {
 
@@ -244,6 +252,29 @@ public abstract class Entity {
     }
 
     /**
+     * getter for the amount of DamageTypes
+     *
+     * @return the amount of DamageTypes
+     *      | result == DamageTypes.size()
+     */
+    public int getAmountOfDamageTypes(){
+        return DamageTypes.size();
+    }
+
+    /**
+     * checks if an entity has a certain damageType
+     *
+     * @param damageType
+     *      the damageType we are looking for
+     *
+     * @return true if entity has damageType, false otherwise
+     *      | result == DamageTypes.contains(damageType)
+     */
+    public boolean hasDamageType(DamageType damageType) {
+        return DamageTypes.contains(damageType);
+    }
+
+    /**
      * getter for the name of an entity
      *
      * @return the name of an entity
@@ -409,7 +440,7 @@ public abstract class Entity {
      */
     @Basic
     public SkinType getSkinType() {
-        return skinType; //TODO: ask if this is correct or  return skintype.getProtection() is better
+        return skinType;
     }
 
     /**
@@ -421,6 +452,22 @@ public abstract class Entity {
     @Raw
     protected void setCapacity() {
         this.Capacity = calculateCapacity();
+    }
+
+    /**
+     * getter for the total weight of all items an entity has
+     *
+     * @return the total weight of all the entity's items
+     *      | for each item in this.getAllItems()
+     *      |   totalweight += item.getweight()
+     *      | result == totalweight
+     */
+    public double getTotalWeight(){
+        double getTotalWeight = 0;
+        for (Item item : this.getAllItems()) {
+            item.getWeight();
+        }
+        return getTotalWeight();
     }
 
     /**
@@ -934,6 +981,29 @@ public abstract class Entity {
      */
     public boolean canHeal(){
         return Healable;
+    }
+
+    /**
+     * checks if capacity is Valid
+     *
+     * @param Capacity
+     *      the capacity we want to check
+     *
+     * @return true if capacity is bigger than 0, false otherwise
+     *      | capacity >= 0
+     */
+    public boolean isValidCapacity(long Capacity){
+        return Capacity >= 0;
+    }
+
+    /**
+     * checks if an entity can hold all its items
+     *
+     * @return true if entity can hold all its items, false otherwise
+     *      | result == this.getTotalWeight() <= this.Capacity
+     */
+    public boolean canHoldItems(){
+        return this.getTotalWeight() <= this.Capacity;
     }
 
 }

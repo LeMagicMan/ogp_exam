@@ -145,6 +145,12 @@ public enum AnchorPoint {
         return this.item == item;
     }
 
+    /**
+     * checks whether an anchorpoint has an Item
+     *
+     * @return true if it has an item, false otherwise
+     *      | result == (item != null)
+     */
     public boolean hasItem(){
         return item != null;
     }

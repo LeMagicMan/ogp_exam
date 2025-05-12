@@ -18,6 +18,9 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @invar capacity of a backpack must be bigger than zero
  *      | isValidCapacity()
+ *
+ * @invar capacity of a backpack must be bigger than or equal to the combined weight of all its items
+ *      | canHoldItems()
  */
 public class Backpack extends Item {
     /**********************************************************
@@ -133,10 +136,11 @@ public class Backpack extends Item {
      *      |   TotalWeight += item.getWeight
      *      | result == TotalWeight
      */
+    @Override
     public double getTotalWeight(){
         double totalWeight = this.getWeight();
         for (Item item : Content){ //TODO: ask about this
-            totalWeight += item.getWeight();
+            totalWeight += item.getTotalWeight();
         }
         return totalWeight;
     }
@@ -144,6 +148,16 @@ public class Backpack extends Item {
     /**********************************************************
      * Methods
      **********************************************************/
+
+    /**
+     * checks if a backpack can store all its items
+     *
+     * @return true if it can store all its items, false otherwise
+     *      | result == this.getTotalWeight() <= this.Capacity
+     */
+    public boolean canHoldItems(){
+        return this.getTotalWeight() <= this.Capacity;
+    }
 
     /**
      * stores an item in a backpack
@@ -264,21 +278,39 @@ public class Backpack extends Item {
    }
 
     /**
-     * //TODO
+     * checks whether a backpack contains a certain item
+     *
      * @param item
-     * @return
+     *      the item we are looking for
+     *
+     * @return true if item is in backpack, false otherwise
+     *      | result == this.Content.contains(item)
      */
    public boolean hasAsItem(Item item){
        return this.Content.contains(item); //TODO: ask about method in public
    }
 
-    public boolean canStoreAll(List<Item> items, long totalWeight) {
-        if (items == null || items.isEmpty()) return true;
+    /**
+     * checks if a backpack can store all items from an array
+     *
+     * @param items
+     *      items we want to check if we can store
+     *
+     * @return true if we can store all items, false if not
+     *      | if items == null OR items.isEmpty()
+     *      |   return true
+     *      | for each item in items
+     *      |   totalWeight += item.getWeight
+     *      | currentWeight = this.getTotalWeight()
+     *      | result == (currentWeight + totalWeight) <= this.Capacity
+     */
+   public boolean canStoreAll(List<Item> items) {
+       if (items == null || items.isEmpty()) return true;
 
-        long currentWeight = this.Content.stream()
-                .mapToLong(item -> (long) item.getWeight())
-                .sum();
+       double totalWeight = items.stream().mapToDouble(Item::getWeight).sum();
 
-        return (currentWeight + totalWeight) <= this.Capacity;
+       double currentWeight = this.getTotalWeight();
+
+       return (currentWeight + totalWeight) <= this.Capacity;
     }
 }

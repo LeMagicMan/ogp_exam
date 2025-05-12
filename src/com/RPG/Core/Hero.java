@@ -14,17 +14,9 @@ import java.util.*;
  * @invar A Hero must only have the anchorpoints Belt, Back, Body, LeftHand, RightHand
  *      | hasProperAnchorpoints()
  *
- * @invar A hero must have a valid Strength
- *      | isValidStrength()
- *
- * @invar A hero must have a correct StrengthScale
- *      | hasProperStrengthScale()
- *
- * @invar A hero must have a valid Protection
- *      | isValidProtection()
- *
  * @invar A hero's skintype must be Normal
  *      | isValidSkinType()
+ *
  */
 public class Hero extends Entity {
 
@@ -42,6 +34,9 @@ public class Hero extends Entity {
      */
     private Boolean Healable = true;
 
+    /**
+     * A variable representing the Intelligence of a hero
+     */
     private final Boolean Intelligent = true;
 
     /**
@@ -49,14 +44,47 @@ public class Hero extends Entity {
      */
     private static final float capacityMultiplier = 20;
 
+    /**
+     * defaultStrength of a hero
+     */
     private static final int defaultStrength = 50;
 
+    /**
+     * defaultProtection of a hero
+     */
     private static final int defaultProtection = 10;
 
     /**********************************************************
      * Constructors
      *********************************************************/
 
+    /**
+     * A constructor for a hero with given name, maxHP, strength, items
+     *
+     * @param name
+     *      name of the hero
+     *
+     * @param maxHP
+     *      maxHP of the hero
+     *
+     * @param strength
+     *      strength of the hero
+     *
+     * @param items
+     *      items of the hero
+     *
+     * @pre Hero must be able to hold all items
+     *      | validateTotalWeight()
+     *
+     * @pre Hero must have Valid Strength
+     *      | isValidStrength()
+     *
+     * @throws InvalidNameException
+     *      gets thrown when the name of a hero is invalid
+     *
+     * @throws InvalidItemsException
+     *      gets thrown when hero cant hold all starterItems
+     */
     public Hero(String name, long maxHP, BigDecimal strength, ArrayList<Item> items) throws InvalidNameException, InvalidItemsException {
         super(name, maxHP, new ArrayList<>(Arrays.asList(
                 AnchorPoint.BELT,
@@ -68,21 +96,20 @@ public class Hero extends Entity {
         this.setStrength(strength.setScale(getStrengthScale(), getRoundingMode()));
         this.setProtection(defaultProtection);
         this.setSkinType(SkinType.NORMAL);
-        this.setDamageTypes(new HashSet<>(List.of(DamageType.CLAWS)));
+        this.setDamageTypes(new HashSet<>(List.of(DamageType.NORMAL)));
         this.setCapacity();
         this.equipStarterItems(items);
     }
 
+    /**
+     * A constructor for a Hero with given Name
+     *
+     * @param name
+     *      name of the hero
+     */
     public Hero(String name) throws InvalidNameException, InvalidItemsException, InvalidValueException, InvalidHolderException {
         // Use a fixed value or another way to pass strength
         this(name, 997L, BigDecimal.valueOf(defaultStrength), createDefaultItems());
-    }
-
-    private static ArrayList<Item> createDefaultItems() throws InvalidValueException, InvalidHolderException {
-        // Create and return the default items for the Hero
-        ArrayList<Item> defaultItems = new ArrayList<>();
-        defaultItems.add(new Weapon(null, AnchorPoint.RIGHTHAND));
-        return defaultItems;
     }
 
     /**********************************************************
@@ -93,59 +120,97 @@ public class Hero extends Entity {
      * Methods
      **********************************************************/
 
-    public boolean hasItemAt(AnchorPoint anchorPoint){
-        return anchorPoint.hasItem();
+    /**
+     * creates items for the most basic constructor of a hero
+     *
+     * @return the created items
+     *    | result == new Weapon(null, AnchorPoint.RIGHTHAND //TODO
+     *
+     * @throws InvalidValueException
+     *      cannot get thrown
+     * @throws InvalidHolderException
+     *      cannot get thrown
+     */
+    private static ArrayList<Item> createDefaultItems() throws InvalidValueException, InvalidHolderException {
+        ArrayList<Item> defaultItems = new ArrayList<>();
+        defaultItems.add(new Weapon(null, AnchorPoint.RIGHTHAND));
+        return defaultItems;
     }
 
+    /**
+     * a method to equip the heaviest starter item sto anchorpoints first and the rest to backpack if there is one
+     *
+     * @param items
+     *      items we want to equip
+     *
+     * @throws InvalidItemsException
+     *      If there is no backpack to store remaining items
+     */
     private void equipStarterItems(ArrayList<Item> items) throws InvalidItemsException {
         if (items == null || items.isEmpty()) return;
 
-        // 1. Detect backpack (if any)
-        Backpack backpack = findBackpack(items);
+        Backpack backpack = (Backpack) findBackpack(items);
         ArrayList<Item> sortedItems = sortItemsByWeight(items, backpack);
 
-        // 2. Find free anchor points
         ArrayList<AnchorPoint> freePoints = getFreeAnchorPoints();
         ArrayList<Item> toEquip = new ArrayList<>();
         ArrayList<Item> toStore = new ArrayList<>();
 
-        // 3. Try to equip items to free anchor points
         tryToEquipItems(sortedItems, freePoints, toEquip, toStore);
 
-        // 4. Validate total weight (items + backpack)
         validateTotalWeight(items);
 
-        // 5. If backpack is present, validate storage capacity for remaining items
         if (backpack != null) {
             validateBackpackStorage(backpack, toStore);
         } else if (!toStore.isEmpty()) {
-            // If no backpack, just skip storing items and throw exception if there are remaining items
             throw new InvalidItemsException("No backpack to store remaining items.");
         }
 
-        // 6. Equip backpack first (if present)
         if (backpack != null) {
-            equipBackpackFirst(backpack);
+            equipBackpack(backpack);
         }
 
-        // 7. Equip valid items to available anchor points
         equipItems(toEquip);
 
-        // 8. Store remaining items in backpack (if backpack is present)
         if (backpack != null) {
             storeRemainingItemsInBackpack(backpack, toStore);
         }
     }
 
-    private Backpack findBackpack(List<Item> items) {
+    /**
+     * checks if there is a backpack in a list of items
+     *
+     * @param items
+     *      items we want to check for a backpack
+     *
+     * @return the backpack itemn if found, null otherwise
+     *      | for each item in item
+     *      |   if (item.getItemType() == ItemType.BACKPACK)
+     *      |       return Item
+     *      | return null
+     */
+    private Item findBackpack(List<Item> items) {
         for (Item item : items) {
             if (item.getItemType() == ItemType.BACKPACK) {
-                return (Backpack) item;
+                return item; //TODO
             }
         }
         return null;
     }
 
+    /**
+     * sorts items in a list by weight from heaviest to lightest
+     *
+     * @param items
+     *      items we want to sort
+     *
+     * @param backpack
+     *      backpack we need to remove from list
+     *
+     * @effect if backpack is not null, we remove the backpack from the sorted list //TODO
+     *
+     * @return the sorted list
+     */
     private ArrayList<Item> sortItemsByWeight(List<Item> items, Backpack backpack) {
         ArrayList<Item> sorted = new ArrayList<>(items);
         if (backpack != null) sorted.remove(backpack);
@@ -153,22 +218,58 @@ public class Hero extends Entity {
         return sorted;
     }
 
+    /**
+     * checks if a hero has any free anchorpoints
+     *
+     * @return the free anchorpoints
+     *      | for each anchorpoint in anchorpoints
+     *      |   if !anchorpoint.hasItem
+     *      |       free.add(anchorpoint)
+     */
     private ArrayList<AnchorPoint> getFreeAnchorPoints() {
         ArrayList<AnchorPoint> free = new ArrayList<>();
         for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
-            AnchorPoint ap = getAnchorPointAt(i);
-            if (ap.getItem() == null) free.add(ap);
+            AnchorPoint anchorpoint = getAnchorPointAt(i);
+            if (!anchorpoint.hasItem()) free.add(anchorpoint);
         }
         return free;
     }
 
+    /**
+     * Attempts to equip a list of sorted items to available anchor points.
+     *
+     * @effect Each item is matched to the first suitable anchor point based on item type.
+     * If a matching anchor point is found, the item is added to the toEquip list,
+     * and the anchor point is removed from freePoints to prevent reuse.
+     * Items that cannot be equipped due to lack of a suitable anchor point are added to toStore.
+     *      | for each item in sortedItems
+     *      |   for each anchorpoint in freePoints
+     *      |       if (anchorpoint.getAllowedItemType() == ItemType.ANY || anchorpoint.getAllowedItemType() == item.getItemType())
+     *      |           toEquip.add(item)
+     *      |           freePoints.remove(anchorpoint)
+     *      |           matched = true
+     *      |   if !matched
+     *      |       toStore.add(item)
+     *
+     * @param sortedItems
+     *      the list of items to equip, sorted by priority or preference
+     *
+     * @param freePoints
+     *      the list of available anchor points where items can be equipped
+     *
+     * @param toEquip
+     *      an output list that will be populated with successfully equipped items
+     *
+     * @param toStore
+     *      an output list that will be populated with items that could not be equipped
+     */
     private void tryToEquipItems(ArrayList<Item> sortedItems, ArrayList<AnchorPoint> freePoints, ArrayList<Item> toEquip, ArrayList<Item> toStore) {
         for (Item item : sortedItems) {
             boolean matched = false;
-            for (AnchorPoint ap : freePoints) {
-                if (ap.getAllowedItemType() == ItemType.ANY || ap.getAllowedItemType() == item.getItemType()) {
+            for (AnchorPoint anchorpoint : freePoints) {
+                if (anchorpoint.getAllowedItemType() == ItemType.ANY || anchorpoint.getAllowedItemType() == item.getItemType()) {
                     toEquip.add(item);
-                    freePoints.remove(ap);
+                    freePoints.remove(anchorpoint);
                     matched = true;
                     break;
                 }
@@ -179,41 +280,89 @@ public class Hero extends Entity {
         }
     }
 
+    /**
+     * checks if all items fom a list can be added to a hero
+     *
+     * @param items
+     *      items we want to add
+     *
+     * @throws InvalidItemsException
+     *      if weight exceeds hero's capacity
+     */
     private void validateTotalWeight(List<Item> items) throws InvalidItemsException {
-        long totalWeight = (long) items.stream().mapToDouble(Item::getWeight).sum();
+        double totalWeight = items.stream().mapToDouble(Item::getWeight).sum();
         if (totalWeight > this.getCapacity()) {
             throw new InvalidItemsException("Total weight exceeds hero capacity.");
         }
     }
 
-    private void validateBackpackStorage(Backpack backpack, List<Item> toStore) throws InvalidItemsException {
-        if (!toStore.isEmpty()) {
-            if (backpack == null) {
-                throw new InvalidItemsException("No backpack to store remaining items.");
-            }
-            long storeWeight = (long) toStore.stream().mapToDouble(Item::getWeight).sum();
-            if (!backpack.canStoreAll(toStore, storeWeight)) {
-                throw new InvalidItemsException("Backpack cannot store all remaining items.");
-            }
-        }
+    /**
+     * checks whether a backpack can store all items
+     *
+     * @param backpack
+     *      backpack we want to store items in
+     *
+     * @param toStore
+     *      items we want to store in backpack
+     */
+    private void validateBackpackStorage(Backpack backpack, List<Item> toStore){
+        backpack.canStoreAll(toStore);
     }
 
-    private void equipBackpackFirst(Backpack backpack) {
+    /**
+     * equips a backpack
+     *
+     * @param backpack
+     *      backpack we want to equip
+     */
+    private void equipBackpack(Backpack backpack) {
         this.equip(AnchorPoint.BACK, backpack);
     }
 
+    /**
+     * equips a list of Items
+     *
+     * @pre hero must be able to hold Items
+     *
+     * @param toEquip
+     *      items we want to equip
+     *
+     * @effect equips all items from the list
+     *      | for each item in toEquip
+     *      |   for each AnchorPoint in anchorpoints
+     *      |       if (anchorpoint.getItem() == null && anchorpoint.getAllowedItemType() == item.getItemType())
+     *      |           this.equip(anchorpoint, item)
+     */
     private void equipItems(List<Item> toEquip) {
         for (Item item : toEquip) {
             for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
-                AnchorPoint ap = getAnchorPointAt(i);
-                if (ap.getItem() == null && ap.getAllowedItemType() == item.getItemType()) {
-                    this.equip(ap, item);
+                AnchorPoint anchorpoint = getAnchorPointAt(i);
+                if (anchorpoint.getItem() == null && anchorpoint.getAllowedItemType() == item.getItemType()) {
+                    this.equip(anchorpoint, item);
                     break;
                 }
             }
         }
     }
 
+    /**
+     * stores Items in backpack
+     *
+     * @pre backpack must be able to store Items
+     *      | for each item in toStore
+     *      |  totalWeight += item.getTotalWeight
+     *      | result totalweight <= backpack.getCapacity()
+     *
+     * @param backpack
+     *      backpack we want to store items in
+     *
+     * @param toStore
+     *      items we want to store in backpack
+     *
+     * @post all items are stored in the given backpack
+     *      | for each item in toStore
+     *      |   backpack.storeItem(item)
+     */
     private void storeRemainingItemsInBackpack(Backpack backpack, List<Item> toStore) {
         if (backpack != null) {
             for (Item item : toStore) {
@@ -228,10 +377,11 @@ public class Hero extends Entity {
      * a method to calculate the capacity of a Hero
      *
      * @return capacity of that hero
+     *      | result == this.getStrength().multiply(BigDecimal.valueOf(capacityMultiplier)).longValue();
      */
     @Override
     protected long calculateCapacity() {
-        return this.getStrength().multiply(BigDecimal.valueOf(capacityMultiplier)).longValue(); //TODO: ask if this is what they meant
+        return this.getStrength().multiply(BigDecimal.valueOf(capacityMultiplier)).longValue();
     }
 
     /**
@@ -309,7 +459,6 @@ public class Hero extends Entity {
             }
         }
 
-        // Valid only if all expected anchorpoints were found
         return found.equals(expected);
     }
 }

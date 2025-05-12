@@ -191,6 +191,16 @@ public abstract class Item {
     }
 
     /**
+     * getter for the totalweight of an Item
+     *
+     * @return the weight of an item
+     *      | this.getWeight
+     */ //TODO: ask
+    public double getTotalWeight(){
+        return getWeight();
+    }
+
+    /**
      * setter for the value of an Item
      *
      * @param value value that needs to be set
