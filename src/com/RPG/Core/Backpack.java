@@ -37,6 +37,7 @@ public class Backpack extends Item {
      * Constructors
      *********************************************************/
 
+
     public Backpack(double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
         super(weight, Value, shinelevel, ItemType.BACKPACK);
         if (this.hasProperItems(Content)){
@@ -126,11 +127,6 @@ public class Backpack extends Item {
             totalWeight += item.getWeight();
         }
         return totalWeight;
-    }
-
-
-    protected ArrayList<Item> getContent(){ //TODO: allowed?
-        return new ArrayList<Item>(Content);
     }
 
     /**********************************************************

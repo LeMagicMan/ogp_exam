@@ -82,10 +82,22 @@ public enum AnchorPoint {
         return item;
     }
 
+    /**
+     * getter for all items in an item on an anchorpoint, and the item itself
+     *
+     * @return
+     *      an arraylist of items
+     *          | items = item
+     *          | for index = 0; index < item.getAmountOfItems; Index++
+     *          |   items.add(item.getItemAt(Index))
+     *          | result == items
+     */
     public ArrayList<Item> getAllItems() {
         ArrayList<Item> items = new ArrayList<>();
         items.add(item);
-        items.addAll(item.getContent());
+        for(int Index = 0; Index < item.getAmountOfItems(); Index++) {
+            items.add(item.getItemAt(Index));
+        }
         return items;
     }
 

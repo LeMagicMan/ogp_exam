@@ -4,16 +4,24 @@ import be.kuleuven.cs.som.annotate.Basic;
 import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidValueException;
 
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicLong;
-
+/**
+ * abstract class representing all items
+ *
+ * @invar every item must have a Valid holder
+ *      | hasValidHolder()
+ *
+ * @invar each different type of item must have a unique ID
+ *      | !(item1.getItemType() == item2.getItemType())
+ *
+ * @invar Value cannot exceed maxValue
+ *      | isValidValue()
+ *
+ */
 public abstract class Item {
 
     /**********************************************************
      * Variables
      **********************************************************/
-
-    private static final AtomicLong idGenerator = new AtomicLong(6); // Start bij 6: positief, even, deelbaar door 3
 
     private ItemType itemType;
 
@@ -96,13 +104,13 @@ public abstract class Item {
         return 0;
     }
 
-    protected ArrayList<Item> getContent(){
-        return null;
-    }
-
     public ShineLevel getShineLevel(){
         return this.ShineLevel;
     }
+
+    public abstract int getAmountOfItems();
+
+    public abstract Item getItemAt(int index);
 
     /**
      * getter for the maxValue of an Item
@@ -251,13 +259,7 @@ public abstract class Item {
      * @return the uniquely created Id
      *      | //TODO: ask about formal
      */
-    private long generateUniqueId() {
-        long nextId;
-        do {
-            nextId = idGenerator.getAndAdd(6);
-        } while (nextId <= 0 || nextId % 6 != 0);
-        return nextId;
-    }
+    protected abstract long generateUniqueId();
 
     /**
      * checks if the weight of an Item is a valid one

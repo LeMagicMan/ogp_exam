@@ -3,10 +3,14 @@ package com.RPG.Core;
 import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidValueException;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class Weapon extends Item {
     /**********************************************************
      * Variables
      **********************************************************/
+
+    private static final AtomicLong idGenerator = new AtomicLong(6); // Start bij 6: positief, even, deelbaar door 3
 
     private int Damage;
 
@@ -42,9 +46,34 @@ public class Weapon extends Item {
     public int getDamage() {
         return Damage;
     }
+
+    @Override
+    public int getAmountOfItems() {
+        return 0;
+    }
+
+    @Override
+    public Item getItemAt(int index) {
+        return null;
+    }
+
     /**********************************************************
      * Methods
      **********************************************************/
+
+    /**
+     * generates an unique id for every Item
+     *
+     * @return the uniquely created Id
+     *      | //TODO: ask about formal
+     */
+    protected long generateUniqueId() {
+        long nextId;
+        do {
+            nextId = idGenerator.getAndAdd(6);
+        } while (nextId <= 0 || nextId % 6 != 0);
+        return nextId;
+    }
 
     /**
      * calculates the value of weapon using its Damage
