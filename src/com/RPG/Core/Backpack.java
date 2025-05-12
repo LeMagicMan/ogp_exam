@@ -8,6 +8,7 @@ import com.RPG.Exception.InvalidValueException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A class representing a BackPack Item
@@ -32,6 +33,8 @@ public class Backpack extends Item {
     private static final double defaultWeight = 5;
 
     private static final int defaultValue = 20;
+
+    private static final AtomicLong idGenerator = new AtomicLong(0);
 
     /**********************************************************
      * Constructors
@@ -100,6 +103,15 @@ public class Backpack extends Item {
             return null;
         }
         return Content.get(index);
+    }
+
+    @Override
+    protected long generateUniqueId() {
+        long nextId;
+        do {
+            nextId = idGenerator.getAndAdd(1);
+        } while (nextId <= 0);
+        return nextId;
     }
 
     /**
