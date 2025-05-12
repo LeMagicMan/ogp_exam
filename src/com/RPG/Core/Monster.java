@@ -48,6 +48,11 @@ public class Monster extends Entity {
      * Getters and Setters
      **********************************************************/
 
+    @Override
+    public int getAdjustedRoll(int roll) {
+        return (roll < this.getHP()) ? roll : (int) this.getHP();
+    }
+
     /**********************************************************
      * Methods
      **********************************************************/

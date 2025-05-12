@@ -1,15 +1,14 @@
-import com.RPG.Core.AnchorPoint;
 import com.RPG.Core.Hero;
 import com.RPG.Core.Monster;
 import com.RPG.Exception.InvalidHPException;
 import com.RPG.Exception.InvalidHolderException;
+import com.RPG.Exception.InvalidItemsException;
 import com.RPG.Exception.InvalidValueException;
-import com.RPG.Core.ShineLevel;
-import com.RPG.Core.Weapon;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.naming.InvalidNameException;
+import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +19,7 @@ public class EntityTest {
     Monster MonsterTest2;
 
     @BeforeEach
-    public void setUpFixture() throws InvalidNameException, InvalidHPException, InvalidValueException, InvalidHolderException {
+    public void setUpFixture() throws InvalidNameException, InvalidHPException, InvalidValueException, InvalidHolderException, InvalidItemsException {
         HeroTest1 = new Hero("Gandalf");
         MonsterTest1 = new Monster("Carcharoth");
         HeroTest2 = new Hero("James: o’Ha’ra");
@@ -56,10 +55,10 @@ public class EntityTest {
         //Legal cases
         assertTrue(HeroTest1.isValidStrength(HeroTest1.getStrength()));
         assertTrue(HeroTest2.isValidStrength(HeroTest2.getStrength()));
-        assertTrue(HeroTest1.isValidStrength(800));
+        assertTrue(HeroTest1.isValidStrength(BigDecimal.valueOf(800)));
 
         //IllegalCases
-        assertFalse(HeroTest2.isValidStrength(-800));
+        assertFalse(HeroTest2.isValidStrength(BigDecimal.valueOf(-800)));
         
         /* Anchorpoints */
         //Legal cases

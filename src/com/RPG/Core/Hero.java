@@ -1,10 +1,11 @@
 package com.RPG.Core;
 
-import com.RPG.Exception.InvalidHPException;
+import com.RPG.Exception.InvalidHolderException;
+import com.RPG.Exception.InvalidItemsException;
+import com.RPG.Exception.InvalidValueException;
 
 import javax.naming.InvalidNameException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -32,26 +33,6 @@ public class Hero extends Entity {
      **********************************************************/
 
     /**
-     * A Variable representing the protection of a Hero
-     */
-    private int Protection = 0;
-
-    /**
-     * A Variable representing the strength of a Hero
-     */
-    private BigDecimal Strength = BigDecimal.valueOf(0);
-
-    /**
-     * A variable representing the precision of the strength variable
-     */
-    private static final int strengthScale = 2;
-
-    /**
-     * A variable representing the way to round the strength to the set strengthScale
-     */
-    private static final RoundingMode roundingMode = RoundingMode.HALF_UP;
-
-    /**
      * A regex that the name of a hero needs to follow
      */
     private static final String nameRegex = "^[A-Z][a-zA-Z ’:]*$";
@@ -61,48 +42,187 @@ public class Hero extends Entity {
      */
     private Boolean Healable = true;
 
+    private final Boolean Intelligent = true;
+
     /**
      * A variable representing a hero's capacity multiplier
      */
     private static final float capacityMultiplier = 20;
 
+    private static final int defaultStrength = 50;
+
+    private static final int defaultProtection = 10;
+
     /**********************************************************
      * Constructors
      *********************************************************/
 
-    public Hero(String name) throws InvalidNameException, InvalidHPException {
-        super(name, 997L, new ArrayList<>(Arrays.asList(
+    public Hero(String name, long maxHP, BigDecimal strength, ArrayList<Item> items) throws InvalidNameException, InvalidItemsException {
+        super(name, maxHP, new ArrayList<>(Arrays.asList(
                 AnchorPoint.BELT,
                 AnchorPoint.BACK,
                 AnchorPoint.BODY,
                 AnchorPoint.LEFTHAND,
                 AnchorPoint.RIGHTHAND
         )));
-        this.Strength = BigDecimal.valueOf(50).setScale(strengthScale, roundingMode);
-        this.Protection = 10;
+        this.setStrength(strength.setScale(getStrengthScale(), getRoundingMode()));
+        this.setProtection(defaultProtection);
         this.setSkinType(SkinType.NORMAL);
         this.setDamageTypes(new HashSet<>(List.of(DamageType.CLAWS)));
         this.setCapacity();
+        this.equipStarterItems(items);
+    }
+
+    public Hero(String name) throws InvalidNameException, InvalidItemsException, InvalidValueException, InvalidHolderException {
+        // Use a fixed value or another way to pass strength
+        this(name, 997L, BigDecimal.valueOf(defaultStrength), createDefaultItems());
+    }
+
+    private static ArrayList<Item> createDefaultItems() throws InvalidValueException, InvalidHolderException {
+        // Create and return the default items for the Hero
+        ArrayList<Item> defaultItems = new ArrayList<>();
+        defaultItems.add(new Weapon(null, AnchorPoint.RIGHTHAND));
+        return defaultItems;
     }
 
     /**********************************************************
      * Getters and Setters
      **********************************************************/
 
-    /**
-     * getter for the strength of a Hero
-     *
-     * @return strength of hero
-     *      | this.Strength
-     */
-    //TODO: ask @basic
-    public int getStrength() {
-        return Strength.intValue();
-    }
-
     /**********************************************************
      * Methods
      **********************************************************/
+
+    public boolean hasItemAt(AnchorPoint anchorPoint){
+        return anchorPoint.hasItem();
+    }
+
+    private void equipStarterItems(ArrayList<Item> items) throws InvalidItemsException {
+        if (items == null || items.isEmpty()) return;
+
+        // 1. Detect backpack (if any)
+        Backpack backpack = findBackpack(items);
+        ArrayList<Item> sortedItems = sortItemsByWeight(items, backpack);
+
+        // 2. Find free anchor points
+        ArrayList<AnchorPoint> freePoints = getFreeAnchorPoints();
+        ArrayList<Item> toEquip = new ArrayList<>();
+        ArrayList<Item> toStore = new ArrayList<>();
+
+        // 3. Try to equip items to free anchor points
+        tryToEquipItems(sortedItems, freePoints, toEquip, toStore);
+
+        // 4. Validate total weight (items + backpack)
+        validateTotalWeight(items);
+
+        // 5. If backpack is present, validate storage capacity for remaining items
+        if (backpack != null) {
+            validateBackpackStorage(backpack, toStore);
+        } else if (!toStore.isEmpty()) {
+            // If no backpack, just skip storing items and throw exception if there are remaining items
+            throw new InvalidItemsException("No backpack to store remaining items.");
+        }
+
+        // 6. Equip backpack first (if present)
+        if (backpack != null) {
+            equipBackpackFirst(backpack);
+        }
+
+        // 7. Equip valid items to available anchor points
+        equipItems(toEquip);
+
+        // 8. Store remaining items in backpack (if backpack is present)
+        if (backpack != null) {
+            storeRemainingItemsInBackpack(backpack, toStore);
+        }
+    }
+
+    private Backpack findBackpack(List<Item> items) {
+        for (Item item : items) {
+            if (item.getItemType() == ItemType.BACKPACK) {
+                return (Backpack) item;
+            }
+        }
+        return null;
+    }
+
+    private ArrayList<Item> sortItemsByWeight(List<Item> items, Backpack backpack) {
+        ArrayList<Item> sorted = new ArrayList<>(items);
+        if (backpack != null) sorted.remove(backpack);
+        sorted.sort((a, b) -> Float.compare((float) b.getWeight(), (float) a.getWeight()));
+        return sorted;
+    }
+
+    private ArrayList<AnchorPoint> getFreeAnchorPoints() {
+        ArrayList<AnchorPoint> free = new ArrayList<>();
+        for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
+            AnchorPoint ap = getAnchorPointAt(i);
+            if (ap.getItem() == null) free.add(ap);
+        }
+        return free;
+    }
+
+    private void tryToEquipItems(ArrayList<Item> sortedItems, ArrayList<AnchorPoint> freePoints, ArrayList<Item> toEquip, ArrayList<Item> toStore) {
+        for (Item item : sortedItems) {
+            boolean matched = false;
+            for (AnchorPoint ap : freePoints) {
+                if (ap.getAllowedItemType() == ItemType.ANY || ap.getAllowedItemType() == item.getItemType()) {
+                    toEquip.add(item);
+                    freePoints.remove(ap);
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                toStore.add(item);
+            }
+        }
+    }
+
+    private void validateTotalWeight(List<Item> items) throws InvalidItemsException {
+        long totalWeight = (long) items.stream().mapToDouble(Item::getWeight).sum();
+        if (totalWeight > this.getCapacity()) {
+            throw new InvalidItemsException("Total weight exceeds hero capacity.");
+        }
+    }
+
+    private void validateBackpackStorage(Backpack backpack, List<Item> toStore) throws InvalidItemsException {
+        if (!toStore.isEmpty()) {
+            if (backpack == null) {
+                throw new InvalidItemsException("No backpack to store remaining items.");
+            }
+            long storeWeight = (long) toStore.stream().mapToDouble(Item::getWeight).sum();
+            if (!backpack.canStoreAll(toStore, storeWeight)) {
+                throw new InvalidItemsException("Backpack cannot store all remaining items.");
+            }
+        }
+    }
+
+    private void equipBackpackFirst(Backpack backpack) {
+        this.equip(AnchorPoint.BACK, backpack);
+    }
+
+    private void equipItems(List<Item> toEquip) {
+        for (Item item : toEquip) {
+            for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
+                AnchorPoint ap = getAnchorPointAt(i);
+                if (ap.getItem() == null && ap.getAllowedItemType() == item.getItemType()) {
+                    this.equip(ap, item);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void storeRemainingItemsInBackpack(Backpack backpack, List<Item> toStore) {
+        if (backpack != null) {
+            for (Item item : toStore) {
+                backpack.storeItem(item);
+            }
+        }
+    }
+
+
 
     /**
      * a method to calculate the capacity of a Hero
@@ -111,7 +231,7 @@ public class Hero extends Entity {
      */
     @Override
     protected long calculateCapacity() {
-        return this.Strength.multiply(BigDecimal.valueOf(capacityMultiplier)).longValue(); //TODO: ask if this is what they meant
+        return this.getStrength().multiply(BigDecimal.valueOf(capacityMultiplier)).longValue(); //TODO: ask if this is what they meant
     }
 
     /**
@@ -139,29 +259,16 @@ public class Hero extends Entity {
     }
 
     /**
-     * A checker to see if the protection is valid
-     *
-     * @param Protection
-     *      the protection that needs to be checked
-     *
-     * @return true if protection is valid, otherwise false
-     *      | result == (Protection >= 0)
-     */
-    public boolean isValidProtection(int Protection){
-        return Protection >= 0;
-    }
-
-    /**
      * A checker to see if the strength is valid
      *
-     * @param Strength
+     * @param strength
      *      the strength that needs to be checked
      *
      * @return true if strength is valid, otherwise false
      *      | result == (strength >= 0)
      */
-    public boolean isValidStrength(int Strength){
-        return Strength >= 0;
+    public boolean isValidStrength(BigDecimal strength) {
+        return strength.compareTo(BigDecimal.ZERO) >= 0;
     }
 
     /**

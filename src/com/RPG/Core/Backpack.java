@@ -7,6 +7,8 @@ import com.RPG.Exception.InvalidItemsException;
 import com.RPG.Exception.InvalidValueException;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A class representing a BackPack Item
@@ -32,9 +34,12 @@ public class Backpack extends Item {
 
     private static final int defaultValue = 20;
 
+    private static final AtomicLong idGenerator = new AtomicLong(0);
+
     /**********************************************************
      * Constructors
      *********************************************************/
+
 
     public Backpack(double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
         super(weight, Value, shinelevel, ItemType.BACKPACK);
@@ -98,6 +103,15 @@ public class Backpack extends Item {
             return null;
         }
         return Content.get(index);
+    }
+
+    @Override
+    protected long generateUniqueId() {
+        long nextId;
+        do {
+            nextId = idGenerator.getAndAdd(1);
+        } while (nextId <= 0);
+        return nextId;
     }
 
     /**
@@ -257,4 +271,14 @@ public class Backpack extends Item {
    public boolean hasAsItem(Item item){
        return this.Content.contains(item); //TODO: ask about method in public
    }
+
+    public boolean canStoreAll(List<Item> items, long totalWeight) {
+        if (items == null || items.isEmpty()) return true;
+
+        long currentWeight = this.Content.stream()
+                .mapToLong(item -> (long) item.getWeight())
+                .sum();
+
+        return (currentWeight + totalWeight) <= this.Capacity;
+    }
 }

@@ -5,13 +5,13 @@ public enum ShineLevel {
 
     NONE(1F),
 
-    LOW(1F),
+    LOW(1.2F),
 
-    MEDIUM(1F),
+    MEDIUM(1.5F),
 
-    HIGH(1F),
+    HIGH(2F),
 
-    LEGENDARY(1F);
+    LEGENDARY(3F);
 
     private float valueMultiplier;
 
