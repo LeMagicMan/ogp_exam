@@ -162,7 +162,7 @@ public class Monster extends Entity {
      * @effect If a matching loot factory exists for the chosen item type, it is used to create the item
      * and associate it with the current object and anchor point. If the creation throws
      * InvalidValueException or InvalidHolderException, the method fails an assertion,
-     * as those exceptions are considered unexpected.
+     * as those exceptions are considered unexpected. //TODO
      */
     private void createLoot(){
         for (int index = 0; index < this.getAmountOfAnchorPoints(); index++) {
