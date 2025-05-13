@@ -28,6 +28,9 @@ public class TreasureManager {
      *
      * @effect If either entity is null or has been terminated, the method exits immediately.
      * Otherwise, the looter will attempt to loot the defeated entity's items.
+     *      | if (defeated == null || looter == null || defeated.isTerminated() || looter.isTerminated())
+     *      |   then return
+     *      | else continue; //TODO
      *
      * @effect Looting behavior is based on the looter's intelligence:
      *      1. If the looter is intelligent
@@ -61,7 +64,8 @@ public class TreasureManager {
      *          | tryEquipOrBackpack()
      *
      *
-     * @effect If an item cannot be equipped or stored, a
+     * @effect If an item cannot be equipped or stored, unequip item from entity
+     *      | defeated.unequip(defeated.getAnchorPointWithItem(item), item);
      *
      * @param looter
      *      the intelligent entity attempting to loot

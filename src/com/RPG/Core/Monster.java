@@ -32,7 +32,9 @@ public class Monster extends Entity {
      */
     private static final String nameRegex = "^[A-Z][a-zA-Z ’:]*$";
 
-    //TODO
+    /**
+     * A map containing all not null ItemFactories needed for a monster
+     */
     private final Map<ItemType, MonsterLootFactory> factories = Map.of(
             ItemType.WEAPON, new WeaponFactory(),
             ItemType.BACKPACK, new BackpackFactory()
@@ -136,7 +138,7 @@ public class Monster extends Entity {
      * @param name
      *      The name to be checked
      *
-     * @return True if the name is valid, not empty and follows the nameRegex, false otherwise //TODO: ask idk mentioning nameRegex is allowed
+     * @return True if the name is valid, not empty and follows the nameRegex, false otherwise
      *      | result == (name != null) && name.matches(nameRegex)
      */
     @Override
@@ -162,7 +164,7 @@ public class Monster extends Entity {
      * InvalidValueException or InvalidHolderException, the method fails an assertion,
      * as those exceptions are considered unexpected.
      */
-    private void createLoot(){ //TODO: desperately needs testing, and ask professor
+    private void createLoot(){
         for (int index = 0; index < this.getAmountOfAnchorPoints(); index++) {
             if (Math.random() < itemSpawnChance) {
                 AnchorPoint anchor = this.getAnchorPointAt(index);

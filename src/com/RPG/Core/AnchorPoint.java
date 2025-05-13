@@ -47,7 +47,7 @@ public enum AnchorPoint {
     private Item item;
 
     /**
-     * Contructor for an Anchorpoint
+     * Constructor for an Anchorpoint
      *
      * @param allowedItemType
      *      The allowed ItemType for that AnchorPoint

@@ -176,7 +176,7 @@ public abstract class Item {
         this.setValue(Value);
         this.itemType = itemType;
         this.ShineLevel = ShineLevel;
-        this.Id = generateUniqueId(); //TODO: overide for weapon and backpack
+        this.Id = generateUniqueId();
     }
 
     /**********************************************************
@@ -314,7 +314,7 @@ public abstract class Item {
      *
      * @return the weight of an item
      *      | this.getWeight
-     */ //TODO: ask
+     */
     public double getTotalWeight(){
         return getWeight();
     }

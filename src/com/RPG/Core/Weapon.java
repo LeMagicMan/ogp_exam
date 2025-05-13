@@ -112,7 +112,7 @@ public class Weapon extends Item {
      * @return the Damage of this weapon
      *      | this.Damage
      */
-    @Override @Basic //TODO: basic?
+    @Override @Basic //TODO: basic, think about if override is nescesary
     public int getDamage() {
         return Damage;
     }
@@ -148,8 +148,9 @@ public class Weapon extends Item {
      * generates an unique id for every Item
      *
      * @return the uniquely created Id
-     *      | //TODO: ask about formal
+     *      | //TODO
      */
+    @Override
     protected long generateUniqueId() {
         long nextId;
         do {

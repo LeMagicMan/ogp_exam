@@ -7,9 +7,6 @@ import java.util.Random;
 
 /**
  * A class representing how entity's heal
- *
- * @invar entity can only heal if healable is true
- *      | isHealable()
  */
 public class HealingSystem {
 
@@ -18,9 +15,12 @@ public class HealingSystem {
      *
      * @param entity
      *      entity we want to heal
+     *
+     * @post Entity can only heal if it is healable
+     *      | entity.canHeal
      */
     public void heal(Entity entity) {
-        if (entity.canHeal()) {
+        if (entity.isHealable()) {
             long healingAmount = calculateHealingAmount(entity);
             entity.increaseHP(healingAmount);
         }
@@ -33,7 +33,7 @@ public class HealingSystem {
      *      entity we want to heal
      *
      * @return a percentage healing amount between 0 and the full difference between max HP and current HP
-     *      | //TODO
+     *      | 0 <= healingAmount <= maxHP - currentHP
      */
     @Model
     private long calculateHealingAmount(Entity entity) {

@@ -116,16 +116,15 @@ public class Hero extends Entity {
      * creates items for the most basic constructor of a hero
      *
      * @return the created items
-     *    | result == new Weapon(null, AnchorPoint.RIGHTHAND //TODO
-     *
-     * @throws InvalidValueException
-     *      cannot get thrown
-     * @throws InvalidHolderException
-     *      cannot get thrown
+     *    | result == new Weapon(null, AnchorPoint.RIGHTHAND)
      */
-    private static ArrayList<Item> createDefaultItems() throws InvalidValueException, InvalidHolderException {
+    private static ArrayList<Item> createDefaultItems() {
         ArrayList<Item> defaultItems = new ArrayList<>();
-        defaultItems.add(new Weapon(null, AnchorPoint.RIGHTHAND));
+        try {
+            defaultItems.add(new Weapon(null, AnchorPoint.RIGHTHAND));
+        } catch (InvalidValueException | InvalidHolderException e) {
+            assert false;
+        }
         return defaultItems;
     }
 
@@ -184,14 +183,14 @@ public class Hero extends Entity {
     private Item findBackpack(List<Item> items) {
         for (Item item : items) {
             if (item.getItemType() == ItemType.BACKPACK) {
-                return item; //TODO
+                return item;
             }
         }
         return null;
     }
 
     /**
-     * sorts items in a list by weight from heaviest to lightest
+     * sorts items in a list by weight from heaviest to lightest, if backpack is not null, we remove the backpack from the sorted list
      *
      * @param items
      *      items we want to sort
@@ -199,14 +198,12 @@ public class Hero extends Entity {
      * @param backpack
      *      backpack we need to remove from list
      *
-     * @effect if backpack is not null, we remove the backpack from the sorted list //TODO
-     *
      * @return the sorted list
      */
     private ArrayList<Item> sortItemsByWeight(List<Item> items, Backpack backpack) {
         ArrayList<Item> sorted = new ArrayList<>(items);
         if (backpack != null) sorted.remove(backpack);
-        sorted.sort((a, b) -> Float.compare((float) b.getWeight(), (float) a.getWeight()));
+        sorted.sort((a, b) -> Float.compare((float) b.getTotalWeight(), (float) a.getTotalWeight()));
         return sorted;
     }
 
@@ -385,7 +382,7 @@ public class Hero extends Entity {
      * @return True if the name is valid, not empty, follows the nameRegex, has a maximum of 2 apostrophes and after a ':' there is always a ' ', false otherwise
      *      | result == (name != null) && name.matches(nameRegex)
      *      | && (name.chars().filter(c -> c == '’').count() > 2)
-     *      | && !(name.charAt(index) == ':' && name.charAt(index + 1) != ' ') //TODO: ask about doc
+     *      | && !(name.charAt(index) == ':' && name.charAt(index + 1) != ' ')
      */
     @Override
     public Boolean isValidName(String name) {
@@ -433,7 +430,6 @@ public class Hero extends Entity {
      *      | TODO: ask about formal
      */
     public boolean hasProperAnchorpoints() {
-        // Use a set to track seen anchorpoints
         Set<AnchorPoint> expected = EnumSet.of(
                 AnchorPoint.BELT,
                 AnchorPoint.BACK,

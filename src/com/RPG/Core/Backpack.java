@@ -221,7 +221,7 @@ public class Backpack extends Item {
     @Override
     public double getTotalWeight(){
         double totalWeight = this.getWeight();
-        for (Item item : Content){ //TODO: ask about this
+        for (Item item : Content){
             totalWeight += item.getTotalWeight();
         }
         return totalWeight;
@@ -265,7 +265,14 @@ public class Backpack extends Item {
     /**
      * removes an item from the content of a backpack
      *
-     * @param item //TODO
+     * @pre Backpack must have item in its content
+     *      | this.hasAsItem(item)
+     *
+     * @param item
+     *      item we want to remove
+     *
+     * @effect item is removed from the backpacks content
+     *      | this.Content.remove(item);
      */
     private void removeItem(Item item){
         if (!this.hasAsItem(item)){
@@ -283,7 +290,7 @@ public class Backpack extends Item {
      * a method to add an item to the content of a backpack
      *
      * @pre must be able to store Item
-     *      | canAddItem(item) //TODO: ask if also needed in store
+     *      | canAddItem(item)
      *
      * @param item
      *      the item we want to add to the content
@@ -339,7 +346,7 @@ public class Backpack extends Item {
      */
     public boolean hasProperItems(ArrayList<Item> content){
         for (Item item : content){
-            if (item.getHolder() != this.getHolder()){ //TODO: ask if this is enough because i ensure all items in backpack belong to the same Holder, ask if nescesary
+            if (item.getHolder() != this.getHolder()){
                 return false;
             }
         }
@@ -369,7 +376,7 @@ public class Backpack extends Item {
      *      | result == this.Content.contains(item)
      */
    public boolean hasAsItem(Item item){
-       return this.Content.contains(item); //TODO: ask about method in public
+       return this.Content.contains(item);
    }
 
     /**

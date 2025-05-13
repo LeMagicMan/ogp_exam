@@ -22,7 +22,7 @@ public class DefaultBattleSystem implements BattleSystem {
      * to the target. If the damage is equal to or greater than the target's current HP,
      * the target is considered slain. In that case:
      *      1. Loot is transferred from the target to the attacker using TreasureManager
-     *              | target.Loot
+     *              | target.Loot()
      *      2. The target is marked as killed via
      *              | target.kill()
      *      3. The attacker is healed using a HealingSystem
@@ -42,7 +42,7 @@ public class DefaultBattleSystem implements BattleSystem {
      *      a list of items to be looted if the target is killed
      */
     @Override
-    public void executeHit(Entity attacker, Entity target, ArrayList<Item> chosenItems) { //TODO: ask about overloading
+    public void executeHit(Entity attacker, Entity target, ArrayList<Item> chosenItems) {
         Random random = new Random();
 
         int roll = random.nextInt(101);

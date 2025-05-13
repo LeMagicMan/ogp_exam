@@ -83,7 +83,7 @@ public abstract class Entity {
     /**
      * A regex that the name of an entity needs to follow
      */
-    private static final String nameRegex = "^[A-Z][a-zA-Z ’:]*$"; //"^.*+$"; "^[A-Z][a-zA-Z ':]*$" //TODO: ask prof
+    private static final String nameRegex = "^.*+$"; //"^[A-Z][a-zA-Z ':]*$" //TODO: ask prof
 
     /**
      * A variable representing the skinType of an entity
@@ -157,7 +157,7 @@ public abstract class Entity {
      * @throws InvalidDamageTypesException gets thrown when damageTypes are not valid
      *      | !hasValidDamageTypes
      */
-    protected Entity(String name, Long maxHP, ArrayList<AnchorPoint> Anchorpoints, SkinType skinType, HashSet<DamageType> damageTypes) throws InvalidNameException, InvalidSkinTypeException, InvalidDamageTypesException { //TODO: ask about nominal aspect of HP
+    protected Entity(String name, Long maxHP, ArrayList<AnchorPoint> Anchorpoints, SkinType skinType, HashSet<DamageType> damageTypes) throws InvalidNameException, InvalidSkinTypeException, InvalidDamageTypesException {
         if(!isValidName(name)){
             throw new InvalidNameException();
         }
@@ -503,9 +503,9 @@ public abstract class Entity {
      * finds a given Anchorpoint in the hashset
      *
      * @pre given Anchorpoint must be in hashset
-     *      | Anchorpoints.contains(anchorpoint)
+     *      | this.hasAnchorpoint(anchorpoint)
      *
-     * @effect if anchorpoint was not found return null //TODO is this redundant
+     * @effect if anchorpoint was not found return null
      *      | if (!AnchorPoints.contains(anchorpoint))
      *      | then result == null
      *
@@ -552,8 +552,7 @@ public abstract class Entity {
 
     /**
      * setter for the HP of an entity
-     *
-     * @effect ensures the HP is minimum o and maximum the maxHP //TODO: needs formal?
+     * ensures the HP is minimum 0 and maximum the maxHP
      *
      * @param newHP
      *      the Hp we want to set
@@ -594,7 +593,7 @@ public abstract class Entity {
      * @return true if is Intelligent, false otherwise
      *      | this.Intelligent
      */
-    @Basic//TODO: basic?
+    @Basic
     public boolean isIntelligent() {
         return Intelligent;
     }
@@ -649,7 +648,7 @@ public abstract class Entity {
      *      | this.Terminated = true
      */
     @Model
-    private void terminate(){ //TODO: ask if this is enough
+    private void terminate(){
         for (AnchorPoint anchorPoint : AnchorPoints) {
             if (anchorPoint.hasItem()){
                 this.unequip(anchorPoint, anchorPoint.getItem());
@@ -683,7 +682,7 @@ public abstract class Entity {
     }
 
     /**
-     * increases the HP of an entity //TODO: ask if ok
+     * increases the HP of an entity
      *
      * @pre entity must be healable
      *
@@ -732,7 +731,7 @@ public abstract class Entity {
     public void equip(AnchorPoint anchorPoint, Item item){
         if (item == null) return;
 
-        if (!hasAnchorpoint(anchorPoint) || !item.isValidItem()){ //TODO: make checker
+        if (!hasAnchorpoint(anchorPoint) || !item.isValidItem()){
             return;
         }
         if (this.isTerminated() || item.isTerminated()){
@@ -745,7 +744,7 @@ public abstract class Entity {
             item.getBackpack().unpackItem(item);
         }
         if(getAnchorPoint(anchorPoint).getItem() != null){
-            this.unequip(getAnchorPoint(anchorPoint), getAnchorPoint(anchorPoint).getItem()); //TODO: ask about second param
+            this.unequip(getAnchorPoint(anchorPoint), getAnchorPoint(anchorPoint).getItem());
         }
         try {
             this.getAnchorPoint(anchorPoint).setItem(item);
@@ -825,8 +824,9 @@ public abstract class Entity {
      * @param name
      *      The name to be checked
      *
-     * @return True if the name is valid, not empty and follows the nameRegex, false otherwise //TODO: ask idf mentioning nameRegex is allowed
-     *      | result == (name != null) && name.matches(nameRegex)
+     * @return True if the name is valid, not empty and follows the nameRegex, false otherwise
+     *      | if (name != null) && name.matches(nameRegex)
+     *      |   result == false
      */
     @Raw
     public Boolean isValidName(String name) {
@@ -898,8 +898,8 @@ public abstract class Entity {
      *
      * @note we are sure the elements are unique because of the used datatype
      *
-     * @return true if damageTypes has a length of 1, false otherwise //TODO
-     *      | result = (damageTypes.size() == 1)
+     * @return true if damageTypes has a length of 1, false otherwise
+     *      | result == (damageTypes.size() == 1)
      */
     public abstract boolean hasValidDamageTypes(HashSet<DamageType> damageTypes);
 
@@ -962,7 +962,10 @@ public abstract class Entity {
      *      the anchorpoint that needs to be checked
      *
      * @return true if the entity has the anchorpoint, false otherwise
-     *      | result == AnchorPoints.contains(anchorPoint) //TODO: ask about formal
+     *      | for Index < getAmountOfAnchorPoints(); Index++
+     *      |   if this.getAnchorpointAt(Index) == anchorpoint
+     *      |       result == true
+     *      | result == false
      */
     public boolean hasAnchorpoint(AnchorPoint anchorPoint) {
         return AnchorPoints.contains(anchorPoint);
@@ -989,16 +992,6 @@ public abstract class Entity {
      */
     public boolean isValidProtection(int Protection){
         return Protection >= 0;
-    }
-
-    /**
-     * checks whether an entity can heal
-     *
-     * @return true if healable, false otherwise
-     *      | this.Healable
-     */
-    public boolean canHeal(){
-        return Healable;
     }
 
     /**
