@@ -27,39 +27,121 @@ public class Backpack extends Item {
      * Variables
      **********************************************************/
 
-    private ArrayList<Item> Content; //TODO: ask about Hashset
+    /**
+     * An arraylist representing the content of the backpack
+     */
+    private ArrayList<Item> Content;
 
+    /**
+     * A variable representing the capacity of  a backpack
+     */
     private int Capacity = 0;
 
+    /**
+     * A variable representing the defaultCapacity of a backpack
+     */
     private static final int defaultCapacity = 20;
 
+    /**
+     * A variable representing the defaultWeight of a backpack
+     */
     private static final double defaultWeight = 5;
 
+    /**
+     * A variable representing the defaultValue
+     */
     private static final int defaultValue = 20;
 
+    /**
+     * A variable Representing A thread-safe atomic counter used to generate unique IDs starting at 0
+     */
     private static final AtomicLong idGenerator = new AtomicLong(0);
 
     /**********************************************************
      * Constructors
      *********************************************************/
 
-
+    /**
+     * A constructor for a backpack with given weight, value, capacity, Holder, anchorpoint, shineLevel, Content
+     *
+     * @pre All items must fit in backpack
+     *      | canStoreAll(Content)
+     *
+     * @param weight
+     *      the weight of the backpack
+     *
+     * @param Value
+     *      the value of the backpack
+     *
+     * @param Capacity
+     *      the capacity of this backpack
+     *
+     * @param Holder
+     *      the holder of this backpack
+     *
+     * @param anchorPoint
+     *      the anchorpoint this backpack attaches to
+     *
+     * @param shinelevel
+     *      the shineLevel of this backpack
+     *
+     * @param Content
+     *      the content of this backpack
+     *
+     * @throws InvalidItemsException gets thrown when items are invalid or cant be stored
+     *      | !(canStoreAll(Content) || hasProperItem(Content))
+     *
+     */
     public Backpack(double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
         super(weight, Value, shinelevel, ItemType.BACKPACK);
         if (this.hasProperItems(Content)){
             throw new InvalidItemsException("all backpack items must belong to this backpack");
         }
-        this.Content = Content;
-        Holder.equip(anchorPoint, this);
+        if (!canStoreAll(Content)){
+            throw new InvalidItemsException("all items must fit in this backpack");
+        }
         this.Capacity = Capacity;
+        Holder.equip(anchorPoint, this);
+        this.Content = Content;
+
     }
 
+    /**
+     * A constructor for a backpack with given weight, value, capacity, Holder, anchorpoint, shineLevel
+     *
+     * @param weight
+     *      the weight of the backpack
+     *
+     * @param Value
+     *      the value of the backpack
+     *
+     * @param Capacity
+     *      the capacity of this backpack
+     *
+     * @param Holder
+     *      the holder of this backpack
+     *
+     * @param anchorPoint
+     *      the anchorpoint this backpack attaches to
+     *
+     * @param shinelevel
+     *      the shineLevel of this backpack
+     */
     public Backpack( double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel) throws InvalidValueException, InvalidHolderException {
         super(weight, Value, Holder, anchorPoint, shinelevel, ItemType.BACKPACK);
         this.Capacity = Capacity;
         this.Content = new ArrayList<Item>();
     }
 
+    /**
+     *A constructor for a backpack with a given Holder and anchorpoint
+     *
+     * @param Holder
+     *      the holder of this backpack
+     *
+     * @param anchorPoint
+     *      the anchorpoint this backpack attaches to
+     */
     public Backpack(Entity Holder, AnchorPoint anchorPoint) throws InvalidValueException, InvalidHolderException {
         this(defaultWeight, defaultValue, defaultCapacity, Holder, anchorPoint, ShineLevel.LOW);
     }
@@ -257,7 +339,7 @@ public class Backpack extends Item {
      */
     public boolean hasProperItems(ArrayList<Item> content){
         for (Item item : content){
-            if (item.getHolder() != this.getHolder()){ //TODO: ask if this is enough because i ensure all items in backpack belong to the same Holder
+            if (item.getHolder() != this.getHolder()){ //TODO: ask if this is enough because i ensure all items in backpack belong to the same Holder, ask if nescesary
                 return false;
             }
         }

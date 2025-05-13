@@ -1,8 +1,6 @@
 package com.RPG.Core;
 
-import com.RPG.Exception.InvalidHolderException;
-import com.RPG.Exception.InvalidItemsException;
-import com.RPG.Exception.InvalidValueException;
+import com.RPG.Exception.*;
 
 import javax.naming.InvalidNameException;
 import java.math.BigDecimal;
@@ -79,24 +77,19 @@ public class Hero extends Entity {
      * @pre Hero must have Valid Strength
      *      | isValidStrength()
      *
-     * @throws InvalidNameException
-     *      gets thrown when the name of a hero is invalid
-     *
      * @throws InvalidItemsException
      *      gets thrown when hero cant hold all starterItems
      */
-    public Hero(String name, long maxHP, BigDecimal strength, ArrayList<Item> items) throws InvalidNameException, InvalidItemsException {
+    public Hero(String name, long maxHP, BigDecimal strength, ArrayList<Item> items) throws InvalidNameException, InvalidItemsException, InvalidSkinTypeException, InvalidDamageTypesException {
         super(name, maxHP, new ArrayList<>(Arrays.asList(
                 AnchorPoint.BELT,
                 AnchorPoint.BACK,
                 AnchorPoint.BODY,
                 AnchorPoint.LEFTHAND,
                 AnchorPoint.RIGHTHAND
-        )));
+        )), SkinType.NORMAL, new HashSet<>(List.of(DamageType.NORMAL)));
         this.setStrength(strength.setScale(getStrengthScale(), getRoundingMode()));
         this.setProtection(defaultProtection);
-        this.setSkinType(SkinType.NORMAL);
-        this.setDamageTypes(new HashSet<>(List.of(DamageType.NORMAL)));
         this.setCapacity();
         this.equipStarterItems(items);
     }
@@ -107,8 +100,7 @@ public class Hero extends Entity {
      * @param name
      *      name of the hero
      */
-    public Hero(String name) throws InvalidNameException, InvalidItemsException, InvalidValueException, InvalidHolderException {
-        // Use a fixed value or another way to pass strength
+    public Hero(String name) throws InvalidNameException, InvalidItemsException, InvalidValueException, InvalidHolderException, InvalidSkinTypeException, InvalidDamageTypesException {
         this(name, 997L, BigDecimal.valueOf(defaultStrength), createDefaultItems());
     }
 
@@ -460,5 +452,28 @@ public class Hero extends Entity {
         }
 
         return found.equals(expected);
+    }
+
+    /**
+     * checks whether the given damagetypes are valid
+     *
+     * @param damageTypes
+     *      the damagetypes that need to be checked
+     *
+     * @return true if all damagetypes are different than Normal, if there is a Normal type it must be the only type
+     *      | for each damagetype in damagetypes :
+     *      |       if damagetype == NORMAL
+     *      |           then result == true
+     *      | result == false
+     *
+     */
+    public boolean hasValidDamageTypes(HashSet<DamageType> damageTypes) {
+        if (damageTypes.size() != 1) return false;
+        for (DamageType damageType : damageTypes) {
+            if (Objects.requireNonNull(damageType) == DamageType.NORMAL) {
+                return true;
+            }
+        }
+        return false;
     }
 }

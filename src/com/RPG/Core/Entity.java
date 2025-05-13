@@ -4,14 +4,15 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 import com.RPG.Exception.InvalidAnchorPointException;
+import com.RPG.Exception.InvalidDamageTypesException;
 import com.RPG.Exception.InvalidHolderException;
+import com.RPG.Exception.InvalidSkinTypeException;
 
 import javax.naming.InvalidNameException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Objects;
 
 
 /**
@@ -141,12 +142,30 @@ public abstract class Entity {
      * @pre maxHP must be Valid
      *      | isValidHP()
      *
-     * @throws InvalidNameException
-     *      gets thrown when the name isnt valid
+     * @pre SkinType must be Valid
+     *      | isValidSkinType()
+     *
+     * @pre must have valid damageTypes
+     *      | hasValidDamageTypes()
+     *
+     * @throws InvalidNameException gets thrown when the name isn't valid
+     *      | !isValidName()
+     *
+     * @throws InvalidSkinTypeException gets thrown when skinType isn't valid
+     *      | !isValidSkinType()
+     *
+     * @throws InvalidDamageTypesException gets thrown when damageTypes are not valid
+     *      | !hasValidDamageTypes
      */
-    protected Entity(String name, Long maxHP, ArrayList<AnchorPoint> Anchorpoints) throws InvalidNameException { //TODO: ask about nominal aspect of HP
+    protected Entity(String name, Long maxHP, ArrayList<AnchorPoint> Anchorpoints, SkinType skinType, HashSet<DamageType> damageTypes) throws InvalidNameException, InvalidSkinTypeException, InvalidDamageTypesException { //TODO: ask about nominal aspect of HP
         if(!isValidName(name)){
             throw new InvalidNameException();
+        }
+        if(!isValidSkinType(skinType)){
+            throw new InvalidSkinTypeException("SkinType is not Valid");
+        }
+        if(!hasValidDamageTypes(damageTypes)){
+            throw new InvalidDamageTypesException("DamageTypes are not valid");
         }
         this.Name = name;
         this.MaxHP = maxHP;
@@ -879,21 +898,20 @@ public abstract class Entity {
      *
      * @note we are sure the elements are unique because of the used datatype
      *
-     * @return true if all damagetypes are different than Normal, if there is a Normal type it must be the only type
-     *      | for each damagetype in damagetypes :
-     *      |       if damagetype == NORMAL
-     *      |       then result == damagetypes.size() == 1
-     *      | result == !DamageTypes.isEmpty()
-     *
+     * @return true if damageTypes has a length of 1, false otherwise //TODO
+     *      | result = (damageTypes.size() == 1)
      */
-    public boolean hasValidDamageTypes(HashSet<DamageType> damageTypes) {
-        for (DamageType damageType : damageTypes) {
-            if (Objects.requireNonNull(damageType) == DamageType.NORMAL) {
-                return damageTypes.size() == 1;
-            }
-        }
-        return !damageTypes.isEmpty();
-    }
+    public abstract boolean hasValidDamageTypes(HashSet<DamageType> damageTypes);
+
+    /**
+     * checks whether the SkinType of an entity is valid
+     *
+     * @param skinType
+     *      SkinType we need to check
+     *
+     * @return true if SKinType is Valid, false otherwise
+     */
+    public abstract boolean isValidSkinType(SkinType skinType);
 
     /**
      * checks if all Items in an entity are valid

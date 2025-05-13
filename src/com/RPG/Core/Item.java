@@ -23,30 +23,99 @@ public abstract class Item {
      * Variables
      **********************************************************/
 
+    /**
+     * A variable representing the itemType of an item
+     */
     private ItemType itemType;
 
+    /**
+     * A variable representing the Id of an Item
+     */
     private final long Id;
 
+    /**
+     * A variable representing the weight of an Item
+     */
     private double Weight;
 
+    /**
+     * A variable representing the defaultWeight of an Item
+     */
     private static final double defaultWeight = 10;
 
+    /**
+     * A variable representing the maxValue of an Item
+     */
     private final int maxValue = 500;
 
+    /**
+     * A variable representing the value of an Item
+     */
     private int Value = 0;
 
-    private Entity Holder; //TODO: can be monster?
+    /**
+     * A variable representing the Holder of an Item
+     */
+    private Entity Holder;
 
+    /**
+     * A variable representing the Shinelevel of an item
+     */
     private ShineLevel ShineLevel;
 
+    /**
+     * A variable representing the terminated state of an item
+     */
     private Boolean terminated = false;
 
+    /**
+     * A variable representing the backpack an item is stored in
+     */
     private Backpack backpack = null;
 
     /**********************************************************
      * Constructors
      **********************************************************/
 
+    /**
+     * A constructor for an item with given weight, Value, Holder, anchorpoint, ShineLevel and itemType
+     *
+     * @pre Holder must be Valid
+     *      | !Holder.isTerminated()
+     *
+     * @pre Value must be Valid
+     *      | isValidValue(value)
+     *
+     * @pre weight must be valid
+     *      | isValidWeight(weight)
+     *
+     * @param weight
+     *      weight of the item
+     *
+     * @param Value
+     *      value of the item
+     *
+     * @param Holder
+     *      Holder of the Item
+     *
+     * @param anchorpoint
+     *      anchorpoint of the item
+     *
+     * @param ShineLevel
+     *      ShineLevel of the item
+     *
+     * @param itemType
+     *      ItemType of the Item
+     *
+     * @throws InvalidHolderException gets thrown when Holder is not Valid
+     *      | Holder.isTerminated()
+     *
+     * @throws InvalidValueException gets thrown when value isn't valid
+     *      | !isValidValue(value)
+     *
+     * @post if weight is not valid set it to the defaultWeight
+     *      | this.setWeight(defaultWeight)
+     */
     protected Item(double weight, int Value, Entity Holder, AnchorPoint anchorpoint, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
         if (Holder != null) {
             if (Holder.isTerminated()) {
@@ -57,7 +126,7 @@ public abstract class Item {
             throw new InvalidValueException("Value cannot be negative");
         }
         if (!isValidWeight(weight)){
-            this.Weight = 10;
+            this.Weight = defaultWeight;
         } else this.Weight = weight;
 
         this.setValue(Value);
@@ -66,24 +135,42 @@ public abstract class Item {
         if (Holder != null) {
             Holder.equip(anchorpoint, this);
         }
-        this.Id = generateUniqueId(); //TODO: override for weapon and backpack
+        this.Id = generateUniqueId();
     }
 
     /**
-     * Auxiliary constructor //TODO
+     * Auxiliary constructor for an Item with given weight, Value, ShineLevel and itemType
+     *
+     * @pre Value must be Valid
+     *      | isValidValue(value)
+     *
+     * @pre weight must be valid
+     *      | isValidWeight(weight)
+     *
+     * @param weight
+     *      weight of the item
+     *
+     * @param Value
+     *      value of the item
      *
      * @param ShineLevel
+     *      ShineLevel of the item
+     *
      * @param itemType
+     *      ItemType of the Item
+     *
+     * @throws InvalidValueException gets thrown when value isn't valid
+     *      | !isValidValue(value)
+     *
+     * @post if weight is not valid set it to the defaultWeight
+     *      | this.setWeight(defaultWeight)
      */
-    protected Item(double weight, int Value, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
-        if (!hasValidHolder(Holder)){
-            throw new InvalidHolderException("Holder cannot be terminated");
-        }
+    protected Item(double weight, int Value, ShineLevel ShineLevel, ItemType itemType) throws InvalidValueException {
         if(!isValidValue(Value)){
             throw new InvalidValueException("Value cannot be negative");
         }
         if (!isValidWeight(weight)){
-            this.Weight = 10;
+            this.Weight = defaultWeight;
         } else this.Weight = weight;
 
         this.setValue(Value);
@@ -96,20 +183,52 @@ public abstract class Item {
      * Getters and Setters
      **********************************************************/
 
+    /**
+     * getter for the Id of an Item
+     *
+     * @return Id of the Item
+     *      | this.Id
+     */
+    @Basic
     public long getId() {
         return Id;
     }
 
+    /**
+     * getter for the Damage of an Item
+     *
+     * @return 0
+     */
     public int getDamage(){
         return 0;
     }
 
+    /**
+     * getter for the shineLevel of an Item
+     *
+     * @return the ShineLevel of an Item
+     *      | this.ShineLevel
+     */
+    @Basic
     public ShineLevel getShineLevel(){
         return this.ShineLevel;
     }
 
+    /**
+     * abstract getter for the amount of Items an item holds
+     *
+     * @return the amount of Items
+     */
     public abstract int getAmountOfItems();
 
+    /**
+     * abstract getter for an item at a certain index in another item
+     *
+     * @param index
+     *      index of the item contained in this item
+     *
+     * @return the item at the index
+     */
     public abstract Item getItemAt(int index);
 
     /**
@@ -267,7 +386,6 @@ public abstract class Item {
      * generates an unique id for every Item
      *
      * @return the uniquely created Id
-     *      | //TODO: ask about formal
      */
     protected abstract long generateUniqueId();
 

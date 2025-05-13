@@ -2,6 +2,9 @@ package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
 
+/**
+ * An enumerater representing the skintype of an entity
+ */
 public enum SkinType {
 
     /**
