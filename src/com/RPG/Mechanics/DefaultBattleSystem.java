@@ -1,6 +1,7 @@
 package com.RPG.Mechanics;
 
 import com.RPG.Core.Entity;
+import com.RPG.Core.Hero;
 import com.RPG.Core.Item;
 
 import java.util.ArrayList;
@@ -9,14 +10,16 @@ import java.util.Random;
 /**
  * A class representing a normal battle between entity's
  */
-public class DefaultBattleSystem implements BattleSystem {
+public class DefaultBattleSystem {
 
     /**
      * Executes a hit action from an attacking entity to a target entity.
      *
-     * @effect This method performs a hit roll using a random value between 0 and 100 (inclusive),
-     * then adjusts the roll using the attacker's {@code getAdjustedRoll} method.
+     * @effect This method performs a hit roll using a random value between 0 and 100,
+     * then adjusts the roll .
      * If the adjusted roll is greater than or equal to the target's defense, the attack hits.
+     *      | if adjustedRoll >= target.getDefense()
+     *      |   target.reduceHP(Math.max(0, attacker.getBaseDamage()))
      *
      * @effect On a successful hit, damage is calculated from the attacker's base damage and applied
      * to the target. If the damage is equal to or greater than the target's current HP,
@@ -31,6 +34,7 @@ public class DefaultBattleSystem implements BattleSystem {
      *              | attacker.normaliseHP()
      *
      * @effect The chosenItems list determines what items are looted from the target on a killing blow.
+     *      | loot(target, attacker, chosenItems)
      *
      * @param attacker
      *      the entity initiating the hit
@@ -41,8 +45,8 @@ public class DefaultBattleSystem implements BattleSystem {
      * @param chosenItems
      *      a list of items to be looted if the target is killed
      */
-    @Override
-    public void executeHit(Entity attacker, Entity target, ArrayList<Item> chosenItems) {
+    private void executeHit(Entity attacker, Entity target, ArrayList<Item> chosenItems) {
+        if (attacker == null || target == null || attacker.isTerminated() || target.isTerminated()) return;
         Random random = new Random();
 
         int roll = random.nextInt(101);
@@ -71,27 +75,29 @@ public class DefaultBattleSystem implements BattleSystem {
      *
      * @effect Each entity takes turns executing a hit on the other. The battle continues
      * until one of the entities has 0 or less HP, at which point the loop ends.
+     *      | while (!hero.isTerminated() && !monster.isTerminated())
+     *      |       executeHit()
      *
-     * @param entity1
+     * @param hero
      *      the first combatant
      *
-     * @param entity2
+     * @param monster
      *      the second combatant
      *
      * @param chosenItems
      *      the list of items that may be looted if a killing blow occurs
      */
-    public void battle(Entity entity1, Entity entity2, ArrayList<Item> chosenItems) {
-        boolean entity1Turn = true;
+    public void battle(Hero hero, Entity monster, ArrayList<Item> chosenItems) {
+        boolean heroTurn = true; //TODO: randomise this
 
-        while (!entity1.isTerminated() && !entity2.isTerminated()) {
-            if (entity1Turn) {
-                executeHit(entity1, entity2, chosenItems);
+        while (!hero.isTerminated() && !monster.isTerminated()) {
+            if (heroTurn) {
+                executeHit(hero, monster, chosenItems);
             } else {
-                executeHit(entity2, entity1, chosenItems);
+                executeHit(monster, hero, chosenItems);
             }
 
-            entity1Turn = !entity1Turn;
+            heroTurn = !heroTurn;
         }
     }
 
