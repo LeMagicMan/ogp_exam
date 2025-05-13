@@ -88,7 +88,7 @@ public class DefaultBattleSystem {
      *      the list of items that may be looted if a killing blow occurs
      */
     public void battle(Hero hero, Entity monster, ArrayList<Item> chosenItems) {
-        boolean heroTurn = true; //TODO: randomise this
+        boolean heroTurn = true; //TODO: add initiator
 
         while (!hero.isTerminated() && !monster.isTerminated()) {
             if (heroTurn) {

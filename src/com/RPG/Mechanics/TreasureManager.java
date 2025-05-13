@@ -96,12 +96,52 @@ public class TreasureManager {
         }
     }
 
+    /**
+     * Enables a non-intelligent looter entity to loot items from a defeated entity
+     * based on how "shiny" or valuable the items appear.
+     *
+     * @effect This method filters out any null or terminated items from the defeated entity's inventory,
+     * then sorts the remaining items in descending order of their ShineLevel's valueMultiplier.
+     * The looter then attempts to equip or store the shiniest items first.
+     *      | for index > defeatedItems.size(); index++
+     *      |   if defeatedItems.get(index).isTerminated || defeatedItems.get(index) == null
+     *      |       defeatedItems.remove(item)
+     *      |   if(defeatedItems.get(index).getShineLevel().getValueMultiplier() < defeatedItems.get(index + 1).getShineLevel().getValueMultiplier())
+     *      |       Item item1 = defeatedItems.get(index ).getShineLevel().getValueMultiplier()
+     *      |       defeatedItems.get(index) = defeatedItems.get(index + 1)
+     *      |       defeatedItems.get(index + 1) = item1
+     *      |       index == 0
+     *
+     *  @effect For each valid item:
+     *      1. If the item is currently equipped by the defeated entity, it is first unequipped from its anchor point.
+     *          | if item.getHolder != null
+     *          |       item.getHolder().unequip(item.getHolder().getAnchorPointWithItem(item), item)
+     *
+     *      2.The looter then tries to equip or store the item
+     *          | looter.tryEquipOrBackpack().
+     *
+     *      3.If this fails, the defeated entity is asked again to unequip the item.
+     *          | for each item in defeatedItems
+     *          |   defeated.unequip(item.getAnchorpoint(), item)
+     *
+     * @note  This behavior models simple creatures or AI looters attracted to flashy, high-value items
+     * without regard for utility or fit.
+     *
+     * @param looter
+     *      the entity attempting to loot items
+     *
+     * @param defeated
+     *      the entity that has been defeated
+     *
+     * @param defeatedItems
+     *      the list of items available from the defeated entity (may include nulls or terminated items)
+     */
     @Model
     private static void lootShiny(Entity looter, Entity defeated, List<Item> defeatedItems) {
         defeatedItems.stream()
                 .filter(item -> item != null && !item.isTerminated())
                 .sorted((item1, item2) ->
-                        Float.compare(item2.getShineLevel().getValueMultiplier(), item1.getShineLevel().getValueMultiplier())) // Sorting based on valueMultiplier
+                        Float.compare(item2.getShineLevel().getValueMultiplier(), item1.getShineLevel().getValueMultiplier()))
                 .forEach(item -> {
                     AnchorPoint anchor = item.getHolder().getAnchorPointWithItem(item);
                     if (anchor != null) {
@@ -115,51 +155,123 @@ public class TreasureManager {
                 });
     }
 
+    /**
+     * Attempts to equip the given item to an available anchor point on the entity, or store it in a backpack if no
+     * appropriate equipment slot is available.
+     *
+     * @effect The method first checks for a compatible, free anchor point where the item can be equipped.
+     * If such a point is found, it attempts to equip the item and returns true on success.
+     *      | if findFreeAnchorPoint(entity, item) != null
+     *      |   entity.equip(findFreeAnchorPoint(entity, item), item)
+     *      | result == true
+     *
+     *
+     * @effect If no appropriate equipment slot is available or equipping fails, the method then searches for a backpack
+     * on the entity. If one exists and can accept the item, it attempts to equip the item into the backpack.
+     *      | if findBackpack(entity) != null && backpack.canAttach(item)
+     *      |   entity.equip(findBackpack(entity), item)
+     *      | result == true
+     *
+     *
+     *
+     * @return If both equipping and storing in a backpack fail, the method returns false.
+     *      | result == false
+     *
+     * @param entity
+     *      the entity that will attempt to equip or store the item
+     *
+     * @param item
+     *      the item to equip or store
+     */
     @Model
     private static boolean tryEquipOrBackpack(Entity entity, Item item) {
         AnchorPoint freeEquipSlot = findFreeAnchorPoint(entity, item);
         if (freeEquipSlot != null) {
-            try {
                 entity.equip(freeEquipSlot, item);
                 return true;
-            } catch (Exception ignored) {}
         }
 
-        AnchorPoint backpack = findBackpack(entity);
-        if (backpack != null && backpack.canAttach(item)) {
-            try {
-                entity.equip(backpack, item);
-                return true;
-            } catch (Exception ignored) {}
+        AnchorPoint back = findBackpack(entity);
+        if (back != null && back.canAttach(item)) {
+            entity.equip(back, item);
+            return true;
         }
 
         return false;
     }
 
+    /**
+     * Searches for a free (unused) anchor point on the given entity that can accept the specified item,
+     * excluding anchor points that represent backpacks.
+     *
+     * @effect The method iterates through all anchor points on the entity and returns the first one that
+     *      1. Is not currently occupied by an item
+     *          | !ap.hasItem()
+     *
+     *      2. Can accept the given item based on type or compatibility
+     *          | ap.canAttach(item)
+     *
+     *      3.Is not considered a backpack anchor point
+     *          | !isBackpack(ap)
+     *
+     * @param entity
+     *      the entity to search for a valid anchor point
+     *
+     * @param item
+     *      the item that needs to be equipped
+     *
+     * @return the first suitable AnchorPoint that can hold the item, or null if none are found
+     *
+     */
     @Model
     private static AnchorPoint findFreeAnchorPoint(Entity entity, Item item) {
         for (int i = 0; i < entity.getAmountOfAnchorPoints(); i++) {
-            AnchorPoint ap = entity.getAnchorPointAt(i);
-            if (!ap.hasItem() && ap.canAttach(item) && !isBackpack(ap)) {
-                return ap;
+            AnchorPoint anchorPoint = entity.getAnchorPointAt(i);
+            if (!anchorPoint.hasItem() && anchorPoint.canAttach(item) && !isBackpack(anchorPoint)) {
+                return anchorPoint;
             }
         }
         return null;
     }
 
+    /**
+     * Searches for and returns the first anchor point on the given entity that is classified as a backpack.
+     *
+     * @effect The method iterates through all of the entity's anchor points and checks each one.
+     * It returns the first anchor point that qualifies as a backpack.
+     *      | for i = 0; i < entity.getAmountOfAnchorPoints(); i++
+     *      |   if (isBackpack(entity.getAnchorPointAt(i)))
+     *      |       result == entity.getAnchorPointAt(i)
+     *
+     *
+     * @param entity
+     *      the entity whose anchor points are being searched
+     *
+     * @return the first AnchorPoint identified as a backpack, or null if none are found
+     */
     @Model
     private static AnchorPoint findBackpack(Entity entity) {
         for (int i = 0; i < entity.getAmountOfAnchorPoints(); i++) {
-            AnchorPoint ap = entity.getAnchorPointAt(i);
-            if (isBackpack(ap)) {
-                return ap;
+            AnchorPoint anchorPoint = entity.getAnchorPointAt(i);
+            if (isBackpack(anchorPoint)) {
+                return anchorPoint;
             }
         }
         return null;
     }
 
+    /**
+     * Determines whether the given anchor point is designated for a backpack.
+     *
+     * @param anchorPoint
+     *      the anchor point to evaluate
+     *
+     * @return true if the anchor point is intended for backpacks; false otherwise
+     *      | result == anchorPoint.getAllowedItemType() == ItemType.BACKPACK
+     *
+     */
     @Model
-    private static boolean isBackpack(AnchorPoint ap) {
-        return ap.getAllowedItemType() == ItemType.BACKPACK;
+    private static boolean isBackpack(AnchorPoint anchorPoint) {
+        return anchorPoint.getAllowedItemType() == ItemType.BACKPACK;
     }
 }
