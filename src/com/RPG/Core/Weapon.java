@@ -128,6 +128,17 @@ public class Weapon extends Item {
     }
 
     /**
+     * returns the default damage of a weapon
+     *
+     * @return the defaultDamage
+     *      | this.defaultDamage
+     */
+    @Override
+    public int getDefaultDamage(){
+        return defaultDamage;
+    }
+
+    /**
      * getter for an Item at a given Index in a weapon
      *
      * @param index
@@ -189,6 +200,7 @@ public class Weapon extends Item {
      * @return true if Damage is bigger than zero, and smaller than maxDamage, false otherwise
      *      | result == (Damage > 0 && Damage <= maxDamage)
      */
+    @Override
     public boolean isValidDamage(int Damage){
         return Damage > 0 && Damage <= maxDamage;
     }

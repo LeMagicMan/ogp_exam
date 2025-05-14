@@ -40,6 +40,16 @@ public class Monster extends Entity {
             ItemType.BACKPACK, new BackpackFactory()
     );
 
+    /**
+     * A variable representing whether an entity can heal
+     */
+    private final Boolean Healable = false;
+
+    /**
+     * A variable representing whether an entity is intelligent
+     */
+    private Boolean Intelligent = false;
+
     /**********************************************************
      * Constructors
      *********************************************************/
@@ -90,6 +100,17 @@ public class Monster extends Entity {
     /**********************************************************
      * Getters and Setters
      **********************************************************/
+
+    /**
+     * getter for the nameRegex of an entity
+     *
+     * @return the nameRegex
+     * | this.nameRegex
+     */
+    @Override
+    public String getNameRegex() {
+        return nameRegex;
+    }
 
     /**
      * getter for the adjusted roll of a monster
@@ -146,7 +167,27 @@ public class Monster extends Entity {
         return super.isValidName(name);
     }
 
+    /**
+     * checks whether an entity can heal
+     *
+     * @return true if an entity can heal, otherwise false
+     * | Entity.Healable
+     */
+    @Override
+    public boolean isHealable() {
+        return Healable;
+    }
 
+    /**
+     * getter for the intelligent of an entity
+     *
+     * @return true if is Intelligent, false otherwise
+     * | this.Intelligent
+     */
+    @Override
+    public boolean isIntelligent() {
+        return Intelligent;
+    }
 
     /**
      * Attempts to create loot items for each anchor point based on a random spawn chance.
@@ -225,6 +266,16 @@ public class Monster extends Entity {
     @Override
     public boolean isValidSkinType(SkinType skinType){
         return skinType != SkinType.NORMAL;
+    }
+
+    /**
+     * a checker that checks if a monster has proper anchorpoints
+     *
+     * @return true
+     */
+    @Override
+    public boolean hasProperAnchorpoints() {
+        return true;
     }
 }
 

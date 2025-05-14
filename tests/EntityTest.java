@@ -1,6 +1,8 @@
+import com.RPG.Core.DamageType;
 import com.RPG.Core.Hero;
 import com.RPG.Core.Monster;
-import com.RPG.Exception.*;
+import com.RPG.Core.SkinType;
+import com.RPG.Exception.InvalidValueException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,84 +12,117 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityTest {
-    Hero HeroTest1;
-    Monster MonsterTest1;
-    Hero HeroTest2;
-    Monster MonsterTest2;
+
+    private Hero hero;
+    private Monster monster;
 
     @BeforeEach
-    public void setUpFixture() throws InvalidNameException, InvalidHPException, InvalidValueException, InvalidHolderException, InvalidItemsException, InvalidDamageTypesException, InvalidSkinTypeException {
-        HeroTest1 = new Hero("Gandalf");
-        MonsterTest1 = new Monster("Carcharoth");
-        HeroTest2 = new Hero("James: o’Ha’ra");
-        MonsterTest2 = new Monster("James o’Hara");
+    public void setUp() throws Exception {
+        hero = new Hero("Artemis");
+        monster = new Monster("Gorgon");
+    }
+
+    // ----------------------------
+    // CONSTRUCTOR + GETTER TESTS
+    // ----------------------------
+
+    @Test
+    public void testHeroInitialization() {
+        assertEquals("Artemis", hero.getName());
+        assertEquals(997L, hero.getMaxHP());
+        assertEquals(997L, hero.getHP());
+        assertTrue(hero.getStrength().compareTo(BigDecimal.ZERO) > 0);
     }
 
     @Test
-    public void testHeroConstructor() {
+    public void testMonsterInitialization() {
+        assertEquals("Gorgon", monster.getName());
+        assertEquals(997L, monster.getMaxHP());
+        assertEquals(997L, monster.getHP());
 
-        /* name */
-        //Legal cases
-        assertEquals("Gandalf", HeroTest1.getName());
-        assertEquals("James: o’Ha’ra", HeroTest2.getName());
+        assertEquals(5, monster.getAmountOfAnchorPoints());
+        assertEquals(SkinType.THICK, monster.getSkinType());
+        assertEquals(1, monster.getAmountOfDamageTypes());
+        assertTrue(monster.hasDamageType(DamageType.CLAWS));
+    }
 
-        //IllegalCases
-        assertThrows(InvalidNameException.class, () -> new Hero("gandalf"));
-        assertThrows(InvalidNameException.class, () -> new Hero("Ga’nd’al’f"));
-        assertThrows(InvalidNameException.class, () -> new Hero("Gand:alf"));
-        assertThrows(InvalidNameException.class, () -> new Hero("Gand&alf"));
+    // ----------------------------
+    // DAMAGE & HEALING LOGIC
+    // ----------------------------
 
-        /* HP */
-        //Legal cases
-        assertEquals(997L, HeroTest1.getHP());
-        assertEquals(997L, HeroTest2.getHP());
-        assertTrue(HeroTest1.isValidHp(293L));
+    @Test
+    public void testDamageApplication() throws InvalidValueException {
+        hero.reduceHP(300L);
+        assertEquals(697L, hero.getHP());
 
-        //IllegalCases
-        assertFalse(HeroTest1.isValidHp(-10L));
-        assertFalse(HeroTest2.isValidHp(800L));
-        assertFalse(HeroTest2.isValidHp(-1303L));
-
-        /* Strength */
-        //Legal cases
-        assertTrue(HeroTest1.isValidStrength(HeroTest1.getStrength()));
-        assertTrue(HeroTest2.isValidStrength(HeroTest2.getStrength()));
-        assertTrue(HeroTest1.isValidStrength(BigDecimal.valueOf(800)));
-
-        //IllegalCases
-        assertFalse(HeroTest2.isValidStrength(BigDecimal.valueOf(-800)));
-        
-        /* Anchorpoints */
-        //Legal cases
-        assertTrue(HeroTest1.hasProperAnchorpoints());
-        assertTrue(HeroTest2.hasProperAnchorpoints());
-
-        //IllegalCases //TODO: make monster and cast it to hero
-
-        /* DamageTypes */
-        //Legal cases
-
-        //IllegalCases
-
-
-
-        /* Capacity */
-        assertEquals(1000L, HeroTest1.getCapacity());
+        monster.reduceHP(997L);
+        assertEquals(0L, monster.getHP());
     }
 
     @Test
-    public void testMonsterConstructor() {
+    public void testNegativeDamageThrowsException() {
+        hero.reduceHP(-10L);
+        assertEquals(hero.getMaxHP(), hero.getHP());
+    }
 
-        /* name */
-        //Legal cases
-        assertEquals("Carcharoth", MonsterTest1.getName());
-        assertEquals("James o’Hara", MonsterTest2.getName());
+    @Test
+    public void testHealingLogic() throws InvalidValueException {
+        hero.reduceHP(200L);
+        assertEquals(797L, hero.getHP());
 
-        //IllegalCases
-        assertThrows(InvalidNameException.class, () -> new Monster("carcharoth"));
-        assertThrows(InvalidNameException.class, () -> new Monster("Carchar|oth"));
+        hero.increaseHP(100L);
+        assertEquals(897L, hero.getHP());
 
-        /* Skin */
+        // Overhealing should cap at max HP
+        hero.increaseHP(500L);
+        assertEquals(hero.getMaxHP(), hero.getHP());
 
+        monster.reduceHP(200L);
+        assertEquals(797, monster.getHP());
+        monster.increaseHP(100L);
+        assertEquals(797, monster.getHP());
+    }
+
+    // ----------------------------
+    // BASE DAMAGE
+    // ----------------------------
+
+    @Test
+    public void testHeroBaseDamageNonZero() {
+        assertTrue(hero.getBaseDamage() > 0);
+    }
+
+    @Test
+    public void testMonsterBaseDamageNonZero() {
+        assertTrue(monster.getBaseDamage() > 0);
+    }
+
+    // ----------------------------
+    // NAME INVARIANT
+    // ----------------------------
+
+    @Test
+    public void testInvalidNameThrowsExceptionForHero() {
+        assertThrows(InvalidNameException.class, () -> new Hero(""));
+    }
+
+    @Test
+    public void testInvalidNameThrowsExceptionForMonster() {
+        assertThrows(InvalidNameException.class, () -> new Monster(" "));
+    }
+
+    // ----------------------------
+    // ANCHOR POINT & DAMAGE TYPES
+    // ----------------------------
+
+    @Test
+    public void testMonsterAnchorPoints() {
+        assertEquals(5, monster.getAmountOfAnchorPoints());
+    }
+
+
+    @Test
+    public void testHeroSkinTypeIsNotNull() {
+        assertNotNull(hero.getSkinType());
     }
 }

@@ -40,7 +40,7 @@ public class Hero extends Entity {
     /**
      * A variable representing a hero's capacity multiplier
      */
-    private static final float capacityMultiplier = 20;
+    private static final float capacityMultiplier = 2;
 
     /**
      * defaultStrength of a hero
@@ -121,7 +121,7 @@ public class Hero extends Entity {
     private static ArrayList<Item> createDefaultItems() {
         ArrayList<Item> defaultItems = new ArrayList<>();
         try {
-            defaultItems.add(new Weapon(null, AnchorPoint.RIGHTHAND));
+            defaultItems.add(new Weapon(null, null));
         } catch (InvalidValueException | InvalidHolderException e) {
             assert false;
         }
@@ -326,9 +326,11 @@ public class Hero extends Entity {
         for (Item item : toEquip) {
             for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
                 AnchorPoint anchorpoint = getAnchorPointAt(i);
-                if (anchorpoint.getItem() == null && anchorpoint.getAllowedItemType() == item.getItemType()) {
-                    this.equip(anchorpoint, item);
-                    break;
+                if(anchorpoint.getAllowedItemType() == ItemType.ANY || anchorpoint.getAllowedItemType() == item.getItemType()) {
+                    if (anchorpoint.getItem() == null && anchorpoint.getAllowedItemType() == item.getItemType()) {
+                        this.equip(anchorpoint, item);
+                        break;
+                    }
                 }
             }
         }
@@ -360,7 +362,27 @@ public class Hero extends Entity {
         }
     }
 
+    /**
+     * getter for the nameRegex of a hero
+     *
+     * @return the nameRegex
+     *      | this.nameRegex
+     */
+    @Override
+    public String getNameRegex() {
+        return nameRegex;
+    }
 
+    /**
+     * getter for the intelligent of an entity
+     *
+     * @return true if is Intelligent, false otherwise
+     * | this.Intelligent
+     */
+    @Override
+    public boolean isIntelligent() {
+        return Intelligent;
+    }
 
     /**
      * a method to calculate the capacity of a Hero
@@ -398,6 +420,17 @@ public class Hero extends Entity {
     }
 
     /**
+     * checks whether an entity can heal
+     *
+     * @return true if an entity can heal, otherwise false
+     * | Entity.Healable
+     */
+    @Override
+    public boolean isHealable() {
+        return Healable;
+    }
+
+    /**
      * A checker to see if the strength is valid
      *
      * @param strength
@@ -429,6 +462,7 @@ public class Hero extends Entity {
      * @return true if a hero has all the needed anchorpoints exactly once, false otherwise
      *      | TODO: ask about formal
      */
+    @Override
     public boolean hasProperAnchorpoints() {
         Set<AnchorPoint> expected = EnumSet.of(
                 AnchorPoint.BELT,

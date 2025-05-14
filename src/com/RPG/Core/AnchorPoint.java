@@ -94,9 +94,11 @@ public enum AnchorPoint {
      */
     public ArrayList<Item> getAllItems() {
         ArrayList<Item> items = new ArrayList<>();
-        items.add(item);
-        for(int Index = 0; Index < item.getAmountOfItems(); Index++) {
-            items.add(item.getItemAt(Index));
+        if (item != null) {
+            items.add(item);
+            for (int Index = 0; Index < item.getAmountOfItems(); Index++) {
+                items.add(item.getItemAt(Index));
+            }
         }
         return items;
     }

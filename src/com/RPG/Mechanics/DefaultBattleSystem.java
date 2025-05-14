@@ -3,6 +3,7 @@ package com.RPG.Mechanics;
 import com.RPG.Core.Entity;
 import com.RPG.Core.Hero;
 import com.RPG.Core.Item;
+import com.RPG.Core.Monster;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -87,8 +88,8 @@ public class DefaultBattleSystem {
      * @param chosenItems
      *      the list of items that may be looted if a killing blow occurs
      */
-    public void battle(Hero hero, Entity monster, ArrayList<Item> chosenItems) {
-        boolean heroTurn = true; //TODO: add initiator
+    public void battle(Hero hero, Monster monster, ArrayList<Item> chosenItems, Entity initiator) {
+        boolean heroTurn = (initiator == hero);
 
         while (!hero.isTerminated() && !monster.isTerminated()) {
             if (heroTurn) {
@@ -100,6 +101,5 @@ public class DefaultBattleSystem {
             heroTurn = !heroTurn;
         }
     }
-
 
 }

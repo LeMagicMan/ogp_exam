@@ -48,7 +48,7 @@ public abstract class Entity {
     /**
      * A variable representing the name of an entity (defensive)
      */
-    private String Name= "";
+    private String Name = "";
 
     /**
      * A variable representing the maximum amount of hitpoints of an entity (nominal)
@@ -65,15 +65,6 @@ public abstract class Entity {
      */
     private ArrayList<AnchorPoint> AnchorPoints = new ArrayList<>();
 
-    /**
-     * A variable representing whether an entity can heal
-     */
-    private final Boolean Healable = false;
-
-    /**
-     * A variable representing whether an entity is intelligent
-     */
-    private final Boolean Intelligent = false;
 
     /**
      * A variable representing the terminated status of an entity
@@ -83,7 +74,7 @@ public abstract class Entity {
     /**
      * A regex that the name of an entity needs to follow
      */
-    private static final String nameRegex = "^.*+$"; //"^[A-Z][a-zA-Z ':]*$" //TODO: ask prof
+    private static final String nameRegex = "^.*+$";
 
     /**
      * A variable representing the skinType of an entity
@@ -127,50 +118,40 @@ public abstract class Entity {
     /**
      * A constructor for an abstract entity
      *
-     * @param name
-     *      name of the entity
-     *
-     * @param maxHP
-     *      maximum HP of the entity
-     *
-     * @param Anchorpoints
-     *      The anchorpoints of an entity
-     *
-     * @pre name must be Valid
-     *      | isValidName()
-     *
-     * @pre maxHP must be Valid
-     *      | isValidHP()
-     *
-     * @pre SkinType must be Valid
-     *      | isValidSkinType()
-     *
-     * @pre must have valid damageTypes
-     *      | hasValidDamageTypes()
-     *
-     * @throws InvalidNameException gets thrown when the name isn't valid
-     *      | !isValidName()
-     *
-     * @throws InvalidSkinTypeException gets thrown when skinType isn't valid
-     *      | !isValidSkinType()
-     *
+     * @param name         name of the entity
+     * @param maxHP        maximum HP of the entity
+     * @param Anchorpoints The anchorpoints of an entity
+     * @throws InvalidNameException        gets thrown when the name isn't valid
+     *                                     | !isValidName()
+     * @throws InvalidSkinTypeException    gets thrown when skinType isn't valid
+     *                                     | !isValidSkinType()
      * @throws InvalidDamageTypesException gets thrown when damageTypes are not valid
-     *      | !hasValidDamageTypes
+     *                                     | !hasValidDamageTypes
+     * @pre name must be Valid
+     * | isValidName()
+     * @pre maxHP must be Valid
+     * | isValidHP()
+     * @pre SkinType must be Valid
+     * | isValidSkinType()
+     * @pre must have valid damageTypes
+     * | hasValidDamageTypes()
      */
     protected Entity(String name, Long maxHP, ArrayList<AnchorPoint> Anchorpoints, SkinType skinType, HashSet<DamageType> damageTypes) throws InvalidNameException, InvalidSkinTypeException, InvalidDamageTypesException {
-        if(!isValidName(name)){
-            throw new InvalidNameException();
+        if (!isValidName(name)) {
+            throw new InvalidNameException("name must follow naming rules");
         }
-        if(!isValidSkinType(skinType)){
+        if (!isValidSkinType(skinType)) {
             throw new InvalidSkinTypeException("SkinType is not Valid");
         }
-        if(!hasValidDamageTypes(damageTypes)){
+        if (!hasValidDamageTypes(damageTypes)) {
             throw new InvalidDamageTypesException("DamageTypes are not valid");
         }
         this.Name = name;
         this.MaxHP = maxHP;
         this.HP = maxHP;
         this.AnchorPoints = Anchorpoints;
+        this.skinType = skinType;
+        this.DamageTypes.addAll(damageTypes);
     }
 
 
@@ -181,8 +162,7 @@ public abstract class Entity {
     /**
      * setter for the strength of an entity
      *
-     * @param strength
-     *      Strength we want to set
+     * @param strength Strength we want to set
      */
     protected void setStrength(BigDecimal strength) {
         this.Strength = strength;
@@ -191,11 +171,10 @@ public abstract class Entity {
     /**
      * setter for the protection of an entity
      *
-     * @param protection
-     *      protection we want to set
+     * @param protection protection we want to set
      */
     protected void setProtection(int protection) {
-        if (isValidProtection(protection)){
+        if (isValidProtection(protection)) {
             this.Protection = protection;
         }
     }
@@ -204,7 +183,7 @@ public abstract class Entity {
      * getter for the roundingMode of the strength
      *
      * @return the roundingMode
-     *      | this.RoundingMode
+     * | this.RoundingMode
      */
     @Basic
     protected RoundingMode getRoundingMode() {
@@ -215,7 +194,7 @@ public abstract class Entity {
      * getter for the precision of the strength
      *
      * @return the strengthScale
-     *      | this.strengthScale
+     * | this.strengthScale
      */
     @Basic
     protected int getStrengthScale() {
@@ -226,7 +205,7 @@ public abstract class Entity {
      * getter for the strength of a Hero
      *
      * @return strength of hero
-     *      | this.Strength
+     * | this.Strength
      */
     @Basic
     public BigDecimal getStrength() {
@@ -236,8 +215,7 @@ public abstract class Entity {
     /**
      * setter for the Damagetypes of an entity
      *
-     * @param damageTypes
-     *      the damageTypes we want to set
+     * @param damageTypes the damageTypes we want to set
      */
     protected void setDamageTypes(HashSet<DamageType> damageTypes) {
         DamageTypes = damageTypes;
@@ -246,15 +224,13 @@ public abstract class Entity {
     /**
      * a getter for an anchorpoint at a certain index
      *
-     * @pre Index must be within range
-     *
      * @param index the index of the anchorpoint
-     *
      * @return the anchorpoint at the given Index
-     *      | this.AnchorPoints.get(index)
+     * | this.AnchorPoints.get(index)
+     * @pre Index must be within range
      */
-    public AnchorPoint getAnchorPointAt(int index){
-        if(index >= this.getAmountOfAnchorPoints()){
+    public AnchorPoint getAnchorPointAt(int index) {
+        if (index >= this.getAmountOfAnchorPoints()) {
             return null;
         }
         return AnchorPoints.get(index);
@@ -264,9 +240,9 @@ public abstract class Entity {
      * a getter for the amount of anchorpoints
      *
      * @return amount of anchorpoints
-     *      | this.AnchorPoints.size()
+     * | this.AnchorPoints.size()
      */
-    public int getAmountOfAnchorPoints(){
+    public int getAmountOfAnchorPoints() {
         return AnchorPoints.size();
     }
 
@@ -274,30 +250,36 @@ public abstract class Entity {
      * getter for the amount of DamageTypes
      *
      * @return the amount of DamageTypes
-     *      | result == DamageTypes.size()
+     * | result == DamageTypes.size()
      */
-    public int getAmountOfDamageTypes(){
+    public int getAmountOfDamageTypes() {
         return DamageTypes.size();
     }
 
     /**
      * checks if an entity has a certain damageType
      *
-     * @param damageType
-     *      the damageType we are looking for
-     *
+     * @param damageType the damageType we are looking for
      * @return true if entity has damageType, false otherwise
-     *      | result == DamageTypes.contains(damageType)
+     * | result == DamageTypes.contains(damageType)
      */
     public boolean hasDamageType(DamageType damageType) {
         return DamageTypes.contains(damageType);
     }
 
     /**
+     * getter for the nameRegex of an entity
+     *
+     * @return the nameRegex
+     * | this.nameRegex
+     */
+    public abstract String getNameRegex();
+
+    /**
      * getter for the name of an entity
      *
      * @return the name of an entity
-     *      | Entity.Name
+     * | Entity.Name
      */
     @Basic
     public String getName() {
@@ -308,7 +290,7 @@ public abstract class Entity {
      * getter for the MaxHP of an entity
      *
      * @return the MaxHP
-     *      | Entity.MaxHP
+     * | Entity.MaxHP
      */
     @Basic
     public long getMaxHP() {
@@ -319,7 +301,7 @@ public abstract class Entity {
      * getter for the HP of an entity
      *
      * @return the HP
-     *      | Entity.HP
+     * | Entity.HP
      */
     @Basic
     public long getHP() {
@@ -330,13 +312,13 @@ public abstract class Entity {
      * getter for the total amount of Damage from all damagetypes
      *
      * @return the total amount of basDamage
-     *      | totalDamage = 0
-     *      | for each damageType in DamageTypes
-     *      |   totalDamage += damageType.getBaseDamage()
-     *      | result == totalDamage
+     * | totalDamage = 0
+     * | for each damageType in DamageTypes
+     * |   totalDamage += damageType.getBaseDamage()
+     * | result == totalDamage
      */
     @Model
-    private long getTotalDamageTypeDamage(){
+    private long getTotalDamageTypeDamage() {
         long totalDamage = 0;
         for (DamageType damageType : DamageTypes) {
             totalDamage += damageType.getBaseDamage();
@@ -347,14 +329,13 @@ public abstract class Entity {
     /**
      * getter for the total amount of damage from weapons in either the right or left hand
      *
-     * @effect if the entity is not intelligent we return 0
-     *
      * @return the amount of Damage from the item in each hand
-     *      | result == this.getAnchorPoint(AnchorPoint.LEFTHAND).getItem().getDamage() + this.getAnchorPoint(AnchorPoint.RIGHTHAND).getItem().getDamage()
+     * | result == this.getAnchorPoint(AnchorPoint.LEFTHAND).getItem().getDamage() + this.getAnchorPoint(AnchorPoint.RIGHTHAND).getItem().getDamage()
+     * @effect if the entity is not intelligent we return 0
      */
     @Model
-    private long getActiveWeaponDamage(){
-        if (this.Intelligent) {
+    private long getActiveWeaponDamage() {
+        if (this.isIntelligent()) {
             long totalDamage = 0;
             if (this.AnchorPoints.contains(AnchorPoint.LEFTHAND)) {
                 if (this.getAnchorPoint(AnchorPoint.LEFTHAND).hasItem()) {
@@ -374,8 +355,7 @@ public abstract class Entity {
     /**
      * setter for the skinType of an entity
      *
-     * @param skinType
-     *      skintype of that entity
+     * @param skinType skintype of that entity
      */
     @Raw
     protected void setSkinType(SkinType skinType) {
@@ -386,10 +366,10 @@ public abstract class Entity {
      * a getter for the protection of an entity
      *
      * @return the protection of that entity
-     *      | this.Protection
+     * | this.Protection
      */
     @Basic
-    public int getProtection(){
+    public int getProtection() {
         return Protection;
     }
 
@@ -397,23 +377,22 @@ public abstract class Entity {
      * getter for the total Defense of an entity
      *
      * @return the amount of baseProtection + Protection from skinType
-     *      | result == this.getProtection() + skinType.getProtection()
+     * | result == this.getProtection() + skinType.getProtection()
      */
-    public int getDefense(){
+    public int getDefense() {
         return Protection + skinType.getProtection();
     }
 
     /**
      * getter for the baseDamage of an entity
      *
-     * @effect If the entity is intelligent we add the Active weapons damage
-     *
      * @return the total amount of base Damage
-     *      | totalDamage = 0
-     *      | if(this.isIntelligent())
-     *      |   totalDamage += this.getActiveWeaponDamage + this.getStrength + this.getTotalDamageTypeDamage - 10
-     *      | else totalDamage += his.getStrength + this.getTotalDamageTypeDamage - 10
-     *      | result == totalDamage
+     * | totalDamage = 0
+     * | if(this.isIntelligent())
+     * |   totalDamage += this.getActiveWeaponDamage + this.getStrength + this.getTotalDamageTypeDamage - 10
+     * | else totalDamage += his.getStrength + this.getTotalDamageTypeDamage - 10
+     * | result == totalDamage
+     * @effect If the entity is intelligent we add the Active weapons damage
      */
     public long getBaseDamage() {
         BigDecimal totalDamage = BigDecimal.ZERO;
@@ -421,7 +400,7 @@ public abstract class Entity {
         BigDecimal weaponDamage = BigDecimal.valueOf(this.getActiveWeaponDamage());
         BigDecimal damageTypeDamage = BigDecimal.valueOf(this.getTotalDamageTypeDamage());
 
-        if (this.Intelligent) {
+        if (this.isIntelligent()) {
             totalDamage = totalDamage.add(Strength).add(weaponDamage).add(damageTypeDamage).subtract(BigDecimal.TEN);
         } else {
             totalDamage = totalDamage.add(Strength).add(damageTypeDamage).subtract(BigDecimal.TEN);
@@ -436,16 +415,16 @@ public abstract class Entity {
      * getter for all the items an entity has
      *
      * @return all the items an entity has
-     *      | for each anchorpoint in anchorPoints
-     *      |   if anchorpoint.hasItem()
-     *      |       items.addAll(anchorPoint.getAllItems())
-     *      | result  == items
+     * | for each anchorpoint in anchorPoints
+     * |   if anchorpoint.hasItem()
+     * |       items.addAll(anchorPoint.getAllItems())
+     * | result  == items
      */
-    public ArrayList<Item> getAllItems(){
+    public ArrayList<Item> getAllItems() {
         ArrayList<Item> items = new ArrayList<>();
         for (AnchorPoint anchorPoint : AnchorPoints) {
             if (anchorPoint.hasItem()) {
-                items.addAll(anchorPoint.getAllItems());
+                items.add(anchorPoint.getItem());
             }
         }
         return items;
@@ -455,7 +434,7 @@ public abstract class Entity {
      * a getter for the skintype of an entity
      *
      * @return skintype of the entity
-     *      | Entity.skinType
+     * | Entity.skinType
      */
     @Basic
     public SkinType getSkinType() {
@@ -466,7 +445,7 @@ public abstract class Entity {
      * setter for the capacity of an entity
      *
      * @post Capacity is set to the return of calculateCapacity()
-     *      | this.Capacity == calculateCapacity()
+     * | this.Capacity == calculateCapacity()
      */
     @Raw
     protected void setCapacity() {
@@ -477,23 +456,24 @@ public abstract class Entity {
      * getter for the total weight of all items an entity has
      *
      * @return the total weight of all the entity's items
-     *      | for each item in this.getAllItems()
-     *      |   totalweight += item.getweight()
-     *      | result == totalweight
+     * | for each item in this.getAllItems()
+     * |   totalweight += item.getTotalWeightweight()
+     * | result == totalweight
      */
-    public double getTotalWeight(){
-        double getTotalWeight = 0;
-        for (Item item : this.getAllItems()) {
-            item.getWeight();
+    public double getTotalWeight() {
+        double TotalWeight = 0;
+        ArrayList<Item> items = getAllItems();
+        for (Item item : items) {
+            item.getTotalWeight();
         }
-        return getTotalWeight();
+        return TotalWeight;
     }
 
     /**
      * a getter for the capacity of an entity
      *
      * @return capacity of that entity
-     *      | Entity.Capacity
+     * | Entity.Capacity
      */
     public long getCapacity() {
         return Capacity;
@@ -502,24 +482,20 @@ public abstract class Entity {
     /**
      * finds a given Anchorpoint in the hashset
      *
-     * @pre given Anchorpoint must be in hashset
-     *      | this.hasAnchorpoint(anchorpoint)
-     *
-     * @effect if anchorpoint was not found return null
-     *      | if (!AnchorPoints.contains(anchorpoint))
-     *      | then result == null
-     *
-     * @param anchorPoint
-     *      AnchorPoint that needs to be found
-     *
+     * @param anchorPoint AnchorPoint that needs to be found
      * @return The AnchorPoint of the entity if found, null otherwise
-     *      | for each ap in AnchorPoints
-     *      |   if ap.equals(anchorpoint)
-     *      |   then result == ap
-     *      | result null
+     * | for each ap in AnchorPoints
+     * |   if ap.equals(anchorpoint)
+     * |   then result == ap
+     * | result null
+     * @pre given Anchorpoint must be in hashset
+     * | this.hasAnchorpoint(anchorpoint)
+     * @effect if anchorpoint was not found return null
+     * | if (!AnchorPoints.contains(anchorpoint))
+     * | then result == null
      */
     @Model
-    private AnchorPoint getAnchorPoint(AnchorPoint anchorPoint){
+    private AnchorPoint getAnchorPoint(AnchorPoint anchorPoint) {
         for (AnchorPoint ap : this.AnchorPoints) {
             if (ap.equals(anchorPoint)) {
                 return ap;
@@ -531,11 +507,9 @@ public abstract class Entity {
     /**
      * getter for the adjusted roll of an entity
      *
-     * @param roll
-     *      roll we need to adjust
-     *
+     * @param roll roll we need to adjust
      * @return the original roll
-     *      | result == roll
+     * | result == roll
      */
     public int getAdjustedRoll(int roll) {
         return roll;
@@ -546,7 +520,7 @@ public abstract class Entity {
      *
      * @effect makes the HP prime again
      */
-    public void normaliseHP(){
+    public void normaliseHP() {
         makePrime(this.HP);
     }
 
@@ -554,8 +528,7 @@ public abstract class Entity {
      * setter for the HP of an entity
      * ensures the HP is minimum 0 and maximum the maxHP
      *
-     * @param newHP
-     *      the Hp we want to set
+     * @param newHP the Hp we want to set
      */
     @Model
     private void setHP(long newHP) {
@@ -565,18 +538,16 @@ public abstract class Entity {
     /**
      * getter for an anchorpoint with a certain item
      *
-     * @param item
-     *      item we want to find the anchorpoint of
-     *
+     * @param item item we want to find the anchorpoint of
      * @return anchorpoint of the item
-     *      | for each anchorpoint in anchorpoints
-     *      |   if anchorpoint.getItem == item
-     *      |       result == anchorpoint
-     *      | result == null
+     * | for each anchorpoint in anchorpoints
+     * |   if anchorpoint.getItem == item
+     * |       result == anchorpoint
+     * | result == null
      */
-    public AnchorPoint getAnchorPointWithItem(Item item){
+    public AnchorPoint getAnchorPointWithItem(Item item) {
         for (AnchorPoint ap : this.AnchorPoints) {
-            if (ap.getItem() != null && ap.getItem().equals(item)){
+            if (ap.getItem() != null && ap.getItem().equals(item)) {
                 return ap;
             }
         }
@@ -591,27 +562,22 @@ public abstract class Entity {
      * getter for the intelligent of an entity
      *
      * @return true if is Intelligent, false otherwise
-     *      | this.Intelligent
+     * | this.Intelligent
      */
-    @Basic
-    public boolean isIntelligent() {
-        return Intelligent;
-    }
+    public abstract boolean isIntelligent();
 
     /**
      * getter for the next prime number
      *
-     * @param HP
-     *      The number we want to find the next prime number for
-     *
+     * @param HP The number we want to find the next prime number for
      * @return the next prime number
-     *      | if HP <= 2
-     *      |   result == 2
-     *      | if HP % 2 == 0
-     *      |   HP++
-     *      | while Not isPrime
-     *      |   HP += 2
-     *      | return HP
+     * | if HP <= 2
+     * |   result == 2
+     * | if HP % 2 == 0
+     * |   HP++
+     * | while Not isPrime
+     * |   HP += 2
+     * | return HP
      */
     @Model
     private long getNextPrime(long HP) {
@@ -626,10 +592,9 @@ public abstract class Entity {
 
     /**
      * makes a number prime
-     *      | getNextPrime(HP)
+     * | getNextPrime(HP)
      *
-     * @param HP
-     *      the number we want to make prime
+     * @param HP the number we want to make prime
      */
     @Model
     private void makePrime(long HP) {
@@ -640,17 +605,16 @@ public abstract class Entity {
      * terminates an entity
      *
      * @effect unequips all items on the anchorpoints of an entity
-     *      | for each anchorpoint in Anchorpoints
-     *      |   if anchorpoint.hasItem()
-     *      |       this.unequip(anchorpoint, anchorpoint.getItem)
-     *
+     * | for each anchorpoint in Anchorpoints
+     * |   if anchorpoint.hasItem()
+     * |       this.unequip(anchorpoint, anchorpoint.getItem)
      * @post entity is terminated
-     *      | this.Terminated = true
+     * | this.Terminated = true
      */
     @Model
-    private void terminate(){
+    private void terminate() {
         for (AnchorPoint anchorPoint : AnchorPoints) {
-            if (anchorPoint.hasItem()){
+            if (anchorPoint.hasItem()) {
                 this.unequip(anchorPoint, anchorPoint.getItem());
             }
         }
@@ -659,91 +623,81 @@ public abstract class Entity {
 
     /**
      * kills an entity
-     *      | terminate()
+     * | terminate()
      */
-    public void kill(){
+    public void kill() {
         this.terminate();
     }
 
     /**
      * reduces the Hp of an entity
      *
-     * @param Damage
-     *      the Damage delivered to the Hp
-     *
+     * @param Damage the Damage delivered to the Hp
      * @effect Hp is the current Hp - Damage
-     *      | this.getHP() - Damage
-     *
+     * | this.getHP() - Damage
      * @post when HP hits 0 the entity needs to be killed
-     *      | kill()
+     * | kill()
      */
-    public void reduceHP(long Damage){
-       setHP(this.getHP() - Damage);
+    public void reduceHP(long Damage) {
+        if (Damage < 0) {
+            return;
+        }
+        setHP(Math.max(0, this.getHP() - Damage));
     }
 
     /**
      * increases the HP of an entity
      *
+     * @param healingAmount the amount we want to increase
      * @pre entity must be healable
-     *
-     * @param healingAmount
-     *      the amount we want to increase
      */
-    public void increaseHP(long healingAmount){
-        if(Healable) {
-            setHP(this.getHP() + healingAmount);
+    public void increaseHP(long healingAmount) {
+        if (healingAmount < 0) {
+            return;
+        }
+        if (this.isHealable()) {
+            setHP(Math.min(this.getMaxHP(), this.getHP() + healingAmount));
         }
     }
 
     /**
      * equips a given item to a given anchorpoint
      *
+     * @param anchorPoint the anchorpoint we want to equip the item to
+     * @param item        the item we want to equip to the anchorpoint
      * @pre Entity must have anchorpoint
-     *      | hasAnchorPoint()
-     *
+     * | hasAnchorPoint()
      * @pre item must be valid
-     *      | item.isValidItem
-     *
+     * | item.isValidItem
      * @pre Entity or item cant be terminated
-     *      | this.isTerminated() || item.isTerminated()
-     *
+     * | this.isTerminated() || item.isTerminated()
      * @pre if item cant be null
-     *      | item != null
-     *
+     * | item != null
      * @effect if Item is in a backpack unpack it first
-     *      | item.getBackpack().unpack(item)
-     *
+     * | item.getBackpack().unpack(item)
      * @effect if anchorpoint already has an item, unequip it
-     *      | this.unequip(getAnchorPoint(anchorPoint), getAnchorPoint(anchorPoint).getItem());
-     *
-     * @param anchorPoint
-     *      the anchorpoint we want to equip the item to
-     *
-     * @param item
-     *      the item we want to equip to the anchorpoint
-     *
+     * | this.unequip(getAnchorPoint(anchorPoint), getAnchorPoint(anchorPoint).getItem());
      * @post Item of anchorpoint is set to given item
-     *      | this.getAnchorPoint(anchorPoint).setItem(item)
-     *
+     * | this.getAnchorPoint(anchorPoint).setItem(item)
      * @post Holder of the item is set to this entity
-     *      | item.setHolder(this)
+     * | item.setHolder(this)
      */
-    public void equip(AnchorPoint anchorPoint, Item item){
+    public void equip(AnchorPoint anchorPoint, Item item) {
         if (item == null) return;
 
-        if (!hasAnchorpoint(anchorPoint) || !item.isValidItem()){
+        if (!hasAnchorpoint(anchorPoint) || !item.isValidItem()) {
             return;
         }
-        if (this.isTerminated() || item.isTerminated()){
+        if (this.isTerminated() || item.isTerminated()) {
             return;
         }
-        if (!anchorPoint.canAttach(item)){
+        if (!anchorPoint.canAttach(item)) {
             return;
         }
-        if (item.getBackpack() != null){
+        if (item.getBackpack() != null) {
             item.getBackpack().unpackItem(item);
         }
-        if(getAnchorPoint(anchorPoint).getItem() != null){
+        if (getAnchorPoint(anchorPoint).getItem() != null) {
             this.unequip(getAnchorPoint(anchorPoint), getAnchorPoint(anchorPoint).getItem());
         }
         try {
@@ -761,41 +715,32 @@ public abstract class Entity {
     /**
      * unequips an item from an entity
      *
+     * @param anchorPoint the anchorpoint we want to unequip the item from
+     * @param item        the item we want to unequip from the anchorpoint
      * @pre Entity must have anchorpoint
-     *      | hasAnchorPoint()
-     *
+     * | hasAnchorPoint()
      * @pre Anchorpoint must contain Item
-     *      | getAnchorPoint(anchorPoint).hasAsItem(item)
-     *
+     * | getAnchorPoint(anchorPoint).hasAsItem(item)
      * @pre Entity or item cant be terminated
-     *      | this.isTerminated() || item.isTerminated()
-     *
+     * | this.isTerminated() || item.isTerminated()
      * @pre Anchorpoint must ba able to attach item
-     *      | anchorpoint.canAttach(Item)
-     *
-     * @param anchorPoint
-     *      the anchorpoint we want to unequip the item from
-     *
-     * @param item
-     *      the item we want to unequip from the anchorpoint
-     *
+     * | anchorpoint.canAttach(Item)
      * @post set item on anchorpoint to null
-     *      | getAnchorPoint(anchorPoint).setItem(null)
-     *
+     * | getAnchorPoint(anchorPoint).setItem(null)
      * @post Holder of Item must be set to null
-     *      | item.setHolder(null)
+     * | item.setHolder(null)
      */
-    public void unequip(AnchorPoint anchorPoint, Item item){
-        if (!hasAnchorpoint(anchorPoint)){
+    public void unequip(AnchorPoint anchorPoint, Item item) {
+        if (!hasAnchorpoint(anchorPoint)) {
             return;
         }
-        if (!getAnchorPoint(anchorPoint).hasAsItem(item)){
+        if (!getAnchorPoint(anchorPoint).hasAsItem(item)) {
             return;
         }
-        if (this.isTerminated() || item.isTerminated()){
+        if (this.isTerminated() || item.isTerminated()) {
             return;
         }
-        if (!anchorPoint.canAttach(item)){
+        if (!anchorPoint.canAttach(item)) {
             return;
         }
         try {
@@ -815,39 +760,34 @@ public abstract class Entity {
      *
      * @return capacity of that entity
      */
-    @Model @Raw
+    @Model
+    @Raw
     protected abstract long calculateCapacity();
 
     /**
      * Checks whether the given name is a valid name
      *
-     * @param name
-     *      The name to be checked
-     *
+     * @param name The name to be checked
      * @return True if the name is valid, not empty and follows the nameRegex, false otherwise
-     *      | if (name != null) && name.matches(nameRegex)
-     *      |   result == false
+     * | if (name != null) && name.matches(this.getNameRegex())
+     * |   result == false
      */
     @Raw
     public Boolean isValidName(String name) {
-        return name.matches(nameRegex);
+        return name.matches(this.getNameRegex()) && !name.isEmpty();
     }
 
     /**
      * Checks whether the Hp of an entity is valid
      *
-     * @param HP
-     *      The Hp that needs to be checked
-     *
-     * @effect
-     *      If the MaxHP is zero it means the maxHp has not been initialised yet, and thus is the HP allowed to be bigger than it to set it
-     *              | if (this.getMaxHP() == 0){result == (this.getHP() >= 0 && isPrime(getHP()))}
-     *
+     * @param HP The Hp that needs to be checked
      * @return true if HP is bigger han or equal to zero, is lower than or Equal to its max HP and the Hp is a Prime number
-     *      | result == (this.getHP() >= 0 && this.getHP <= this.getMaxHP() && isPrime(getHP()))
+     * | result == (this.getHP() >= 0 && this.getHP <= this.getMaxHP() && isPrime(getHP()))
+     * @effect If the MaxHP is zero it means the maxHp has not been initialised yet, and thus is the HP allowed to be bigger than it to set it
+     * | if (this.getMaxHP() == 0){result == (this.getHP() >= 0 && isPrime(getHP()))}
      */
     public Boolean isValidHp(Long HP) {
-        if (this.getMaxHP() == 0L){
+        if (this.getMaxHP() == 0L) {
             return (HP >= 0 && isPrime(HP));
         }
         return (HP >= 0 && HP <= this.getMaxHP() && isPrime(HP));
@@ -856,15 +796,13 @@ public abstract class Entity {
     /**
      * Checks whether the HP of an entity is prime
      *
-     * @param HP
-     *      The HP of an entity
-     *          | Entity.getHP()
-     *
+     * @param HP The HP of an entity
+     *           | Entity.getHP()
      * @return true if HP is prime, otherwise false
-     *      | if HP == 1
-     *      | then result == false
-     *      | for each index until HP-1
-     *      |   HP % index == 0
+     * | if HP == 1
+     * | then result == false
+     * | for each index until HP-1
+     * |   HP % index == 0
      */
     @Model
     private Boolean isPrime(Long HP) {
@@ -883,32 +821,25 @@ public abstract class Entity {
      * checks whether an entity can heal
      *
      * @return true if an entity can heal, otherwise false
-     *      | Entity.Healable
+     * | Entity.Healable
      */
     @Basic
-    public boolean isHealable() {
-        return Healable;
-    }
+    public abstract boolean isHealable();
 
     /**
      * checks whether the given damagetypes are valid
      *
-     * @param damageTypes
-     *      the damagetypes that need to be checked
-     *
-     * @note we are sure the elements are unique because of the used datatype
-     *
+     * @param damageTypes the damagetypes that need to be checked
      * @return true if damageTypes has a length of 1, false otherwise
-     *      | result == (damageTypes.size() == 1)
+     * | result == (damageTypes.size() == 1)
+     * @note we are sure the elements are unique because of the used datatype
      */
     public abstract boolean hasValidDamageTypes(HashSet<DamageType> damageTypes);
 
     /**
      * checks whether the SkinType of an entity is valid
      *
-     * @param skinType
-     *      SkinType we need to check
-     *
+     * @param skinType SkinType we need to check
      * @return true if SKinType is Valid, false otherwise
      */
     public abstract boolean isValidSkinType(SkinType skinType);
@@ -917,16 +848,18 @@ public abstract class Entity {
      * checks if all Items in an entity are valid
      *
      * @return true if an item is terminated or does not have this entity as its holder, false otherwise
-     *      | for each anchorpoint in anchorpoints
-     *      |   for each item in anchorPoint.getAllItems()
-     *      |       if item.isTerminated() OR item.getHolder() != this
-     *      |           result == false
-     *      | result == true
+     * | for each anchorpoint in anchorpoints
+     * |   for each item in anchorPoint.getAllItems()
+     * |       if item.isTerminated() OR item.getHolder() != this
+     * |           result == false
+     * | result == true
      */
-    public boolean hasValidItems(){
+    public boolean hasValidItems() {
         for (AnchorPoint anchorPoint : AnchorPoints) {
-            for (Item item: anchorPoint.getAllItems()){
-                if (item.isTerminated() || item.getHolder() != this) return false;
+            for (Item item : anchorPoint.getAllItems()) {
+                if (item != null) {
+                    if (item.isTerminated() || item.getHolder() != this) return false;
+                }
             }
         }
         return true;
@@ -935,37 +868,33 @@ public abstract class Entity {
     /**
      * checks if an entity has a certain item
      *
-     * @param item
-     *      item we want to check for
-     *
+     * @param item item we want to check for
      * @return true if entity has item, false otherwise
-     *      | for each anchorpoint in anchorpoints
-     *      |   if anchorpoint.getItem() == item
-     *      |       result == true
-     *      | result == false
+     * | for each anchorpoint in anchorpoints
+     * |   if anchorpoint.getItem() == item
+     * |       result == true
+     * | result == false
      */
-    public boolean hasAsItem(Item item){
-       for (AnchorPoint ap : this.AnchorPoints) {
-           if (ap.getItem() != null){
-               if (ap.getItem().equals(item)){
-                   return true;
-               }
-           }
-       }
-       return false;
+    public boolean hasAsItem(Item item) {
+        for (AnchorPoint ap : this.AnchorPoints) {
+            if (ap.getItem() != null) {
+                if (ap.getItem().equals(item)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
      * checks if the entity has give anchorpoint
      *
-     * @param anchorPoint
-     *      the anchorpoint that needs to be checked
-     *
+     * @param anchorPoint the anchorpoint that needs to be checked
      * @return true if the entity has the anchorpoint, false otherwise
-     *      | for Index < getAmountOfAnchorPoints(); Index++
-     *      |   if this.getAnchorpointAt(Index) == anchorpoint
-     *      |       result == true
-     *      | result == false
+     * | for Index < getAmountOfAnchorPoints(); Index++
+     * |   if this.getAnchorpointAt(Index) == anchorpoint
+     * |       result == true
+     * | result == false
      */
     public boolean hasAnchorpoint(AnchorPoint anchorPoint) {
         return AnchorPoints.contains(anchorPoint);
@@ -975,7 +904,7 @@ public abstract class Entity {
      * checks if a given Entity is terminated
      *
      * @return true if Entity is terminated, false otherwise
-     *      | this.Terminated
+     * | this.Terminated
      */
     public boolean isTerminated() {
         return Terminated;
@@ -984,26 +913,22 @@ public abstract class Entity {
     /**
      * A checker to see if the protection is valid
      *
-     * @param Protection
-     *      the protection that needs to be checked
-     *
+     * @param Protection the protection that needs to be checked
      * @return true if protection is valid, otherwise false
-     *      | result == (Protection >= 0)
+     * | result == (Protection >= 0)
      */
-    public boolean isValidProtection(int Protection){
+    public boolean isValidProtection(int Protection) {
         return Protection >= 0;
     }
 
     /**
      * checks if capacity is Valid
      *
-     * @param Capacity
-     *      the capacity we want to check
-     *
+     * @param Capacity the capacity we want to check
      * @return true if capacity is bigger than 0, false otherwise
-     *      | capacity >= 0
+     * | capacity >= 0
      */
-    public boolean isValidCapacity(long Capacity){
+    public boolean isValidCapacity(long Capacity) {
         return Capacity >= 0;
     }
 
@@ -1011,10 +936,16 @@ public abstract class Entity {
      * checks if an entity can hold all its items
      *
      * @return true if entity can hold all its items, false otherwise
-     *      | result == this.getTotalWeight() <= this.Capacity
+     * | result == this.getTotalWeight() <= this.Capacity
      */
-    public boolean canHoldItems(){
+    public boolean canHoldItems() {
         return this.getTotalWeight() <= this.Capacity;
     }
 
+    /**
+     * a checker that checks if a hero has all the needed anchorpoints exactly once
+     *
+     * @return true if a hero has all the needed anchorpoints exactly once, false otherwise
+     */
+    public abstract boolean hasProperAnchorpoints();
 }

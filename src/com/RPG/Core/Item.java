@@ -24,6 +24,11 @@ public abstract class Item {
      **********************************************************/
 
     /**
+     * A variable representing the default Damage of a weapon
+     */
+    private static final int defaultDamage = 0;
+
+    /**
      * A variable representing the itemType of an item
      */
     private ItemType itemType;
@@ -72,6 +77,11 @@ public abstract class Item {
      * A variable representing the backpack an item is stored in
      */
     private Backpack backpack = null;
+
+    /**
+     * the maximum weight an item can be
+     */
+    private static final double maxWeight = 150;
 
     /**********************************************************
      * Constructors
@@ -122,13 +132,9 @@ public abstract class Item {
                 throw new InvalidHolderException("Holder cannot be terminated");
             }
         }
-        if(!isValidValue(Value)){
-            throw new InvalidValueException("Value cannot be negative");
-        }
         if (!isValidWeight(weight)){
             this.Weight = defaultWeight;
         } else this.Weight = weight;
-
         this.setValue(Value);
         this.itemType = itemType;
         this.ShineLevel = ShineLevel;
@@ -166,9 +172,6 @@ public abstract class Item {
      *      | this.setWeight(defaultWeight)
      */
     protected Item(double weight, int Value, ShineLevel ShineLevel, ItemType itemType) throws InvalidValueException {
-        if(!isValidValue(Value)){
-            throw new InvalidValueException("Value cannot be negative");
-        }
         if (!isValidWeight(weight)){
             this.Weight = defaultWeight;
         } else this.Weight = weight;
@@ -254,6 +257,16 @@ public abstract class Item {
     }
 
     /**
+     * returns the default damage of an item
+     *
+     * @return the defaultDamage
+     *      | this.defaultDamage
+     */
+    public int getDefaultDamage(){
+        return defaultDamage;
+    }
+
+    /**
      * sets the holder of an Item
      *
      * @pre Holder must be Valid
@@ -286,6 +299,17 @@ public abstract class Item {
     public double getWeight() {
         return Weight;
     }
+
+    /**
+     * getter for the value of an item
+     *
+     * @return the value of that item
+     *      | this.value
+     */
+    public int getValue(){
+        return Value;
+    }
+
 
     /**
      * sets the weight of an Item
@@ -338,10 +362,11 @@ public abstract class Item {
      *      | this.Value = value
      */
     protected void setValue(int value) throws InvalidValueException {
+        value = calculateValue(value);
         if(!isValidValue(value)){
             throw new InvalidValueException("Value cannot be negative");
         }
-        this.Value = calculateValue(value);
+        this.Value = value;
     }
 
     /**
@@ -399,7 +424,7 @@ public abstract class Item {
      *      | result == weight >= 0
      */
     public boolean isValidWeight(double weight) {
-        return weight >= 0;
+        return weight >= 0 && weight <= maxWeight;
     }
 
     /**
@@ -448,5 +473,14 @@ public abstract class Item {
      */
     public boolean isValidItem(){
         return !isTerminated() && hasValidHolder(this.getHolder());
+    }
+
+    /**
+     * checks if the Damage of a weapon is valid
+     *
+     * @return true
+     */
+    public boolean isValidDamage(int Damage){
+        return true;
     }
 }

@@ -1,5 +1,6 @@
 package com.RPG.Core;
 
+import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 import com.RPG.Exception.InvalidHolderException;
@@ -97,10 +98,12 @@ public class Backpack extends Item {
         if (this.hasProperItems(Content)){
             throw new InvalidItemsException("all backpack items must belong to this backpack");
         }
+        if (!this.isValidCapacity(Capacity)){
+            this.Capacity = defaultCapacity;
+        } else this.Capacity = Capacity;
         if (!canStoreAll(Content)){
             throw new InvalidItemsException("all items must fit in this backpack");
         }
-        this.Capacity = Capacity;
         Holder.equip(anchorPoint, this);
         this.Content = Content;
 
@@ -129,7 +132,9 @@ public class Backpack extends Item {
      */
     public Backpack( double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel) throws InvalidValueException, InvalidHolderException {
         super(weight, Value, Holder, anchorPoint, shinelevel, ItemType.BACKPACK);
-        this.Capacity = Capacity;
+        if (!this.isValidCapacity(Capacity)){
+            this.Capacity = defaultCapacity;
+        } else this.Capacity = Capacity;
         this.Content = new ArrayList<Item>();
     }
 
@@ -150,6 +155,16 @@ public class Backpack extends Item {
      * Getters and Setters
      **********************************************************/
 
+    /**
+     * getter for the capacity of a backpack
+     *
+     * @return the capacity of the backpack
+     *      | this.Capacity
+     */
+    @Basic
+    public int getCapacity(){
+        return Capacity;
+    }
     /**
      * sets the capacity of a backpack
      *
@@ -221,8 +236,30 @@ public class Backpack extends Item {
     @Override
     public double getTotalWeight(){
         double totalWeight = this.getWeight();
-        for (Item item : Content){
-            totalWeight += item.getTotalWeight();
+        if (!(Content ==  null)){
+            for (Item item : Content){
+                totalWeight += item.getTotalWeight();
+            }
+            return totalWeight;
+        }
+        return totalWeight;
+    }
+
+    /**
+     * getter for the weight of the content of a backpack
+     *
+     * @return the weight of every item in the backpack combined plus the backpacks own weight
+     *      | TotalWeight == 0
+     *      | for each item in Content
+     *      |   TotalWeight += item.getWeight
+     *      | result == TotalWeight
+     */
+    public double getContentWeight(){
+        double totalWeight = 0;
+        if (!(Content ==  null)) {
+            for (Item item : Content) {
+                totalWeight += item.getTotalWeight();
+            }
         }
         return totalWeight;
     }
@@ -329,10 +366,13 @@ public class Backpack extends Item {
      *      |       result == false
      */
     public boolean canAddItem(Item item){
-        if (!(this.getTotalWeight() + item.getWeight() >= this.Capacity)){
+        if ((this.getContentWeight() + item.getWeight() >= this.Capacity)){
             return false;
         }
-        return !item.isTerminated() && !this.isTerminated() && !this.getHolder().isTerminated();
+        if (this.getHolder() == null || item.getHolder() == null){
+            return !item.isTerminated() && !this.isTerminated();
+        }
+        return !item.isTerminated() && !this.isTerminated() && !this.getHolder().isTerminated() && !item.getHolder().isTerminated();
     }
 
     /**
@@ -398,7 +438,7 @@ public class Backpack extends Item {
 
        double totalWeight = items.stream().mapToDouble(Item::getWeight).sum();
 
-       double currentWeight = this.getTotalWeight();
+       double currentWeight = this.getContentWeight();
 
        return (currentWeight + totalWeight) <= this.Capacity;
     }
