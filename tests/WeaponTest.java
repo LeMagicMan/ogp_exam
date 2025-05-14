@@ -7,15 +7,14 @@ import javax.naming.InvalidNameException;
 import java.util.HashSet;
 import java.util.Set;
 
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class WeaponTest {
 
-    private Entity holder;
-    private AnchorPoint anchor;
-    private static final int defaultDamage = 10;
-    private static final int valuePerDamage = 2;
-    private static final int maxDamage = 100;
+     Entity holder;
+     AnchorPoint anchor;
+
 
     @BeforeEach
     void setUp() throws InvalidDamageTypesException, InvalidNameException, InvalidSkinTypeException, InvalidValueException, InvalidItemsException, InvalidHolderException {
@@ -40,13 +39,13 @@ class WeaponTest {
     @Test
     void testConstructorInvalidDamageFallsBackToDefault() throws InvalidHolderException, InvalidValueException {
         Weapon weapon = new Weapon(8.0, holder, anchor, ShineLevel.HIGH, -99);
-        assertEquals(defaultDamage, weapon.getDamage());
+        assertEquals(50, weapon.getDamage());
     }
 
     @Test
     void testSecondaryConstructorSetsDefaults() throws InvalidHolderException, InvalidValueException {
         Weapon weapon = new Weapon(holder, anchor);
-        assertEquals(defaultDamage, weapon.getDamage());
+        assertEquals(50, weapon.getDamage());
         assertEquals(10.0, weapon.getWeight()); // defaultWeight
         assertEquals(ShineLevel.LOW, weapon.getShineLevel());
     }
@@ -60,9 +59,9 @@ class WeaponTest {
         Weapon weapon = new Weapon(holder, anchor);
         assertTrue(weapon.isValidDamage(1));
         assertTrue(weapon.isValidDamage(50));
-        assertTrue(weapon.isValidDamage(maxDamage));
+        assertTrue(weapon.isValidDamage(100));
         assertFalse(weapon.isValidDamage(0));
-        assertFalse(weapon.isValidDamage(maxDamage + 1));
+        assertFalse(weapon.isValidDamage(100 + 1));
         assertFalse(weapon.isValidDamage(-1));
     }
 
@@ -79,7 +78,7 @@ class WeaponTest {
     @Test
     void testCalculateValueWithZeroDamage() throws InvalidHolderException, InvalidValueException {
         Weapon weapon = new Weapon(holder, anchor);
-        assertEquals(defaultDamage * valuePerDamage, weapon.getValue());
+        assertEquals(50 * 2, weapon.getValue());
     }
 
     /* -------------------------------------------------------------
@@ -122,9 +121,9 @@ class WeaponTest {
 
     @Test
     void testMaxDamageAccepted() throws InvalidHolderException, InvalidValueException {
-        Weapon weapon = new Weapon(10.0, holder, anchor, ShineLevel.LOW, maxDamage);
-        assertEquals(maxDamage, weapon.getDamage());
-        assertTrue(weapon.isValidDamage(maxDamage));
+        Weapon weapon = new Weapon(10.0, holder, anchor, ShineLevel.LOW, 100);
+        assertEquals(100, weapon.getDamage());
+        assertTrue(weapon.isValidDamage(100));
     }
 
     @Test

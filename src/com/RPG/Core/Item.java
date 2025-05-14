@@ -483,4 +483,17 @@ public abstract class Item {
     public boolean isValidDamage(int Damage){
         return true;
     }
+
+    /**
+     * //TODO
+     */
+    public void terminate(){
+        terminated = true;
+        if (backpack != null) {
+            backpack.unpackItem(this);
+        }
+        if (Holder != null) {
+            this.getHolder().unequip(this.getHolder().getAnchorPointWithItem(this), this );
+        }
+    }
 }

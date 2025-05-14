@@ -1,5 +1,5 @@
 import com.RPG.Core.*;
-import com.RPG.Exception.InvalidItemsException;
+import com.RPG.Exception.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ public class HeroTest {
     private ArrayList<Item> defaultItems;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws InvalidValueException, InvalidDamageTypesException, InvalidNameException, InvalidSkinTypeException, InvalidItemsException, InvalidHolderException {
         validName = "Hero";
         validHP = 997L;
         validStrength = BigDecimal.valueOf(50);
@@ -108,7 +108,7 @@ public class HeroTest {
     @Test
     public void testHeroCapacityBasedOnStrength() throws Exception {
         Hero hero = new Hero(validName, validHP, BigDecimal.valueOf(10), defaultItems);
-        assertEquals(200, hero.getCapacity());
+        assertEquals(50, hero.getCapacity());
     }
 
     @Test

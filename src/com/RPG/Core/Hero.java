@@ -40,7 +40,7 @@ public class Hero extends Entity {
     /**
      * A variable representing a hero's capacity multiplier
      */
-    private static final float capacityMultiplier = 2;
+    private static final float capacityMultiplier = 5;
 
     /**
      * defaultStrength of a hero
@@ -152,13 +152,11 @@ public class Hero extends Entity {
         validateTotalWeight(items);
 
         if (backpack != null) {
-            validateBackpackStorage(backpack, toStore);
-        } else if (!toStore.isEmpty()) {
-            throw new InvalidItemsException("No backpack to store remaining items.");
-        }
-
-        if (backpack != null) {
-            equipBackpack(backpack);
+            if (backpack.canStoreAll(toStore)) {
+                equipBackpack(backpack);
+            }
+        } else if(!(toStore.isEmpty())){
+            throw new InvalidItemsException("Too many items");
         }
 
         equipItems(toEquip);
@@ -283,19 +281,6 @@ public class Hero extends Entity {
         if (totalWeight > this.getCapacity()) {
             throw new InvalidItemsException("Total weight exceeds hero capacity.");
         }
-    }
-
-    /**
-     * checks whether a backpack can store all items
-     *
-     * @param backpack
-     *      backpack we want to store items in
-     *
-     * @param toStore
-     *      items we want to store in backpack
-     */
-    private void validateBackpackStorage(Backpack backpack, List<Item> toStore){
-        backpack.canStoreAll(toStore);
     }
 
     /**

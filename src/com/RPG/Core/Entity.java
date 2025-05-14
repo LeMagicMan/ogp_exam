@@ -343,7 +343,7 @@ public abstract class Entity {
                 }
             }
             if (this.AnchorPoints.contains(AnchorPoint.RIGHTHAND)) {
-                if (this.getAnchorPoint(AnchorPoint.LEFTHAND).hasItem()) {
+                if (this.getAnchorPoint(AnchorPoint.RIGHTHAND).hasItem()) {
                     totalDamage = this.getAnchorPoint(AnchorPoint.RIGHTHAND).getItem().getDamage();
                 }
             }
@@ -495,7 +495,7 @@ public abstract class Entity {
      * | then result == null
      */
     @Model
-    private AnchorPoint getAnchorPoint(AnchorPoint anchorPoint) {
+    protected AnchorPoint getAnchorPoint(AnchorPoint anchorPoint) {
         for (AnchorPoint ap : this.AnchorPoints) {
             if (ap.equals(anchorPoint)) {
                 return ap;
@@ -546,9 +546,9 @@ public abstract class Entity {
      * | result == null
      */
     public AnchorPoint getAnchorPointWithItem(Item item) {
-        for (AnchorPoint ap : this.AnchorPoints) {
-            if (ap.getItem() != null && ap.getItem().equals(item)) {
-                return ap;
+        for (AnchorPoint anchorPoint : this.AnchorPoints) {
+            if (anchorPoint.getItem() != null && anchorPoint.getItem().equals(item)) {
+                return anchorPoint;
             }
         }
         return null;
@@ -677,6 +677,7 @@ public abstract class Entity {
      * | item.getBackpack().unpack(item)
      * @effect if anchorpoint already has an item, unequip it
      * | this.unequip(getAnchorPoint(anchorPoint), getAnchorPoint(anchorPoint).getItem());
+     *
      * @post Item of anchorpoint is set to given item
      * | this.getAnchorPoint(anchorPoint).setItem(item)
      * @post Holder of the item is set to this entity
