@@ -138,7 +138,7 @@ public abstract class Item {
         this.setValue(Value);
         this.itemType = itemType;
         this.ShineLevel = ShineLevel;
-        if (Holder != null) {
+        if (Holder != null && Holder.canEquip(this)) {
             Holder.equip(anchorpoint, this);
         }
         this.Id = generateUniqueId();

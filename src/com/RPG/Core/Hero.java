@@ -221,7 +221,9 @@ public class Hero extends Entity {
         ArrayList<AnchorPoint> free = new ArrayList<>();
         for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
             AnchorPoint anchorpoint = getAnchorPointAt(i);
-            if (!anchorpoint.hasItem()) free.add(anchorpoint);
+            if (!hasItemAt(anchorpoint)) {
+                free.add(anchorpoint);
+            }
         }
         return free;
     }
@@ -315,8 +317,10 @@ public class Hero extends Entity {
         for (Item item : toEquip) {
             for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
                 AnchorPoint anchorpoint = getAnchorPointAt(i);
-                if(anchorpoint.getAllowedItemType() == ItemType.ANY || anchorpoint.getAllowedItemType() == item.getItemType()) {
-                    if (anchorpoint.getItem() == null && anchorpoint.getAllowedItemType() == item.getItemType()) {
+                if (anchorpoint.getAllowedItemType() == ItemType.ANY || anchorpoint.getAllowedItemType() == item.getItemType()) {
+                    Item equippedItem = equipment.get(anchorpoint);
+
+                    if (equippedItem == null) {
                         this.equip(anchorpoint, item);
                         break;
                     }
@@ -486,7 +490,7 @@ public class Hero extends Entity {
      *      | result == false
      *
      */
-    public boolean hasValidDamageTypes(HashSet<DamageType> damageTypes) {
+    public boolean areValidDamageTypes(HashSet<DamageType> damageTypes) {
         if (damageTypes.size() != 1) return false;
         for (DamageType damageType : damageTypes) {
             if (Objects.requireNonNull(damageType) == DamageType.NORMAL) {

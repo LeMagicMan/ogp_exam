@@ -50,6 +50,11 @@ public class Monster extends Entity {
      */
     private Boolean Intelligent = false;
 
+    /**
+     * A variable representing the capacity a monster gets per anchorpoint
+     */
+    private static final int capacityPerAnchorPoint = 31;
+
     /**********************************************************
      * Constructors
      *********************************************************/
@@ -76,8 +81,8 @@ public class Monster extends Entity {
         super(name, maxHP, anchorPoints, skintype, damageTypes);
         this.setDamageTypes(damageTypes);
         this.setSkinType(skintype);
-        createLoot();
         this.setCapacity();
+        createLoot();
     }
 
     /**
@@ -145,10 +150,8 @@ public class Monster extends Entity {
     @Override
     protected long calculateCapacity() {
         long capacity = 0L;
-        for (int index = 0; index < this.getAmountOfAnchorPoints(); index++){
-            if (this.getAnchorPointAt(index).hasItem()){
-                capacity += (long) this.getAnchorPointAt(index).getItem().getWeight();
-            }
+        for (int index = 0; index < this.getAmountOfAnchorPoints(); index++) {
+            capacity += capacityPerAnchorPoint;
         }
         return capacity;
     }
@@ -244,7 +247,7 @@ public class Monster extends Entity {
      *      | result == false
      */
     @Override
-    public boolean hasValidDamageTypes(HashSet<DamageType> damageTypes){
+    public boolean areValidDamageTypes(HashSet<DamageType> damageTypes){
         if (damageTypes.size() != 1) return false;
         for (DamageType damageType : damageTypes){
             if (damageType == DamageType.NORMAL){

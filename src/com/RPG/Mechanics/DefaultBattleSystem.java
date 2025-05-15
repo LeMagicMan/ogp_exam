@@ -1,7 +1,6 @@
 package com.RPG.Mechanics;
 
 import com.RPG.Core.Entity;
-import com.RPG.Core.Hero;
 import com.RPG.Core.Item;
 import com.RPG.Core.Monster;
 
@@ -46,27 +45,67 @@ public class DefaultBattleSystem {
      * @param chosenItems
      *      a list of items to be looted if the target is killed
      */
-    private void executeHit(Entity attacker, Entity target, ArrayList<Item> chosenItems) {
+    private void executeHit(Entity attacker, Entity target, ArrayList<Item> chosenItems, boolean response) {
         if (attacker == null || target == null || attacker.isTerminated() || target.isTerminated()) return;
         Random random = new Random();
 
         int roll = random.nextInt(101);
+        if (response) {
+            System.out.println(attacker.getName() + " rolled " + roll);
+        }
 
         int adjustedRoll = attacker.getAdjustedRoll(roll);
+        if (response) {
+            System.out.println(attacker.getName() + "'s got adjusted to " + adjustedRoll);
+        }
 
         if (adjustedRoll >= target.getDefense()) {
+            if (response) {
+                System.out.println(attacker.getName() + " hits " + target.getName());
+            }
+
             long damage = Math.max(0, attacker.getBaseDamage());
+            if (response) {
+                System.out.println(attacker.getName() + " does " + damage + " damage to " + target.getName());
+            }
 
             boolean killingBlow = damage >= target.getHP();
 
             target.reduceHP(damage);
 
             if (killingBlow) {
+                if (response) {
+                    System.out.println(attacker.getName() + " killed " + target.getName());
+                    System.out.println(attacker.getName() + " starts looting, currently he has: " + attacker.getAllItems());
+                }
+
                 TreasureManager.loot(target, attacker, chosenItems);
+                if (response) {
+                    System.out.println(attacker.getName() + " stopped looting, currently he has: " + attacker.getAllItems());
+                }
+
                 target.kill();
+                if (response && target.isTerminated()) {
+                    System.out.println(target.getName() + " breathed his last ");
+                }
                 HealingSystem healingSystem = new HealingSystem();
+
+                if (response && attacker.isHealable()) {
+                    System.out.println(attacker.getName() + " started healing, he currently has " + attacker.getHP() + " HP" );
+                }
                 healingSystem.heal(attacker);
+                if (response) {
+                    System.out.println(attacker.getName() + " has recovered and ended the fight with " + attacker.getHP() + " HP" );
+                }
+
                 attacker.normaliseHP();
+                if (response) {
+                    System.out.println(attacker.getName() + " Hp got normalised to " + attacker.getHP());
+                }
+            }
+        } else {
+            if (response) {
+                System.out.println(attacker.getName() + " missed " + target.getName());
             }
         }
     }
@@ -79,27 +118,37 @@ public class DefaultBattleSystem {
      *      | while (!hero.isTerminated() && !monster.isTerminated())
      *      |       executeHit()
      *
-     * @param hero
+     * @param entity1
      *      the first combatant
      *
-     * @param monster
+     * @param entity2
      *      the second combatant
      *
      * @param chosenItems
      *      the list of items that may be looted if a killing blow occurs
      */
-    public void battle(Hero hero, Monster monster, ArrayList<Item> chosenItems, Entity initiator) {
-        boolean heroTurn = (initiator == hero);
+    private void battle(Entity entity1, Entity entity2, ArrayList<Item> chosenItems, Entity initiator, boolean response) {
+        boolean heroTurn = (initiator == entity1);
 
-        while (!hero.isTerminated() && !monster.isTerminated()) {
+        while (!entity1.isTerminated() && !entity2.isTerminated()) {
             if (heroTurn) {
-                executeHit(hero, monster, chosenItems);
+                executeHit(entity1, entity2, chosenItems, response);
             } else {
-                executeHit(monster, hero, chosenItems);
+                executeHit(entity2, entity1, chosenItems, response);
             }
 
             heroTurn = !heroTurn;
         }
     }
 
+    /**
+     * //TODO
+     * @param attacker
+     * @param monster
+     * @param chosenItems
+     * @param initiator
+     */
+    public void combat(Entity attacker, Monster monster, ArrayList<Item> chosenItems, Entity initiator, boolean response) {
+        battle(attacker, monster, chosenItems, initiator, response);
+    }
 }

@@ -1,10 +1,6 @@
 package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Model;
-import com.RPG.Exception.InvalidAnchorPointException;
-
-import java.util.ArrayList;
 
 /**
  * an enumerator containing all types of Anchorpoints
@@ -42,11 +38,6 @@ public enum AnchorPoint {
     private final ItemType allowedItemType;
 
     /**
-     * the Item in that anchorpoint
-     */
-    private Item item;
-
-    /**
      * Constructor for an Anchorpoint
      *
      * @param allowedItemType
@@ -57,7 +48,6 @@ public enum AnchorPoint {
      */
     private AnchorPoint(ItemType allowedItemType) {
         this.allowedItemType = allowedItemType;
-        this.item = null;
     }
 
     /**
@@ -72,55 +62,6 @@ public enum AnchorPoint {
     }
 
     /**
-     * getter for the Item in an AnchorPoint
-     *
-     * @return the item in the AnchorPoint
-     *      | this.item
-     */
-    @Basic
-    public Item getItem() {
-        return item;
-    }
-
-    /**
-     * getter for all items in an item on an anchorpoint, and the item itself
-     *
-     * @return
-     *      an arraylist of items
-     *          | items = item
-     *          | for index = 0; index < item.getAmountOfItems; Index++
-     *          |   items.add(item.getItemAt(Index))
-     *          | result == items
-     */
-    public ArrayList<Item> getAllItems() {
-        ArrayList<Item> items = new ArrayList<>();
-        if (item != null) {
-            items.add(item);
-            for (int Index = 0; Index < item.getAmountOfItems(); Index++) {
-                items.add(item.getItemAt(Index));
-            }
-        }
-        return items;
-    }
-
-    /**
-     * sets the Item of an AnchorPoint
-     *
-     * @pre Item must be Valid
-     *      | Item.isValidItem()
-     *
-     * @param item
-     *      The Item that needs to be set
-     *
-     */
-    @Model
-    void setItem(Item item) throws InvalidAnchorPointException {
-        if (this.canAttach(item)) {
-            this.item = item;
-        } else throw new InvalidAnchorPointException("cannot attach item to this anchorpoint");
-    }
-
-    /**
      * checks whether a certain Item can be attached to the AnchorPoint
      *
      * @param item
@@ -132,29 +73,6 @@ public enum AnchorPoint {
      */
     public boolean canAttach(Item item) {
        return allowedItemType == ItemType.ANY || item.getItemType() == allowedItemType;
-    }
-
-    /**
-     * checks if a given Anchorpoint has a given Item
-     *
-     * @param item
-     *      the item we need to check for
-     *
-     * @return true if AnchorPoint has Item, false otherwise
-     *      | result == (this.getItem() == item)
-     */
-    public boolean hasAsItem(Item item) {
-        return this.item == item;
-    }
-
-    /**
-     * checks whether an anchorpoint has an Item
-     *
-     * @return true if it has an item, false otherwise
-     *      | result == (item != null)
-     */
-    public boolean hasItem(){
-        return item != null;
     }
 
 }

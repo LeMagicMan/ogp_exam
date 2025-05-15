@@ -98,7 +98,7 @@ public class HeroTest {
         HashSet<DamageType> invalidTypes = new HashSet<>();
         invalidTypes.add(DamageType.NORMAL);
         invalidTypes.add(DamageType.CLAWS);
-        assertFalse(hero.hasValidDamageTypes(invalidTypes));
+        assertFalse(hero.areValidDamageTypes(invalidTypes));
     }
 
     /***************

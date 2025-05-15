@@ -1,10 +1,7 @@
 package com.RPG.Mechanics;
 
 import be.kuleuven.cs.som.annotate.Model;
-import com.RPG.Core.AnchorPoint;
-import com.RPG.Core.Entity;
-import com.RPG.Core.Item;
-import com.RPG.Core.ItemType;
+import com.RPG.Core.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -191,9 +188,9 @@ public class TreasureManager {
                 return true;
         }
 
-        AnchorPoint back = findBackpack(entity);
-        if (back != null && back.canAttach(item)) {
-            entity.equip(back, item);
+        Backpack back = findBackpack(entity);
+        if (back != null) {
+            back.storeItem(item);
             return true;
         }
 
@@ -227,7 +224,7 @@ public class TreasureManager {
     private static AnchorPoint findFreeAnchorPoint(Entity entity, Item item) {
         for (int i = 0; i < entity.getAmountOfAnchorPoints(); i++) {
             AnchorPoint anchorPoint = entity.getAnchorPointAt(i);
-            if (!anchorPoint.hasItem() && anchorPoint.canAttach(item) && !isBackpack(anchorPoint)) {
+            if (!entity.hasItemAt(anchorPoint) && anchorPoint.canAttach(item)) {
                 return anchorPoint;
             }
         }
@@ -250,11 +247,11 @@ public class TreasureManager {
      * @return the first AnchorPoint identified as a backpack, or null if none are found
      */
     @Model
-    private static AnchorPoint findBackpack(Entity entity) {
+    private static Backpack findBackpack(Entity entity) {
         for (int i = 0; i < entity.getAmountOfAnchorPoints(); i++) {
             AnchorPoint anchorPoint = entity.getAnchorPointAt(i);
-            if (isBackpack(anchorPoint)) {
-                return anchorPoint;
+            if (hasBackpack(anchorPoint, entity)) {
+                return (Backpack) entity.getItemAt(anchorPoint);
             }
         }
         return null;
@@ -271,7 +268,9 @@ public class TreasureManager {
      *
      */
     @Model
-    private static boolean isBackpack(AnchorPoint anchorPoint) {
-        return anchorPoint.getAllowedItemType() == ItemType.BACKPACK;
+    private static boolean hasBackpack(AnchorPoint anchorPoint, Entity entity) {
+        if (anchorPoint == null) return false;
+        if (entity.getItemAt(anchorPoint) == null) return false;
+        return entity.getItemAt(anchorPoint).getItemType() == ItemType.BACKPACK;
     }
 }

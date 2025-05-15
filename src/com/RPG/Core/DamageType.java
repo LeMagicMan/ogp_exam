@@ -13,12 +13,12 @@ public enum DamageType {
     /**
      * DamageType for an entity that fights with its claws
      */
-    CLAWS(100),
+    CLAWS(50),
 
     /**
      * DamageType for an entity that fights with its horns
      */
-    HORNS(70),
+    HORNS(35),
 
     /**
      * DamageType for an entity that fights with normal limbs
@@ -28,12 +28,12 @@ public enum DamageType {
     /**
      * DamageType for an entity that fights with its tail
      */
-    TAIL(60),
+    TAIL(30),
 
     /**
      * DamageType for an entity that fights with its teeth
      */
-    TEETH(80);
+    TEETH(40);
 
     /**
      * The Damage the DamageType does

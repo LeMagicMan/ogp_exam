@@ -45,7 +45,7 @@ public class MonsterTest {
         Monster monster = new Monster(validName, validHP, defaultAnchorPoints, validDamageTypes, validSkinType);
         assertEquals(validName, monster.getName());
         assertEquals(validSkinType, monster.getSkinType());
-        assertTrue(monster.hasValidDamageTypes(validDamageTypes));
+        assertTrue(monster.areValidDamageTypes(validDamageTypes));
         assertEquals(validHP, monster.getHP());
         assertTrue(monster.hasProperAnchorpoints());
     }
@@ -95,13 +95,13 @@ public class MonsterTest {
     @Test
     public void testInvalidDamageTypeWithNORMAL() throws InvalidDamageTypesException, InvalidNameException, InvalidSkinTypeException {
         HashSet<DamageType> badTypes = new HashSet<>(List.of(DamageType.NORMAL));
-        assertFalse(new Monster("Warg").hasValidDamageTypes(badTypes));
+        assertFalse(new Monster("Warg").areValidDamageTypes(badTypes));
     }
 
     @Test
     public void testMultipleDamageTypesInvalid() throws InvalidDamageTypesException, InvalidNameException, InvalidSkinTypeException {
         HashSet<DamageType> multi = new HashSet<>(Set.of(DamageType.CLAWS, DamageType.TAIL));
-        assertFalse(new Monster("Warg").hasValidDamageTypes(multi));
+        assertFalse(new Monster("Warg").areValidDamageTypes(multi));
     }
 
     /***************

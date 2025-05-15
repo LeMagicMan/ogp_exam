@@ -98,13 +98,13 @@ public class Backpack extends Item {
         if (this.hasProperItems(Content)){
             throw new InvalidItemsException("all backpack items must belong to this backpack");
         }
-        if (!this.isValidCapacity(Capacity)){
-            this.Capacity = defaultCapacity;
-        } else this.Capacity = Capacity;
+        this.setCapacity(Capacity);
         if (!canStoreAll(Content)){
             throw new InvalidItemsException("all items must fit in this backpack");
         }
-        Holder.equip(anchorPoint, this);
+        if (Holder != null && Holder.canEquip(this)) {
+            Holder.equip(anchorPoint, this);
+        }
         this.Content = Content;
 
     }
@@ -132,9 +132,7 @@ public class Backpack extends Item {
      */
     public Backpack( double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel) throws InvalidValueException, InvalidHolderException {
         super(weight, Value, Holder, anchorPoint, shinelevel, ItemType.BACKPACK);
-        if (!this.isValidCapacity(Capacity)){
-            this.Capacity = defaultCapacity;
-        } else this.Capacity = Capacity;
+        this.setCapacity(Capacity);
         this.Content = new ArrayList<Item>();
     }
 
@@ -371,6 +369,9 @@ public class Backpack extends Item {
         }
         if (this.getHolder() == null || item.getHolder() == null){
             return !item.isTerminated() && !this.isTerminated();
+        }
+        if (!this.getHolder().canEquip(item)){
+            return false;
         }
         return !item.isTerminated() && !this.isTerminated() && !this.getHolder().isTerminated() && !item.getHolder().isTerminated();
     }

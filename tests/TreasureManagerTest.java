@@ -1,104 +1,131 @@
 import com.RPG.Core.*;
+import com.RPG.Exception.*;
 import com.RPG.Mechanics.TreasureManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.naming.InvalidNameException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TreasureManagerTest {
 
-    private Entity intelligentHero;
-    private Entity nonIntelligentMonster;
-    private Weapon desiredWeapon;
+    private Hero intelligentHero;
+    private Monster nonIntelligentMonster;
+    private Weapon dullWeapon;
     private Weapon shinyWeapon;
-    private Weapon unwantedWeapon;
+    private Backpack monsterBackpack;
     private Backpack heroBackpack;
-    private Weapon monsterWeapon;
+    private Weapon heroWeapon;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         intelligentHero = new Hero("Hero");
         nonIntelligentMonster = new Monster("Monster");
-        heroBackpack = new Backpack(intelligentHero, AnchorPoint.BACK);
 
-        // Setup items
-        desiredWeapon = new Weapon(5, nonIntelligentMonster, AnchorPoint.LEFTHAND, ShineLevel.LOW, 50);
-        monsterWeapon = new Weapon(nonIntelligentMonster, AnchorPoint.RIGHTHAND);
-        shinyWeapon = new Weapon(5, intelligentHero, AnchorPoint.RIGHTHAND, ShineLevel.HIGH, 30);
-        unwantedWeapon = new Weapon(5, null, AnchorPoint.LEFTHAND, ShineLevel.NONE, 40);
+        dullWeapon = new Weapon(2.0, nonIntelligentMonster, AnchorPoint.LEFTHAND, ShineLevel.LOW, 12);
+        shinyWeapon = new Weapon(1.0, nonIntelligentMonster, AnchorPoint.RIGHTHAND, ShineLevel.HIGH, 8);
+        monsterBackpack = new Backpack(3.0, 40, 10, nonIntelligentMonster, AnchorPoint.BACK, ShineLevel.MEDIUM);
 
-        // Set the hero's desired item
-        ArrayList<Item> desiredItems = new ArrayList<>();
-        desiredItems.add(desiredWeapon);
-
+        heroWeapon = new Weapon(2.0, intelligentHero, AnchorPoint.LEFTHAND, ShineLevel.LEGENDARY, 12);
+        heroBackpack = new Backpack(2.5, 30, 10, intelligentHero, AnchorPoint.BACK, ShineLevel.LOW);
     }
 
     @Test
-    public void intelligentEntityLootsDesiredItem() throws Exception {
-        // Simulate the hero looting the items
-        ArrayList<Item> desiredItems = new ArrayList<>();
-        desiredItems.add(desiredWeapon);
-        TreasureManager.loot(nonIntelligentMonster, intelligentHero, desiredItems);
+    void testLootWithNullEntitiesDoesNothing() {
+        ArrayList<Item> desired = new ArrayList<>();
+        desired.add(dullWeapon);
 
-        // Assert that the intelligent hero looted the desired weapon
-        assertEquals(intelligentHero, desiredWeapon.getHolder());
-        assertTrue(heroBackpack.hasAsItem(desiredWeapon));
-        assertFalse(heroBackpack.hasAsItem(shinyWeapon));
+        TreasureManager.loot(null, intelligentHero, desired);
+        TreasureManager.loot(nonIntelligentMonster, null, desired);
+
+        assertTrue(nonIntelligentMonster.hasAsItem(dullWeapon));
+        assertTrue(intelligentHero.hasAsItem(heroWeapon));
     }
 
     @Test
-    public void nonIntelligentEntityLootsShinyItem() throws Exception {
+    void testLootWithTerminatedEntitiesDoesNothing() throws InvalidValueException, InvalidDamageTypesException, InvalidNameException, InvalidSkinTypeException, InvalidItemsException, InvalidHolderException {
+        Hero deadHero = new Hero("Peter");
+        deadHero.kill();
+        ArrayList<Item> desired = new ArrayList<>();
+        desired.add(dullWeapon);
+
+        TreasureManager.loot(nonIntelligentMonster, deadHero, desired);
+        assertTrue(nonIntelligentMonster.hasAsItem(dullWeapon));
+
+        TreasureManager.loot(deadHero, intelligentHero, desired);
+        assertTrue(nonIntelligentMonster.hasAsItem(dullWeapon));
+    }
+
+    @Test
+    void testIntelligentHeroLootsDesiredItemsOnly() {
+        ArrayList<Item> desired = new ArrayList<>();
+        desired.add(dullWeapon);
+
+        TreasureManager.loot(nonIntelligentMonster, intelligentHero, desired);
+
+        assertTrue(intelligentHero.hasAsItem(dullWeapon));
+        assertFalse(intelligentHero.hasAsItem(shinyWeapon));
+        assertTrue(nonIntelligentMonster.hasAsItem(shinyWeapon));
+    }
+
+    @Test
+    void testLootSkipsInvalidDesiredItems() throws InvalidValueException, InvalidHolderException {
+        ArrayList<Item> desired = new ArrayList<>();
+        desired.add(null);
+        Item fakeItem = new Weapon(1.0, null, null, ShineLevel.LOW, 3);
+        desired.add(fakeItem);
+
+        TreasureManager.loot(nonIntelligentMonster, intelligentHero, desired);
+
+        assertFalse(intelligentHero.hasAsItem(fakeItem));
+        assertTrue(nonIntelligentMonster.hasAsItem(dullWeapon));
+    }
+
+    @Test
+    void testNonIntelligentMonsterLootsShiniestItem() {
+        ArrayList<Item> dummyList = nonIntelligentMonster.getAllItems();
+        TreasureManager.loot(intelligentHero, nonIntelligentMonster, dummyList);
+
+        assertTrue(nonIntelligentMonster.hasAsItem(heroWeapon));
+    }
+
+    @Test
+    void testLootFallsBackToBackpack() throws Exception {
+        Weapon blockingWeapon = new Weapon(1.0, intelligentHero, AnchorPoint.RIGHTHAND, ShineLevel.LOW, 5);
+        ArrayList<Item> desired = new ArrayList<>();
+        desired.add(shinyWeapon);
+
+        TreasureManager.loot(nonIntelligentMonster, intelligentHero, desired);
+
+        assertTrue(heroBackpack.hasAsItem(shinyWeapon));
+    }
+
+    @Test
+    void testLootFailsIfNoSlotAndNoBackpack() throws InvalidValueException, InvalidHolderException {
         intelligentHero.unequip(AnchorPoint.BACK, heroBackpack);
-        intelligentHero.equip(AnchorPoint.BACK, unwantedWeapon);
-        // Simulate the monster looting the shiny weapon (because it is not intelligent)
-        ArrayList<Item> desiredItems = new ArrayList<>();
-        desiredItems.add(desiredWeapon);  // Monster doesn't care about this
-        TreasureManager.loot(intelligentHero, nonIntelligentMonster, desiredItems);
 
-        // Assert that the non-intelligent monster looted the shiny weapon
-        assertEquals(nonIntelligentMonster, shinyWeapon.getHolder());
-        assertNull(unwantedWeapon.getHolder());
+        Weapon blockingWeapon = new Weapon(1.0, intelligentHero, AnchorPoint.BACK, ShineLevel.LOW, 5);
+        Weapon blockingWeapon1 = new Weapon(1.0, intelligentHero, AnchorPoint.RIGHTHAND, ShineLevel.LOW, 5);
+        ArrayList<Item> desired = new ArrayList<>();
+        desired.add(shinyWeapon);
+
+        TreasureManager.loot(nonIntelligentMonster, intelligentHero, desired);
+
+        assertNull(shinyWeapon.getHolder());
     }
 
     @Test
-    public void intelligentEntityIgnoresUnwantedItems() throws Exception {
-        // Hero desires the desiredWeapon but there is also an unwantedWeapon
-        ArrayList<Item> desiredItems = new ArrayList<>();
-        desiredItems.add(desiredWeapon);
-        TreasureManager.loot(nonIntelligentMonster, intelligentHero, desiredItems);
+    void testLootMultipleItemsWithMixedOutcomes() throws Exception {
+        // Hero gets shiny weapon in slot, dull weapon into backpack
+        ArrayList<Item> desired = new ArrayList<>();
+        desired.add(shinyWeapon);
+        desired.add(dullWeapon);
 
-        // Assert that the intelligent hero ignores the unwanted weapon
-        assertNull(unwantedWeapon.getHolder());
-        assertFalse(heroBackpack.hasAsItem(unwantedWeapon));
-    }
+        TreasureManager.loot(nonIntelligentMonster, intelligentHero, desired);
 
-    @Test
-    public void intelligentEntityCannotLootIfBackpackFull() throws Exception {
-        // Fill up the backpack with items
-        for (int i = 0; i < 20; i++) {
-            Weapon filler = new Weapon(1, intelligentHero, AnchorPoint.LEFTHAND, ShineLevel.LOW, 1);
-            heroBackpack.storeItem(filler);
-        }
-
-        // Try to add the desired weapon when the backpack is full
-        ArrayList<Item> desiredItems = new ArrayList<>();
-        desiredItems.add(desiredWeapon);
-        TreasureManager.loot(nonIntelligentMonster, intelligentHero, desiredItems);
-
-        // Assert that the desired weapon could not be looted since the backpack is full
-        assertNull(desiredWeapon.getHolder());
-        assertFalse(heroBackpack.hasAsItem(desiredWeapon));
-    }
-
-    @Test
-    public void emptyLootListDoesNothing() throws Exception {
-        // Simulate loot attempt with an empty desired list
-        ArrayList<Item> emptyDesiredItems = new ArrayList<>();
-        TreasureManager.loot(nonIntelligentMonster, intelligentHero, emptyDesiredItems);
-
-        // Assert that the backpack has no items (nothing was looted)
-        assertEquals(0, heroBackpack.getAmountOfItems());
+        assertTrue(intelligentHero.hasAsItem(shinyWeapon));
+        assertTrue(heroBackpack.hasAsItem(dullWeapon));
     }
 }
