@@ -91,7 +91,10 @@ public class Hero extends Entity {
         this.setStrength(strength.setScale(getStrengthScale(), getRoundingMode()));
         this.setProtection(defaultProtection);
         this.setCapacity();
-        this.equipStarterItems(items);
+        if (items == null || items.isEmpty()) {
+            this.equipStarterItems(createDefaultItems());
+        } else this.equipStarterItems(items);
+
     }
 
     /**
@@ -101,7 +104,7 @@ public class Hero extends Entity {
      *      name of the hero
      */
     public Hero(String name) throws InvalidNameException, InvalidItemsException, InvalidValueException, InvalidHolderException, InvalidSkinTypeException, InvalidDamageTypesException {
-        this(name, 997L, BigDecimal.valueOf(defaultStrength), createDefaultItems());
+        this(name, 997L, BigDecimal.valueOf(defaultStrength), null);
     }
 
     /**********************************************************
@@ -118,7 +121,7 @@ public class Hero extends Entity {
      * @return the created items
      *    | result == new Weapon(null, AnchorPoint.RIGHTHAND)
      */
-    private static ArrayList<Item> createDefaultItems() {
+    private ArrayList<Item> createDefaultItems() {
         ArrayList<Item> defaultItems = new ArrayList<>();
         try {
             defaultItems.add(new Weapon(null, null));
@@ -164,6 +167,7 @@ public class Hero extends Entity {
         if (backpack != null) {
             storeRemainingItemsInBackpack(backpack, toStore);
         }
+        items.clear();
     }
 
     /**

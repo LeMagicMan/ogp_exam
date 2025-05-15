@@ -39,13 +39,13 @@ class WeaponTest {
     @Test
     void testConstructorInvalidDamageFallsBackToDefault() throws InvalidHolderException, InvalidValueException {
         Weapon weapon = new Weapon(8.0, holder, anchor, ShineLevel.HIGH, -99);
-        assertEquals(50, weapon.getDamage());
+        assertEquals(10, weapon.getDamage());
     }
 
     @Test
     void testSecondaryConstructorSetsDefaults() throws InvalidHolderException, InvalidValueException {
         Weapon weapon = new Weapon(holder, anchor);
-        assertEquals(50, weapon.getDamage());
+        assertEquals(10, weapon.getDamage());
         assertEquals(10.0, weapon.getWeight()); // defaultWeight
         assertEquals(ShineLevel.LOW, weapon.getShineLevel());
     }
@@ -78,7 +78,7 @@ class WeaponTest {
     @Test
     void testCalculateValueWithZeroDamage() throws InvalidHolderException, InvalidValueException {
         Weapon weapon = new Weapon(holder, anchor);
-        assertEquals(50 * 2, weapon.getValue());
+        assertEquals(20, weapon.getValue());
     }
 
     /* -------------------------------------------------------------

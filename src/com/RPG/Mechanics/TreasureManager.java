@@ -145,7 +145,7 @@ public class TreasureManager {
                 .forEach(item -> {
                     AnchorPoint anchor = item.getHolder().getAnchorPointWithItem(item);
                     if (anchor != null) {
-                        item.getHolder().unequip(anchor, item);
+                        defeated.unequip(anchor, item);
                     }
 
                     boolean equipped = tryEquipOrBackpack(looter, item);
@@ -201,7 +201,7 @@ public class TreasureManager {
     }
 
     /**
-     * Searches for a free (unused) anchor point on the given entity that can accept the specified item,
+     * Searches for a free anchor point on the given entity that can accept the specified item,
      * excluding anchor points that represent backpacks.
      *
      * @effect The method iterates through all anchor points on the entity and returns the first one that

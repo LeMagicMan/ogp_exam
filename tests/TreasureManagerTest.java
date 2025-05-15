@@ -15,17 +15,19 @@ public class TreasureManagerTest {
     private Weapon shinyWeapon;
     private Weapon unwantedWeapon;
     private Backpack heroBackpack;
+    private Weapon monsterWeapon;
 
     @BeforeEach
     public void setUp() throws Exception {
-        intelligentHero = new Hero("Hero");  // Hero is intelligent
-        nonIntelligentMonster = new Monster("Monster");  // Monster is not intelligent
+        intelligentHero = new Hero("Hero");
+        nonIntelligentMonster = new Monster("Monster");
         heroBackpack = new Backpack(intelligentHero, AnchorPoint.BACK);
 
         // Setup items
-        desiredWeapon = new Weapon(5, null, AnchorPoint.LEFTHAND, ShineLevel.LOW, 50);
-        shinyWeapon = new Weapon(5, null, AnchorPoint.RIGHTHAND, ShineLevel.HIGH, 30);
-        unwantedWeapon = new Weapon(5, null, AnchorPoint.LEFTHAND, ShineLevel.LOW, 40);
+        desiredWeapon = new Weapon(5, nonIntelligentMonster, AnchorPoint.LEFTHAND, ShineLevel.LOW, 50);
+        monsterWeapon = new Weapon(nonIntelligentMonster, AnchorPoint.RIGHTHAND);
+        shinyWeapon = new Weapon(5, intelligentHero, AnchorPoint.RIGHTHAND, ShineLevel.HIGH, 30);
+        unwantedWeapon = new Weapon(5, null, AnchorPoint.LEFTHAND, ShineLevel.NONE, 40);
 
         // Set the hero's desired item
         ArrayList<Item> desiredItems = new ArrayList<>();
@@ -48,6 +50,8 @@ public class TreasureManagerTest {
 
     @Test
     public void nonIntelligentEntityLootsShinyItem() throws Exception {
+        intelligentHero.unequip(AnchorPoint.BACK, heroBackpack);
+        intelligentHero.equip(AnchorPoint.BACK, unwantedWeapon);
         // Simulate the monster looting the shiny weapon (because it is not intelligent)
         ArrayList<Item> desiredItems = new ArrayList<>();
         desiredItems.add(desiredWeapon);  // Monster doesn't care about this
@@ -55,7 +59,7 @@ public class TreasureManagerTest {
 
         // Assert that the non-intelligent monster looted the shiny weapon
         assertEquals(nonIntelligentMonster, shinyWeapon.getHolder());
-        assertNull(desiredWeapon.getHolder());
+        assertNull(unwantedWeapon.getHolder());
     }
 
     @Test
