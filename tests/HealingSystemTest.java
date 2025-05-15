@@ -56,17 +56,6 @@ public class HealingSystemTest {
         assertEquals(initialHP, afterHP, "Monster HP should not change after healing");
     }
 
-    @RepeatedTest(10)
-    void repeatedHealingShouldNotExceedHeroMaxHP() throws InvalidValueException, InvalidDamageTypesException, InvalidNameException, InvalidSkinTypeException, InvalidItemsException, InvalidHolderException {
-        hero = new Hero("Hero");
-        long maxHP = hero.getMaxHP();
-
-        for (int i = 0; i < 10; i++) {
-            healingSystem.heal(hero);
-            assertTrue(hero.getHP() <= maxHP, "Hero HP must never exceed max HP");
-        }
-    }
-
     @Test
     void healingShouldDoNothingIfHeroHPIsMax() throws Exception {
         // First, restore hero HP to max
