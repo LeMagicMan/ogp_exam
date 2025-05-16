@@ -41,7 +41,7 @@ public class EntityTest {
     }
 
     @Test
-    public void testReduceHPWithinBounds() throws InvalidValueException {
+    public void testReduceHPWithinBounds(){
         hero.reduceHP(300L);
         assertEquals(697L, hero.getHP());
 
@@ -56,20 +56,19 @@ public class EntityTest {
     }
 
     @Test
-    public void testIncreaseHPWithinBounds() throws InvalidValueException {
+    public void testIncreaseHPWithinBounds(){
         hero.reduceHP(200L);
         assertEquals(797L, hero.getHP());
 
         hero.increaseHP(100L);
         assertEquals(897L, hero.getHP());
 
-        // Overhealing caps at max HP
         hero.increaseHP(500L);
         assertEquals(hero.getMaxHP(), hero.getHP());
     }
 
     @Test
-    public void testMonsterHPDoesNotIncrease() throws InvalidValueException {
+    public void testMonsterHPDoesNotIncrease(){
         monster.reduceHP(200L);
         assertEquals(797L, monster.getHP());
 
@@ -103,7 +102,6 @@ public class EntityTest {
 
     @Test
     public void testGetDefenseReflectsProtectionAndSkin() {
-        // Defense = getProtection() + getSkinType().getProtection()
         int expected = hero.getProtection() + hero.getSkinType().getProtection();
         assertEquals(expected, hero.getDefense());
     }
@@ -143,20 +141,16 @@ public class EntityTest {
 
     @Test
     public void testIsValidCapacity() throws InvalidValueException, InvalidHolderException {
-        // Valid capacities
         assertTrue(hero.isValidCapacity(0));
         assertTrue(hero.isValidCapacity(10));
 
-        // Invalid capacity - negative
         assertFalse(hero.isValidCapacity(-1));
 
-        // Create backpacks with various capacities
         AnchorPoint heroAnchor = hero.getAnchorPointAt(0);
         Backpack validBackpack = new Backpack(3.0, 100, 15, hero, heroAnchor, ShineLevel.MEDIUM);
         assertTrue(validBackpack.isValidCapacity(validBackpack.getCapacity()));
 
         Backpack invalidBackpack = new Backpack(3.0, 100, -5, hero, heroAnchor, ShineLevel.MEDIUM);
-        // The invalid capacity will be reset to defaultCapacity inside constructor
         assertTrue(invalidBackpack.isValidCapacity(invalidBackpack.getCapacity()));
         assertTrue(invalidBackpack.getCapacity() >= 0);
     }
@@ -179,7 +173,6 @@ public class EntityTest {
 
         assertTrue(monster.hasValidDamageTypes());
 
-        // Create invalid damage types - including NORMAL with others
         HashSet<DamageType> invalidDamageTypes = new HashSet<>();
         invalidDamageTypes.add(DamageType.NORMAL);
         invalidDamageTypes.add(DamageType.CLAWS);

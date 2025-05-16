@@ -30,10 +30,6 @@ public class HeroTest {
         }
     }
 
-    /***************
-     * Constructor Tests
-     ***************/
-
     @Test
     public void testHeroConstructorWithValidParams() throws Exception {
         Hero hero = new Hero(validName, validHP, validStrength, defaultItems);
@@ -54,10 +50,6 @@ public class HeroTest {
         assertTrue(hero.hasDamageType(DamageType.NORMAL));
     }
 
-    /***************
-     * Name Validation Tests
-     ***************/
-
     @Test
     public void testValidNameWithColonAndSpaces() throws Exception {
         Hero hero = new Hero("John: The Brave");
@@ -73,10 +65,6 @@ public class HeroTest {
     public void testInvalidNameColonWithoutSpace() {
         assertThrows(InvalidNameException.class, () -> new Hero("John:TheBrave"));
     }
-
-    /***************
-     * SkinType and DamageType Tests
-     ***************/
 
     @Test
     public void testHeroSkinTypeIsAlwaysNormal() throws Exception {
@@ -101,10 +89,6 @@ public class HeroTest {
         assertFalse(hero.areValidDamageTypes(invalidTypes));
     }
 
-    /***************
-     * Strength / Capacity Tests
-     ***************/
-
     @Test
     public void testHeroCapacityBasedOnStrength() throws Exception {
         Hero hero = new Hero(validName, validHP, BigDecimal.valueOf(10), defaultItems);
@@ -128,10 +112,6 @@ public class HeroTest {
         Hero hero = new Hero(validName);
         assertEquals(2, hero.getStrength().scale());
     }
-
-    /***************
-     * AnchorPoint and Item Tests
-     ***************/
 
     @Test
     public void testHeroHasProperAnchorpoints() throws Exception {
@@ -164,10 +144,6 @@ public class HeroTest {
     public void testEmptyItemListDoesNotThrow() {
         assertDoesNotThrow(() -> new Hero(validName, validHP, validStrength, new ArrayList<>()));
     }
-
-    /***************
-     * Healable / Intelligent
-     ***************/
 
     @Test
     public void testHeroIsHealable() throws Exception {

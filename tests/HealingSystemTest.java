@@ -56,12 +56,11 @@ public class HealingSystemTest {
 
     @Test
     void healingShouldDoNothingIfHeroHPIsMax() throws Exception {
-        // First, restore hero HP to max
         hero = new Hero("Hero");
         long maxHP = hero.getMaxHP();
 
         while (hero.getHP() < maxHP) {
-            hero.increaseHP(1);  // artificially bring HP to max
+            hero.increaseHP(1);
         }
         assertEquals(maxHP, hero.getHP());
 

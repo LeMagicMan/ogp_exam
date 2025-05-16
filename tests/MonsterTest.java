@@ -36,10 +36,6 @@ public class MonsterTest {
         validSkinType = SkinType.THICK;
     }
 
-    /***************
-     * Constructor Tests
-     ***************/
-
     @Test
     public void testFullConstructorValid() throws Exception {
         Monster monster = new Monster(validName, validHP, defaultAnchorPoints, validDamageTypes, validSkinType);
@@ -59,10 +55,6 @@ public class MonsterTest {
         assertEquals(5, monster.getAmountOfAnchorPoints());
     }
 
-    /***************
-     * Name Validation
-     ***************/
-
     @Test
     public void testValidMonsterNameWithColon() throws Exception {
         Monster monster = new Monster("Brute: Alpha");
@@ -75,10 +67,6 @@ public class MonsterTest {
         assertThrows(InvalidNameException.class, () -> new Monster("123Orc"));
         assertThrows(InvalidNameException.class, () -> new Monster(""));
     }
-
-    /***************
-     * SkinType & DamageType Validation
-     ***************/
 
     @Test
     public void testValidSkinTypeCheck() throws Exception {
@@ -104,19 +92,11 @@ public class MonsterTest {
         assertFalse(new Monster("Warg").areValidDamageTypes(multi));
     }
 
-    /***************
-     * Capacity & AnchorPoints
-     ***************/
-
     @Test
     public void testHasProperAnchorpoints() throws Exception {
         Monster monster = new Monster(validName);
         assertTrue(monster.hasProperAnchorpoints());
     }
-
-    /***************
-     * Adjusted Roll
-     ***************/
 
     @Test
     public void testAdjustedRollLessThanHP() throws Exception {
@@ -130,10 +110,6 @@ public class MonsterTest {
         assertEquals(997, monster.getAdjustedRoll(1000));
     }
 
-    /***************
-     * Healable / Intelligent
-     ***************/
-
     @Test
     public void testMonsterIsNotHealable() throws Exception {
         Monster monster = new Monster(validName);
@@ -145,10 +121,6 @@ public class MonsterTest {
         Monster monster = new Monster(validName);
         assertFalse(monster.isIntelligent());
     }
-
-    /***************
-     * Name Regex Getter
-     ***************/
 
     @Test
     public void testGetNameRegex() {

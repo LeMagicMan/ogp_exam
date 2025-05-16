@@ -118,7 +118,6 @@ public class TreasureManagerTest {
 
     @Test
     void testLootMultipleItemsWithMixedOutcomes() throws Exception {
-        // Hero gets shiny weapon in slot, dull weapon into backpack
         ArrayList<Item> desired = new ArrayList<>();
         desired.add(shinyWeapon);
         desired.add(dullWeapon);

@@ -18,10 +18,6 @@ public class ItemTest {
         anchorPoint = AnchorPoint.RIGHTHAND;
     }
 
-    // --------------------------
-    // Testing Weapon (subclass of Item)
-    // --------------------------
-
     @Test
     public void testWeaponBasicConstructor_SetsDefaultValues() throws Exception {
         Weapon weapon = new Weapon(entity, anchorPoint);
@@ -43,10 +39,6 @@ public class ItemTest {
         entity.kill();
         assertThrows(InvalidHolderException.class, () -> new Weapon(entity, anchorPoint));
     }
-
-    // --------------------------
-    // Testing Backpack (subclass of Item)
-    // --------------------------
 
     @Test
     public void testBackpackConstructor_SetsFieldsCorrectly() throws Exception {
@@ -72,10 +64,6 @@ public class ItemTest {
         Backpack backpack = new Backpack(-5.0, 100, 5, entity, anchorPoint, ShineLevel.MEDIUM);
         assertEquals(10.0, backpack.getWeight()); // defaultWeight applied
     }
-
-    // --------------------------
-    // General Item tests via subclasses
-    // --------------------------
 
     @Test
     public void testIsValidWeight() throws InvalidValueException, InvalidHolderException {

@@ -22,10 +22,6 @@ class WeaponTest {
         anchor = AnchorPoint.LEFTHAND;
     }
 
-    /* -------------------------------------------------------------
-     * Constructor Tests
-     * ------------------------------------------------------------- */
-
     @Test
     void testConstructorWithValidParameters() throws InvalidHolderException, InvalidValueException {
         Weapon weapon = new Weapon(12.5, holder, anchor, ShineLevel.MEDIUM, 50);
@@ -50,10 +46,6 @@ class WeaponTest {
         assertEquals(ShineLevel.LOW, weapon.getShineLevel());
     }
 
-    /* -------------------------------------------------------------
-     * Damage Validation
-     * ------------------------------------------------------------- */
-
     @Test
     void testIsValidDamage() throws InvalidHolderException, InvalidValueException {
         Weapon weapon = new Weapon(holder, anchor);
@@ -64,10 +56,6 @@ class WeaponTest {
         assertFalse(weapon.isValidDamage(100 + 1));
         assertFalse(weapon.isValidDamage(-1));
     }
-
-    /* -------------------------------------------------------------
-     * Value Calculation
-     * ------------------------------------------------------------- */
 
     @Test
     void testCalculateValueWithValidDamage() throws InvalidHolderException, InvalidValueException {
@@ -80,10 +68,6 @@ class WeaponTest {
         Weapon weapon = new Weapon(holder, anchor);
         assertEquals(20, weapon.getValue());
     }
-
-    /* -------------------------------------------------------------
-     * Unique ID Generation
-     * ------------------------------------------------------------- */
 
     @Test
     void testUniqueIdIsMultipleOfSixAndPositive() throws InvalidHolderException, InvalidValueException {
@@ -102,10 +86,6 @@ class WeaponTest {
         }
     }
 
-    /* -------------------------------------------------------------
-     * Composite-like Methods
-     * ------------------------------------------------------------- */
-
     @Test
     void testWeaponHasNoContainedItems() throws InvalidHolderException, InvalidValueException {
         Weapon weapon = new Weapon(holder, anchor);
@@ -114,10 +94,6 @@ class WeaponTest {
         assertNull(weapon.getItemAt(-1));
         assertNull(weapon.getItemAt(999));
     }
-
-    /* -------------------------------------------------------------
-     * Edge Cases
-     * ------------------------------------------------------------- */
 
     @Test
     void testMaxDamageAccepted() throws InvalidHolderException, InvalidValueException {
@@ -131,10 +107,6 @@ class WeaponTest {
         Weapon weapon = new Weapon(-5.0, holder, anchor, ShineLevel.HIGH, 10);
         assertEquals(10, weapon.getWeight());
     }
-
-    /* -------------------------------------------------------------
-     * Exception Handling (Assumes you validate holder or weight)
-     * ------------------------------------------------------------- */
 
     @Test
     void testNullHolderThrowsException() throws InvalidValueException, InvalidDamageTypesException, InvalidNameException, InvalidSkinTypeException, InvalidItemsException, InvalidHolderException {
