@@ -142,13 +142,24 @@ public class DefaultBattleSystem {
     }
 
     /**
+     * simulates a battle between A monster and a different Entity
      *
-     * @param attacker
+     * @param entity
+     *      the entity fighting th monster
+     *
      * @param monster
+     *      the monster the entity fights
+     *
      * @param chosenItems
+     *      the items the entity wants to loot
+     *
      * @param initiator
+     *      the one who startted the fight
+     *
+     * @effect simulates a battle between a Monster Entity and a different Entity
+     *      | battle (entity, monster, chosenItems, initiator, response)
      */
-    public void combat(Entity attacker, Monster monster, ArrayList<Item> chosenItems, Entity initiator, boolean response) {
-        battle(attacker, monster, chosenItems, initiator, response);
+    public void combat(Entity entity, Monster monster, ArrayList<Item> chosenItems, Entity initiator, boolean response) {
+        battle(entity, monster, chosenItems, initiator, response);
     }
 }
