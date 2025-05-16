@@ -8,7 +8,7 @@ import com.RPG.Exception.InvalidValueException;
  * abstract class representing all items
  *
  * @invar every item must have a Valid holder
- *      | hasValidHolder()
+ *      | isValidHolder()
  *
  * @invar each different type of item must have a unique ID
  *      | !(item1.getItemType() == item2.getItemType())
@@ -36,7 +36,7 @@ public abstract class Item {
     /**
      * A variable representing the Id of an Item
      */
-    private final long Id;
+    private final Long Id;
 
     /**
      * A variable representing the weight of an Item
@@ -71,7 +71,7 @@ public abstract class Item {
     /**
      * A variable representing the terminated state of an item
      */
-    private Boolean terminated = false;
+    private boolean terminated = false;
 
     /**
      * A variable representing the backpack an item is stored in
@@ -283,7 +283,7 @@ public abstract class Item {
      *      | this.Holder = Holder
      */
     protected void setHolder(Entity Holder) throws InvalidHolderException {
-        if (isTerminated()){ //TODO: ask about this checker and the hasValidHolder
+        if (isTerminated()){ //TODO: ask about this checker and the isValidHolder
             throw new InvalidHolderException("Holder cannot be terminated");
         }
         this.Holder = Holder;
@@ -381,8 +381,25 @@ public abstract class Item {
     }
 
     /**
+     * sets the backpack of an Item
+     *
+     * @pre Item must be in Content of backpack, if backpack null, backpack of item needs to be set to null
+     *      | if backpack == null
+     *      | then this.setBackpack(null)
+     *      | backpack.hasAsItem(this)
+     *
+     * @param backpack
+     *      the backpack we want to add an item to
+     */
+    protected void setBackpack(Backpack backpack){
+        this.backpack = backpack;
+    }
+
+    /**
      * getter for the Backpack of an Item
-     * @return
+     *
+     * @return the backpack of this item
+     *      | this.backpack
      */
     public Backpack getBackpack() {
         return backpack;
@@ -436,7 +453,7 @@ public abstract class Item {
      * @return true if holder is valid, false otherwise
      *      | !Holder.isTerminated()
      */
-    public boolean hasValidHolder(Entity Holder){
+    public boolean isValidHolder(Entity Holder){
         if (Holder == null) return true;
         return !Holder.isTerminated() && Holder.hasAsItem(this);
     }
@@ -460,6 +477,7 @@ public abstract class Item {
      * @return true if Item is terminated, false otherwise
      *      | this.Terminated
      */
+    @Basic
     public boolean isTerminated() {
         return terminated;
     }
@@ -468,11 +486,11 @@ public abstract class Item {
      * checks if the Item is valid
      *
      * @return true if Item is not terminated and has a valid Holder, false otherwise
-     *      | if(!isTerminated && hasValidHolder)
+     *      | if(!isTerminated && isValidHolder)
      *      | then result == true
      */
     public boolean isValidItem(){
-        return !isTerminated() && hasValidHolder(this.getHolder());
+        return !isTerminated() && isValidHolder(this.getHolder());
     }
 
     /**
@@ -485,10 +503,26 @@ public abstract class Item {
     }
 
     /**
-     * //TODO
+     * terminates an Item and its relations with other classes
+     *
+     * @effect makes sure both the bidirectional relation with Entity and Backpack is removed properly
+     *      | if backpack != null
+     *      | then backpack.unpackItem(this)
+     *      | Holder != null
+     *      | this.getHolder().unequip(this.getHolder().getAnchorPointWithItem(this), this )
+     *
+     * @effect if this item has content remove everything out of its content
+     *      | if this.getAmountOfItems() > 0
+     *      |   for index < this.getAmountOfItems(); index++
+     *      |       this.getBackpack().unpackItem(this.getItemAt(index))
      */
     public void terminate(){
         terminated = true;
+        if (this.getAmountOfItems() > 0){
+            for (int index = 0; index < this.getAmountOfItems(); index++){
+                this.getBackpack().unpackItem(this.getItemAt(index));
+            }
+        }
         if (backpack != null) {
             backpack.unpackItem(this);
         }

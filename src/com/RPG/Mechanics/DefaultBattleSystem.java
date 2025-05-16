@@ -142,7 +142,7 @@ public class DefaultBattleSystem {
     }
 
     /**
-     * //TODO
+     *
      * @param attacker
      * @param monster
      * @param chosenItems

@@ -30,12 +30,12 @@ public class Weapon extends Item {
     /**
      * A variable representing the value per Damage of a weapon
      */
-    private static int valuePerDamage = 2;
+    private final static int valuePerDamage = 2;
 
     /**
      * A variable representing the maxValue of a weapon
      */
-    private final int maxValue = 200;
+    private static final int maxValue = 200;
 
     /**
      * A variable representing the maxDamage of a weapon
@@ -156,10 +156,12 @@ public class Weapon extends Item {
      **********************************************************/
 
     /**
-     * generates an unique id for every Item
+     * generates an unique id for every Weapon
      *
      * @return the uniquely created Id
-     *      | //TODO
+     *      | nextId = IdGenerator
+     *      | idGenerator + 6
+     *      | result = nextId
      */
     @Override
     protected long generateUniqueId() {

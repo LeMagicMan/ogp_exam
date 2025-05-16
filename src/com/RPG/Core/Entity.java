@@ -59,18 +59,17 @@ public abstract class Entity {
     /**
      * A variable representing the current amount of hitpoints (nominal)
      */
-    private Long HP = 0L;
+    private long HP = 0L;
 
     /**
      * A variable representing the AnchorPoints of an entity
      */
     private ArrayList<AnchorPoint> AnchorPoints = new ArrayList<>();
 
-
     /**
      * A variable representing the terminated status of an entity
      */
-    private Boolean Terminated = false;
+    private boolean Terminated = false;
 
     /**
      * A regex that the name of an entity needs to follow
@@ -112,7 +111,10 @@ public abstract class Entity {
      */
     private static final RoundingMode roundingMode = RoundingMode.HALF_UP;
 
-    protected final Map<AnchorPoint, Item> equipment = new EnumMap<>(AnchorPoint.class);
+    /**
+     * A map representing the currently equipped items at each anchor point
+     */
+    private final Map<AnchorPoint, Item> equipment = new EnumMap<>(AnchorPoint.class);
 
     /**********************************************************
      * Constructors
@@ -513,7 +515,7 @@ public abstract class Entity {
     }
 
     /**
-     * finds a given Anchorpoint in the hashset
+     * finds a given Anchorpoint of the entity
      *
      * @param anchorPoint
      *      AnchorPoint that needs to be found
@@ -554,16 +556,6 @@ public abstract class Entity {
     }
 
     /**
-     * normalises the HP of an entity
-     *
-     * @effect makes the HP prime again
-     *      | makePrime(this.getHP())
-     */
-    public void normaliseHP() {
-        makePrime(this.HP);
-    }
-
-    /**
      * setter for the HP of an entity
      * ensures the HP is minimum 0 and maximum the maxHP
      *
@@ -601,6 +593,26 @@ public abstract class Entity {
      * Methods
      **********************************************************/
 
+    /**
+     * normalises the HP of an entity
+     *
+     * @effect makes the HP prime again
+     *      | makePrime(this.getHP())
+     */
+    public void normaliseHP() {
+        makePrime(this.HP);
+    }
+
+    /**
+     * checks if an entity has an item at a certain anchorPoint
+     *
+     * @param anchorPoint
+     *      the anchorpoint we want to check
+     *
+     * @return tue if the anchorpoint has an item, false otherwise or anchorpoint is null
+     *      | if (anchorPoint == null) return false;
+     *      | result == equipment.containsKey(anchorPoint)
+     */
     public boolean hasItemAt(AnchorPoint anchorPoint) {
         if (anchorPoint == null) {
             return false;
@@ -851,7 +863,7 @@ public abstract class Entity {
      *      |   result == false
      */
     @Raw
-    public Boolean isValidName(String name) {
+    public boolean isValidName(String name) {
         return name.matches(this.getNameRegex()) && !name.isEmpty();
     }
 
@@ -866,7 +878,7 @@ public abstract class Entity {
      * @effect If the MaxHP is zero it means the maxHp has not been initialised yet, and thus is the HP allowed to be bigger than it to set it
      *      | if (this.getMaxHP() == 0){result == (this.getHP() >= 0 && isPrime(getHP()))}
      */
-    public Boolean isValidHp(Long HP) {
+    public boolean isValidHp(long HP) {
         if (this.getMaxHP() == 0L) {
             return (HP >= 0 && isPrime(HP));
         }
@@ -886,7 +898,7 @@ public abstract class Entity {
      *      |   HP % index == 0
      */
     @Model
-    private Boolean isPrime(Long HP) {
+    private boolean isPrime(long HP) {
         if (HP <= 1) {
             return false;
         }
@@ -919,6 +931,12 @@ public abstract class Entity {
      */
     public abstract boolean areValidDamageTypes(HashSet<DamageType> damageTypes);
 
+    /**
+     * checks whether an entity has validDamageTypes
+     *
+     * @return if the entity has Valid DamageTypes, false otherwise
+     *      | this.areValidDamageTypes(DamageTypes)
+     */
     public boolean hasValidDamageTypes(){
         return this.areValidDamageTypes(DamageTypes);
     }
@@ -999,6 +1017,7 @@ public abstract class Entity {
      * @return true if Entity is terminated, false otherwise
      *      | this.Terminated
      */
+    @Basic
     public boolean isTerminated() {
         return Terminated;
     }
@@ -1045,9 +1064,14 @@ public abstract class Entity {
     public abstract boolean hasProperAnchorpoints();
 
     /**
-     * //TODO
+     * checks if an entity can equip a certain item
+     *
      * @param item
-     * @return
+     *      item we want to check for
+     *
+     * @return true if we can equip Item, false otherwise
+     *      | if (item == null) result == true
+     *      | result == !(this.getTotalWeight() + item.getTotalWeight() > this.Capacity)
      */
     public boolean canEquip(Item item) {
         if (item == null) return true;

@@ -43,12 +43,12 @@ public class Monster extends Entity {
     /**
      * A variable representing whether an entity can heal
      */
-    private final Boolean Healable = false;
+    private static final boolean Healable = false;
 
     /**
      * A variable representing whether an entity is intelligent
      */
-    private Boolean Intelligent = false;
+    private static final boolean Intelligent = false;
 
     /**
      * A variable representing the capacity a monster gets per anchorpoint
@@ -118,9 +118,7 @@ public class Monster extends Entity {
     }
 
     /**
-     * getter for the adjusted roll of a monster
-     *
-     * @effect If the roll is less than the current HP, the roll is returned unchanged.
+     * getter for the adjusted roll of a monster, If the roll is less than the current HP, the roll is returned unchanged.
      * Otherwise, the method returns the HP value, effectively capping the roll at the current HP.
      *
      * @param roll
@@ -166,7 +164,7 @@ public class Monster extends Entity {
      *      | result == (name != null) && name.matches(nameRegex)
      */
     @Override
-    public Boolean isValidName(String name) {
+    public boolean isValidName(String name) {
         return super.isValidName(name);
     }
 
@@ -174,7 +172,7 @@ public class Monster extends Entity {
      * checks whether an entity can heal
      *
      * @return true if an entity can heal, otherwise false
-     * | Entity.Healable
+     *      | Entity.Healable
      */
     @Override
     public boolean isHealable() {
@@ -185,7 +183,7 @@ public class Monster extends Entity {
      * getter for the intelligent of an entity
      *
      * @return true if is Intelligent, false otherwise
-     * | this.Intelligent
+     *      | this.Intelligent
      */
     @Override
     public boolean isIntelligent() {
@@ -198,21 +196,28 @@ public class Monster extends Entity {
      * @effect  For each anchor point on the object, this method checks if a random number is less than
      * the itemSpawnChance. If so, it attempts to create an item of the allowed type
      * for that anchor point using the appropriate MonsterLootFactory.
+     *      | if (Math.random() < itemSpawnChance)
+     *      | then MonsterLootFactory factory = factories.get(anchorpoint.getAllowedItemType());
      *
      * @effect If the anchor point allows any item type ItemType.ANY, a specific type is
      * chosen randomly from a fixed set: WEAPON, ARMOR, MONEY_POUCH,
      * and BACKPACK.
+     *      | if(anchorpoint.getAllowedItemType() == ItemType.ANY)
+     *      |       ItemType[] types = {ItemType.WEAPON, ItemType.ARMOR, ItemType.MONEY_POUCH, ItemType.BACKPACK}
+     *      |       type = types[(int) (Math.random() * types.length)]
      *
      * @effect If a matching loot factory exists for the chosen item type, it is used to create the item
      * and associate it with the current object and anchor point. If the creation throws
      * InvalidValueException or InvalidHolderException, the method fails an assertion,
-     * as those exceptions are considered unexpected. //TODO
+     * as those exceptions are considered unexpected.
+     *      | Item item = factory.createItem(this, anchorpoint);
+     *
      */
     private void createLoot(){
         for (int index = 0; index < this.getAmountOfAnchorPoints(); index++) {
             if (Math.random() < itemSpawnChance) {
-                AnchorPoint anchor = this.getAnchorPointAt(index);
-                ItemType type = anchor.getAllowedItemType();
+                AnchorPoint anchorpoint = this.getAnchorPointAt(index);
+                ItemType type = anchorpoint.getAllowedItemType();
 
                 switch (type) {
                     case ANY -> {
@@ -225,7 +230,7 @@ public class Monster extends Entity {
 
                 if (factory != null) {
                     try {
-                        Item item = factory.createItem(this, anchor);
+                        Item item = factory.createItem(this, anchorpoint);
                     } catch (InvalidValueException | InvalidHolderException e) {
                         assert false; //shouldn't happen
                     }

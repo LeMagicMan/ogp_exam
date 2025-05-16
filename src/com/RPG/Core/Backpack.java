@@ -203,6 +203,14 @@ public class Backpack extends Item {
         return Content.get(index);
     }
 
+    /**
+     * generates an unique id for every backpack
+     *
+     * @return the uniquely created Id
+     *      | nextId = IdGenerator
+     *      | idGenerator + 1
+     *      | result = nextId
+     */
     @Override
     protected long generateUniqueId() {
         long nextId;
@@ -284,7 +292,7 @@ public class Backpack extends Item {
      */
     @Raw
     public void storeItem(Item item){
-        this.AddItem(item);
+        this.addItem(item);
     }
 
     /**
@@ -306,19 +314,23 @@ public class Backpack extends Item {
      * @param item
      *      item we want to remove
      *
-     * @effect item is removed from the backpacks content
+     * @effect backpack of item is set to null
+     *      | item.setBackpack(null)
+     *
+     * @post item is removed from the backpacks content
      *      | this.Content.remove(item);
      */
     private void removeItem(Item item){
         if (!this.hasAsItem(item)){
             return;
         }
-        this.Content.remove(item);
         try {
             item.setHolder(null);
         } catch (InvalidHolderException e) {
             assert false;
         }
+        this.Content.remove(item);
+        item.setBackpack(null);
     }
 
     /**
@@ -331,7 +343,7 @@ public class Backpack extends Item {
      *      the item we want to add to the content
      */
     @Raw @Model
-    private void AddItem(Item item){
+    private void addItem(Item item){
         if (!this.canAddItem(item)){
             return;
         }
@@ -350,6 +362,7 @@ public class Backpack extends Item {
             assert false;
         }
         Content.add(item);
+        item.setBackpack(this);
     }
 
     /**
@@ -387,7 +400,7 @@ public class Backpack extends Item {
      */
     public boolean hasProperItems(ArrayList<Item> content){
         for (Item item : content){
-            if (item.getHolder() != this.getHolder()){
+            if (item.getHolder() != this.getHolder() || item.getBackpack() != this.getBackpack()){
                 return false;
             }
         }

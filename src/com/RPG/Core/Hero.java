@@ -30,17 +30,17 @@ public class Hero extends Entity {
     /**
      * A variable representing whether a hero can heal
      */
-    private Boolean Healable = true;
+    private static final boolean Healable = true;
 
     /**
      * A variable representing the Intelligence of a hero
      */
-    private final Boolean Intelligent = true;
+    private static final boolean Intelligent = true;
 
     /**
      * A variable representing a hero's capacity multiplier
      */
-    private static final float capacityMultiplier = 5;
+    private static final float capacityMultiplier = 5F;
 
     /**
      * defaultStrength of a hero
@@ -110,6 +110,17 @@ public class Hero extends Entity {
     /**********************************************************
      * Getters and Setters
      **********************************************************/
+
+    /**
+     * getter for the nameRegex of a hero
+     *
+     * @return the nameRegex
+     *      | this.nameRegex
+     */
+    @Override
+    public String getNameRegex() {
+        return nameRegex;
+    }
 
     /**********************************************************
      * Methods
@@ -318,7 +329,7 @@ public class Hero extends Entity {
             for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
                 AnchorPoint anchorpoint = getAnchorPointAt(i);
                 if (anchorpoint.getAllowedItemType() == ItemType.ANY || anchorpoint.getAllowedItemType() == item.getItemType()) {
-                    Item equippedItem = equipment.get(anchorpoint);
+                    Item equippedItem = getItemAt(anchorpoint);
 
                     if (equippedItem == null) {
                         this.equip(anchorpoint, item);
@@ -356,17 +367,6 @@ public class Hero extends Entity {
     }
 
     /**
-     * getter for the nameRegex of a hero
-     *
-     * @return the nameRegex
-     *      | this.nameRegex
-     */
-    @Override
-    public String getNameRegex() {
-        return nameRegex;
-    }
-
-    /**
      * getter for the intelligent of an entity
      *
      * @return true if is Intelligent, false otherwise
@@ -400,7 +400,7 @@ public class Hero extends Entity {
      *      | && !(name.charAt(index) == ':' && name.charAt(index + 1) != ' ')
      */
     @Override
-    public Boolean isValidName(String name) {
+    public boolean isValidName(String name) {
 
         long Apostrof = name.chars().filter(c -> c == '’').count();
         if (Apostrof > 2) return false;
@@ -453,7 +453,18 @@ public class Hero extends Entity {
      * a checker that checks if a hero has all the needed anchorpoints exactly once
      *
      * @return true if a hero has all the needed anchorpoints exactly once, false otherwise
-     *      | TODO: ask about formal
+     *      | Set<AnchorPoint> expected = EnumSet.of(
+     *      |           AnchorPoint.BELT,
+     *      |           AnchorPoint.BACK,
+     *      |           AnchorPoint.BODY,
+     *      |           AnchorPoint.LEFTHAND,
+     *      |           AnchorPoint.RIGHTHAND
+     *      |   );
+     *      | Set<AnchorPoint> found = EnumSet.noneOf(AnchorPoint.class)
+     *      | for (index < getAmountOfAnchorPoints())
+     *      |   if (!expected.contains(getAnchorPointAt(index)) || !found.add(getAnchorPointAt(index)))
+     *      |   then result == false
+     *      | result == found.equals(expected)
      */
     @Override
     public boolean hasProperAnchorpoints() {
@@ -468,8 +479,8 @@ public class Hero extends Entity {
         Set<AnchorPoint> found = EnumSet.noneOf(AnchorPoint.class);
 
         for (int index = 0; index < this.getAmountOfAnchorPoints(); index++) {
-            AnchorPoint ap = getAnchorPointAt(index);
-            if (!expected.contains(ap) || !found.add(ap)) {
+            AnchorPoint anchorPoint = getAnchorPointAt(index);
+            if (!expected.contains(anchorPoint) || !found.add(anchorPoint)) {
                 return false;
             }
         }
