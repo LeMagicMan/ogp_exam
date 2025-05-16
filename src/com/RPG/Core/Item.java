@@ -36,7 +36,7 @@ public abstract class Item {
     /**
      * A variable representing the itemType of an item
      */
-    private ItemType itemType;
+    private final ItemType itemType;
 
     /**
      * A variable representing the Id of an Item
@@ -71,7 +71,7 @@ public abstract class Item {
     /**
      * A variable representing the Shinelevel of an item
      */
-    private ShineLevel ShineLevel;
+    private final ShineLevel ShineLevel;
 
     /**
      * A variable representing the terminated state of an item

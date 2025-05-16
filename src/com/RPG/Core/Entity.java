@@ -68,7 +68,7 @@ public abstract class Entity {
     /**
      * A variable representing the AnchorPoints of an entity
      */
-    private ArrayList<AnchorPoint> AnchorPoints = new ArrayList<>();
+    private final ArrayList<AnchorPoint> AnchorPoints = new ArrayList<>();
 
     /**
      * A variable representing the terminated status of an entity

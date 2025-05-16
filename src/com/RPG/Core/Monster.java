@@ -154,7 +154,7 @@ public class Monster extends Entity {
      * getter for the nameRegex of an entity
      *
      * @return the nameRegex
-     * | this.nameRegex
+     *      | this.nameRegex
      */
     @Override @Raw
     public String getNameRegex() {

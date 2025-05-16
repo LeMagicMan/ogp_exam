@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.RPG"},{"l":"com.RPG.Core"},{"l":"com.RPG.Exception"},{"l":"com.RPG.Mechanics"}];updateSearchResults();

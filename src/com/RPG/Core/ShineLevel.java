@@ -54,7 +54,7 @@ public enum ShineLevel {
      * @pre ValueMultiplier must be Valid
      *      | isValidValueMultiplier()
      */
-    private ShineLevel(float valueMultiplier) {
+    ShineLevel(float valueMultiplier) {
         if (!isValidValueMultiplier(valueMultiplier)) {
             this.valueMultiplier = 1F;
         } else this.valueMultiplier = valueMultiplier;
