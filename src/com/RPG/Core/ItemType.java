@@ -36,6 +36,6 @@ public enum ItemType {
     /**
      * constructor for an ItemType
      */
-    private ItemType() {
+    ItemType() {
     }
 }

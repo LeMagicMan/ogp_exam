@@ -54,7 +54,7 @@ public enum DamageType {
      * @pre baseDamage must be bigger than or equal to 0
      *      | hasValidDamage
      */
-    private DamageType(long baseDamage) {
+    DamageType(long baseDamage) {
         if (!isValidDamage(baseDamage)) {
             return;
         }

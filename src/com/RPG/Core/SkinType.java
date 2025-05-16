@@ -45,7 +45,7 @@ public enum SkinType {
      * @pre Protection must be valid
      *      | (protection >= 0)
      */
-    private SkinType(int protection) {
+    SkinType(int protection) {
         this.Protection = protection;
     }
 
