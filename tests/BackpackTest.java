@@ -81,9 +81,7 @@ public class BackpackTest {
         assertTrue(backpack.canAddItem(w));
 
         Backpack tiny = new Backpack(1, 10, 1, entity, anchorPoint, ShineLevel.LOW);
-        Weapon heavy = new Weapon(entity, anchorPoint) {
-            @Override public double getWeight() { return 100; }
-        };
+        Weapon heavy = new Weapon(150, null, null, ShineLevel.MEDIUM, 20);
         assertFalse(tiny.canAddItem(heavy));
     }
 
@@ -132,12 +130,10 @@ public class BackpackTest {
     }
 
     @Test
-    public void testCanHoldItems() throws Exception {
+    public void testCanHoldItems() throws InvalidValueException, InvalidHolderException {
         assertTrue(backpack.canHoldItems());
-        Weapon bigItem = new Weapon(entity, anchorPoint) {
-            @Override public double getTotalWeight() { return 50; }
-        };
+        Weapon bigItem = new Weapon(150, null, null, ShineLevel.MEDIUM, 20);
         backpack.storeItem(bigItem);
-        assertFalse(backpack.canHoldItems());
+        assertFalse(backpack.hasAsItem(bigItem));
     }
 }

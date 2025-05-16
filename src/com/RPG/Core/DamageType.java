@@ -1,6 +1,7 @@
 package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Raw;
 
 /**
  * An enumerator representing the damageTypes of a monster
@@ -79,6 +80,7 @@ public enum DamageType {
      * @return true if baseDamage bigger than or equal to 0, false otherwise
      *      | baseDamage >= 0
      */
+    @Raw
     public boolean isValidDamage(long baseDamage) {
         return this.baseDamage >= 0;
     }

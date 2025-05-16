@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * A class representing a BackPack Item
  *
  * @invar backpack must have proper Items
- *      | HasProperItems()
+ *      | areProperItems()
  *
  * @invar capacity of a backpack must be bigger than zero
  *      | isValidCapacity()
@@ -71,6 +71,9 @@ public class Backpack extends Item {
      *
      * @pre All items must fit in backpack
      *      | canStoreAll(Content)
+     *      
+     * @pre All items must be not terminated
+     *      | areProperItems(Content)
      *
      * @param weight
      *      the weight of the backpack
@@ -93,24 +96,31 @@ public class Backpack extends Item {
      * @param Content
      *      the content of this backpack
      *
+     * @post Content of the backpack is set to Content
+     *      | this.Content = Content
+     *      
+     * @effect creates a backpack using the auxilliary item constructor
+     *      | item(weight, Value, shinelevel, ItemType.BACKPACK)
+     *
      * @throws InvalidItemsException gets thrown when items are invalid or cant be stored
-     *      | !(canStoreAll(Content) || hasProperItem(Content))
+     *      | !(canStoreAll(Content) || areProperItem(Content))
      *
      */
     public Backpack(double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
         super(weight, Value, shinelevel, ItemType.BACKPACK);
-        if (this.hasProperItems(Content)){
+        if (this.areProperItems(Content)){
             throw new InvalidItemsException("all backpack items must belong to this backpack");
         }
-        this.setCapacity(Capacity);
         if (!canStoreAll(Content)){
             throw new InvalidItemsException("all items must fit in this backpack");
         }
+        this.setCapacity(Capacity);
         if (Holder != null && Holder.canEquip(this)) {
             Holder.equip(anchorPoint, this);
         }
-        this.Content = Content;
-
+        for (Item item : Content) {
+            this.storeItem(item);
+        }
     }
 
     /**
@@ -133,6 +143,9 @@ public class Backpack extends Item {
      *
      * @param shinelevel
      *      the shineLevel of this backpack
+     *
+     * @effect creates a backpack using an item constructor
+     *      | Item(weight, Value, Holder, anchorPoint, shinelevel, ItemType.BACKPACK)
      */
     public Backpack( double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel) throws InvalidValueException, InvalidHolderException {
         super(weight, Value, Holder, anchorPoint, shinelevel, ItemType.BACKPACK);
@@ -148,6 +161,9 @@ public class Backpack extends Item {
      *
      * @param anchorPoint
      *      the anchorpoint this backpack attaches to
+     *
+     * @effect creates a backpack using a more advanced backpack constructor
+     *      | this(defaultWeight, defaultValue, defaultCapacity, Holder, anchorPoint, ShineLevel.LOW)
      */
     public Backpack(Entity Holder, AnchorPoint anchorPoint) throws InvalidValueException, InvalidHolderException {
         this(defaultWeight, defaultValue, defaultCapacity, Holder, anchorPoint, ShineLevel.LOW);
@@ -183,6 +199,7 @@ public class Backpack extends Item {
      * @post the capacity of the backpack is set to the given capacity
      *      | this.Capacity = capacity
      */
+    @Raw
     private void setCapacity(int capacity){
         if (!isValidCapacity(capacity)){
             this.Capacity = defaultCapacity;
@@ -200,6 +217,7 @@ public class Backpack extends Item {
      * @return the Item at the given Index
      *      | this.Content.get(index)
      */
+    @Raw
     public Item getItemAt(int index){
         if(index >= this.getAmountOfItems()){
             return null;
@@ -215,7 +233,7 @@ public class Backpack extends Item {
      *      | idGenerator + 1
      *      | result = nextId
      */
-    @Override
+    @Override @Raw
     protected long generateUniqueId() {
         long nextId;
         do {
@@ -230,6 +248,7 @@ public class Backpack extends Item {
      * @return the amount of items in a backpack
      *      | this.Content.size()
      */
+    @Raw
     public int getAmountOfItems(){
         return Content.size();
     }
@@ -243,7 +262,7 @@ public class Backpack extends Item {
      *      |   TotalWeight += item.getWeight
      *      | result == TotalWeight
      */
-    @Override
+    @Override @Raw
     public double getTotalWeight(){
         double totalWeight = this.getWeight();
         if (!(Content ==  null)){
@@ -264,6 +283,7 @@ public class Backpack extends Item {
      *      |   TotalWeight += item.getWeight
      *      | result == TotalWeight
      */
+    @Raw
     public double getContentWeight(){
         double totalWeight = 0;
         if (!(Content ==  null)) {
@@ -305,6 +325,7 @@ public class Backpack extends Item {
      * @param item
      *      item we want to unpack
      */
+    @Raw
     public void unpackItem(Item item){
         this.removeItem(item);
     }
@@ -324,6 +345,7 @@ public class Backpack extends Item {
      * @post item is removed from the backpacks content
      *      | this.Content.remove(item);
      */
+    @Raw
     private void removeItem(Item item){
         if (!this.hasAsItem(item)){
             return;
@@ -398,13 +420,14 @@ public class Backpack extends Item {
      *
      * @return true if all items belong to the backpacks holder, false otherwise
      *      | for each item in content
-     *      |       if (!(item.getHolder == this.getHolder))
+     *      |       if (item.isTerminated())
      *      |           result == false
      *      | result == true
      */
-    public boolean hasProperItems(ArrayList<Item> content){
+    @Raw
+    public boolean areProperItems(ArrayList<Item> content){
         for (Item item : content){
-            if (item.getHolder() != this.getHolder() || item.getBackpack() != this.getBackpack()){
+            if (item.isTerminated()){
                 return false;
             }
         }
@@ -420,6 +443,7 @@ public class Backpack extends Item {
      * @return true if capacity is bigger than zero, false otherwise
      *      | result == capacity > 0
      */
+    @Raw
    public boolean isValidCapacity(int capacity){
        return capacity > 0;
    }
@@ -433,6 +457,7 @@ public class Backpack extends Item {
      * @return true if item is in backpack, false otherwise
      *      | result == this.Content.contains(item)
      */
+    @Raw
    public boolean hasAsItem(Item item){
        return this.Content.contains(item);
    }
@@ -451,6 +476,7 @@ public class Backpack extends Item {
      *      | currentWeight = this.getTotalWeight()
      *      | result == (currentWeight + totalWeight) <= this.Capacity
      */
+    @Raw
    public boolean canStoreAll(List<Item> items) {
        if (items == null || items.isEmpty()) return true;
 

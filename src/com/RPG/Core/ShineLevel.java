@@ -1,6 +1,7 @@
 package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Raw;
 
 /**
  * Enumerator for the shineLevel of an Item
@@ -79,6 +80,7 @@ public enum ShineLevel {
      * @return true if bigger than 0, false otherwise
      *      | result == valueMultiplier >= 1
      */
+    @Raw
     public boolean isValidValueMultiplier(float valueMultiplier){
         return valueMultiplier >= 1;
     }

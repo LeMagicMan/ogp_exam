@@ -94,8 +94,8 @@ public class DefaultBattleSystem {
                 }
                 HealingSystem healingSystem = new HealingSystem();
 
-                if (response && attacker.isHealable()) {
-                    System.out.println(attacker.getName() + " started healing, he currently has " + attacker.getHP() + " HP" );
+                if (response) {
+                    System.out.println(attacker.getName() + " started trying to healing, he currently has " + attacker.getHP() + " HP" );
                 }
                 healingSystem.heal(attacker);
                 if (response) {

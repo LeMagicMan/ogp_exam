@@ -11,7 +11,7 @@ import java.util.HashSet;
 
 public class Main {
     public static void main(String[] args) throws InvalidDamageTypesException, InvalidNameException, InvalidSkinTypeException, InvalidItemsException, InvalidValueException, InvalidHolderException {
-        Hero player1 = new Hero("Dave", 60L, BigDecimal.valueOf(25.00), null);
+        Hero player1 = new Hero("Dave", 40L, BigDecimal.valueOf(25.00), null);
         Weapon weapon1 = new Weapon(5, player1, AnchorPoint.LEFTHAND, ShineLevel.LEGENDARY, 30);
         Backpack backpack1 = new Backpack(player1, AnchorPoint.BACK);
         Weapon weapon2 = new Weapon(2, null, null, ShineLevel.NONE, 2);

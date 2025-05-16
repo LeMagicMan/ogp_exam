@@ -1,6 +1,7 @@
 package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Raw;
 import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidValueException;
 
@@ -128,6 +129,24 @@ public abstract class Item {
      *
      * @post if weight is not valid set it to the defaultWeight
      *      | this.setWeight(defaultWeight)
+     *
+     * @post weight of Item is set
+     *      | this.weight = weight
+     *
+     * @post value of item is set
+     *      | this.setValue(Value)
+     *
+     * @post itemType of item is set
+     *      | this.ItemType = itemType
+     *
+     * @post shineLevel of Item is set
+     *      | this.ShineLevel = ShineLevel
+     *
+     * @post item is equiped to Holder on the right anchorpoint
+     *      | Holder.equip(anchorpoint, this)
+     *
+     * @post item is created with a unique Id
+     *      | this.Id = generateUniqueId()
      */
     protected Item(double weight, int Value, Entity Holder, AnchorPoint anchorpoint, ShineLevel ShineLevel, ItemType itemType) throws InvalidHolderException, InvalidValueException {
         if (Holder != null) {
@@ -173,6 +192,21 @@ public abstract class Item {
      *
      * @post if weight is not valid set it to the defaultWeight
      *      | this.setWeight(defaultWeight)
+     *
+     * @post weight of Item is set
+     *      | this.weight = weight
+     *
+     * @post value of item is set
+     *      | this.setValue(Value)
+     *
+     * @post itemType of item is set
+     *      | this.ItemType = itemType
+     *
+     * @post shineLevel of Item is set
+     *      | this.ShineLevel = ShineLevel
+     *
+     * @post item is created with a unique Id
+     *      | this.Id = generateUniqueId()
      */
     protected Item(double weight, int Value, ShineLevel ShineLevel, ItemType itemType) throws InvalidValueException {
         if (!isValidWeight(weight)){
@@ -225,6 +259,7 @@ public abstract class Item {
      *
      * @return the amount of Items
      */
+    @Raw
     public abstract int getAmountOfItems();
 
     /**
@@ -235,6 +270,7 @@ public abstract class Item {
      *
      * @return the item at the index
      */
+    @Raw
     public abstract Item getItemAt(int index);
 
     /**
@@ -254,7 +290,7 @@ public abstract class Item {
      * @return the holder of the Item
      *      | this.Holder
      */
-    @Basic
+    @Basic @Raw
     public Entity getHolder() {
         return Holder;
     }
@@ -285,8 +321,9 @@ public abstract class Item {
      * @post the Holder of the Item is set to the given Holder
      *      | this.Holder = Holder
      */
+    @Raw
     protected void setHolder(Entity Holder) throws InvalidHolderException {
-        if (isTerminated()){ //TODO: ask about this checker and the isValidHolder
+        if (isTerminated()){
             throw new InvalidHolderException("Holder cannot be terminated");
         }
         this.Holder = Holder;
@@ -298,7 +335,7 @@ public abstract class Item {
      * @return the weight of the item
      *      | this.Weight
      */
-    @Basic
+    @Basic @Raw
     public double getWeight() {
         return Weight;
     }
@@ -342,6 +379,7 @@ public abstract class Item {
      * @return the weight of an item
      *      | this.getWeight
      */
+    @Raw
     public double getTotalWeight(){
         return getWeight();
     }
@@ -364,6 +402,7 @@ public abstract class Item {
      * @post value is set as th value of the Item
      *      | this.Value = value
      */
+    @Raw
     protected void setValue(int value) throws InvalidValueException {
         value = calculateValue(value);
         if(!isValidValue(value)){
@@ -378,7 +417,7 @@ public abstract class Item {
      * @return the ItemType
      *      | this.itemType
      */
-    @Basic
+    @Basic @Raw
     public ItemType getItemType() {
         return itemType;
     }
@@ -394,6 +433,7 @@ public abstract class Item {
      * @param backpack
      *      the backpack we want to add an item to
      */
+    @Raw
     protected void setBackpack(Backpack backpack){
         this.backpack = backpack;
     }
@@ -404,6 +444,7 @@ public abstract class Item {
      * @return the backpack of this item
      *      | this.backpack
      */
+    @Raw
     public Backpack getBackpack() {
         return backpack;
     }
@@ -423,6 +464,7 @@ public abstract class Item {
      *
      * @return dependedValue
      */
+    @Raw
     protected int calculateValue(int dependendValue){
         return dependendValue;
     }
@@ -432,6 +474,7 @@ public abstract class Item {
      *
      * @return the uniquely created Id
      */
+    @Raw
     protected abstract long generateUniqueId();
 
     /**
@@ -443,6 +486,7 @@ public abstract class Item {
      * @return true if weight is valid, otherwise false
      *      | result == weight >= 0
      */
+    @Raw
     public boolean isValidWeight(double weight) {
         return weight >= 0 && weight <= maxWeight;
     }
@@ -470,6 +514,7 @@ public abstract class Item {
      * @return true if the value is valid, false otherwise
      *      | result == value >= 0 && value <= this.MaxValue
      */
+    @Raw
     public boolean isValidValue(int value){
         return value >= 0 && value <= this.getMaxValue();
     }
@@ -480,7 +525,7 @@ public abstract class Item {
      * @return true if Item is terminated, false otherwise
      *      | this.Terminated
      */
-    @Basic
+    @Basic @Raw
     public boolean isTerminated() {
         return terminated;
     }
@@ -492,6 +537,7 @@ public abstract class Item {
      *      | if(!isTerminated && isValidHolder)
      *      | then result == true
      */
+    @Raw
     public boolean isValidItem(){
         return !isTerminated() && isValidHolder(this.getHolder());
     }

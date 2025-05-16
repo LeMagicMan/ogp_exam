@@ -1,5 +1,6 @@
 package com.RPG.Core;
 
+import be.kuleuven.cs.som.annotate.Raw;
 import com.RPG.Exception.*;
 
 import javax.naming.InvalidNameException;
@@ -80,6 +81,30 @@ public class Hero extends Entity {
      * @pre Hero must have Valid Strength
      *      | isValidStrength()
      *
+     * @effect creates a Hero using the entity constructor
+     *      | Entity(name, maxHP, new ArrayList<>(Arrays.asList(
+     *      |           AnchorPoint.BELT,
+     *      |           AnchorPoint.BACK,
+     *      |           AnchorPoint.BODY,
+     *      |           AnchorPoint.LEFTHAND,
+     *      |           AnchorPoint.RIGHTHAND
+     *      |   )), SkinType.NORMAL, new HashSet<>(List.of(DamageType.NORMAL)))
+     *
+     * @effect if Hero doesn't get any starter Items we creat the default Items
+     *      | createDefaultItems()
+     *
+     * @post given Items are equiped to hero
+     *      | this.equipStarterItems(items)
+     *
+     * @post Strength of Hero is set
+     *      | this.setStrength(strength.setScale(getStrengthScale(), getRoundingMode()))
+     *
+     * @post Protection of Hero is set
+     *      | this.setProtection(defaultProtection)
+     *
+     * @post Capacity of Hero is set
+     *      | this.setCapacity();
+     *
      * @throws InvalidItemsException
      *      gets thrown when hero cant hold all starterItems
      */
@@ -105,6 +130,9 @@ public class Hero extends Entity {
      *
      * @param name
      *      name of the hero
+     *
+     * @effect creates a hero using a more advanced hero constructor
+     *      | this(name, 997L, BigDecimal.valueOf(defaultStrength), null)
      */
     public Hero(String name) throws InvalidNameException, InvalidItemsException, InvalidValueException, InvalidHolderException, InvalidSkinTypeException, InvalidDamageTypesException {
         this(name, 997L, BigDecimal.valueOf(defaultStrength), null);
@@ -120,7 +148,7 @@ public class Hero extends Entity {
      * @return the nameRegex
      *      | this.nameRegex
      */
-    @Override
+    @Override @Raw
     public String getNameRegex() {
         return nameRegex;
     }
@@ -135,6 +163,7 @@ public class Hero extends Entity {
      * @return the created items
      *    | result == new Weapon(null, AnchorPoint.RIGHTHAND)
      */
+    @Raw
     private ArrayList<Item> createDefaultItems() {
         ArrayList<Item> defaultItems = new ArrayList<>();
         try {
@@ -154,6 +183,7 @@ public class Hero extends Entity {
      * @throws InvalidItemsException
      *      If there is no backpack to store remaining items
      */
+    @Raw
     private void equipStarterItems(ArrayList<Item> items) throws InvalidItemsException {
         if (items == null || items.isEmpty()) return;
 
@@ -196,6 +226,7 @@ public class Hero extends Entity {
      *      |       return Item
      *      | return null
      */
+    @Raw
     private Item findBackpack(List<Item> items) {
         for (Item item : items) {
             if (item.getItemType() == ItemType.BACKPACK) {
@@ -216,6 +247,7 @@ public class Hero extends Entity {
      *
      * @return the sorted list
      */
+    @Raw
     private ArrayList<Item> sortItemsByWeight(List<Item> items, Backpack backpack) {
         ArrayList<Item> sorted = new ArrayList<>(items);
         if (backpack != null) sorted.remove(backpack);
@@ -231,6 +263,7 @@ public class Hero extends Entity {
      *      |   if !anchorpoint.hasItem
      *      |       free.add(anchorpoint)
      */
+    @Raw
     private ArrayList<AnchorPoint> getFreeAnchorPoints() {
         ArrayList<AnchorPoint> free = new ArrayList<>();
         for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
@@ -270,6 +303,7 @@ public class Hero extends Entity {
      * @param toStore
      *      an output list that will be populated with items that could not be equipped
      */
+    @Raw
     private void tryToEquipItems(ArrayList<Item> sortedItems, ArrayList<AnchorPoint> freePoints, ArrayList<Item> toEquip, ArrayList<Item> toStore) {
         for (Item item : sortedItems) {
             boolean matched = false;
@@ -296,6 +330,7 @@ public class Hero extends Entity {
      * @throws InvalidItemsException
      *      if weight exceeds hero's capacity
      */
+    @Raw
     private void validateTotalWeight(List<Item> items) throws InvalidItemsException {
         double totalWeight = items.stream().mapToDouble(Item::getWeight).sum();
         if (totalWeight > this.getCapacity()) {
@@ -309,6 +344,7 @@ public class Hero extends Entity {
      * @param backpack
      *      backpack we want to equip
      */
+    @Raw
     private void equipBackpack(Backpack backpack) {
         this.equip(AnchorPoint.BACK, backpack);
     }
@@ -327,6 +363,7 @@ public class Hero extends Entity {
      *      |       if (anchorpoint.getItem() == null && anchorpoint.getAllowedItemType() == item.getItemType())
      *      |           this.equip(anchorpoint, item)
      */
+    @Raw
     private void equipItems(List<Item> toEquip) {
         for (Item item : toEquip) {
             for (int i = 0; i < getAmountOfAnchorPoints(); i++) {
@@ -361,6 +398,7 @@ public class Hero extends Entity {
      *      | for each item in toStore
      *      |   backpack.storeItem(item)
      */
+    @Raw
     private void storeRemainingItemsInBackpack(Backpack backpack, List<Item> toStore) {
         if (backpack != null) {
             for (Item item : toStore) {
@@ -386,7 +424,7 @@ public class Hero extends Entity {
      * @return capacity of that hero
      *      | result == this.getStrength().multiply(BigDecimal.valueOf(capacityMultiplier)).longValue();
      */
-    @Override
+    @Override @Raw
     protected long calculateCapacity() {
         return this.getStrength().multiply(BigDecimal.valueOf(capacityMultiplier)).longValue();
     }
@@ -448,6 +486,7 @@ public class Hero extends Entity {
      * @return true if skintype ios normal, otherwise false
      *      | result == skintype == NORMAL
      */
+    @Override @Raw
     public boolean isValidSkinType(SkinType skinType){
         return skinType == SkinType.NORMAL;
     }
@@ -504,6 +543,7 @@ public class Hero extends Entity {
      *      | result == false
      *
      */
+    @Raw
     public boolean areValidDamageTypes(HashSet<DamageType> damageTypes) {
         if (damageTypes.size() != 1) return false;
         for (DamageType damageType : damageTypes) {

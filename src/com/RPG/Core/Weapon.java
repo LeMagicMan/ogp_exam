@@ -1,6 +1,7 @@
 package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Raw;
 import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidValueException;
 
@@ -81,6 +82,9 @@ public class Weapon extends Item {
      * @param Damage
      *      Damage of the Weapon
      *
+     * @effect Weapon is created using an Item constructor
+     *      | Item(weight, Damage, Holder, anchorPoint, ShineLevel, ItemType.WEAPON)
+     *
      * @post if damage is not valid set it to the defaultDamage
      *      | if (!isValidDamage(Damage))
      *      |   then this.Damage = defaultDamage
@@ -101,6 +105,8 @@ public class Weapon extends Item {
      * @param anchorPoint
      *      anchorpoint of the weapon
      *
+     * @effect weapon is created using a more advanced weapon constructor
+     *      | this(defaultWeight, Holder, anchorPoint, ShineLevel.LOW, defaultDamage)
      */
     public Weapon( Entity Holder, AnchorPoint anchorPoint) throws InvalidValueException, InvalidHolderException {
         this(defaultWeight, Holder, anchorPoint, ShineLevel.LOW, defaultDamage);
@@ -126,7 +132,7 @@ public class Weapon extends Item {
      *
      * @return 0
      */
-    @Override
+    @Override @Raw
     public int getAmountOfItems() {
         return 0;
     }
@@ -150,7 +156,7 @@ public class Weapon extends Item {
      *
      * @return null
      */
-    @Override
+    @Override @Raw
     public Item getItemAt(int index) {
         return null;
     }
@@ -167,7 +173,7 @@ public class Weapon extends Item {
      *      | idGenerator + 6
      *      | result = nextId
      */
-    @Override
+    @Override @Raw
     protected long generateUniqueId() {
         long nextId;
         do {
@@ -192,7 +198,7 @@ public class Weapon extends Item {
      * @return the calculated Value
      *      | Damage * valuePerDamage
      */
-    @Override
+    @Override @Raw
     protected int calculateValue(int Damage) {
         if (!isValidDamage(Damage)){
             return defaultDamage * valuePerDamage;
@@ -206,7 +212,7 @@ public class Weapon extends Item {
      * @return true if Damage is bigger than zero, and smaller than maxDamage, false otherwise
      *      | result == (Damage > 0 && Damage <= maxDamage)
      */
-    @Override
+    @Override @Raw
     public boolean isValidDamage(int Damage){
         return Damage > 0 && Damage <= maxDamage;
     }

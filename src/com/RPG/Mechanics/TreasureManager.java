@@ -31,7 +31,7 @@ public class TreasureManager {
      * Otherwise, the looter will attempt to loot the defeated entity's items.
      *      | if (defeated == null || looter == null || defeated.isTerminated() || looter.isTerminated())
      *      |   then return
-     *      | else continue; //TODO
+     *      | else continue;
      *
      * @effect Looting behavior is based on the looter's intelligence:
      *      1. If the looter is intelligent

@@ -1,5 +1,6 @@
 package com.RPG.Core;
 
+import be.kuleuven.cs.som.annotate.Raw;
 import com.RPG.Exception.InvalidDamageTypesException;
 import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidSkinTypeException;
@@ -80,11 +81,41 @@ public class Monster extends Entity {
      *
      * @param skintype
      *      skintype of a monster
+     *
+     * @pre DamageTypes must be Valid
+     *      | areValidDamageTypes(damageTypes)
+     *
+     * @pre SkinType must be valid
+     *      | isValidSkinType(skintype)
+     *
+     * @effect if SkinType not valid set it to SkinType.TOUGH
+     *      | if !isValidSkinType(skintype)
+     *      | then this.setSkinType(SkinType.TOUGH)
+     *
+     * @effect if damageTypes are not Valid theyre set to DamageType.TAIL
+     *      | if !areValidDamageTypes(damageTypes)
+     *      | then this.setDamageTypes( new HashSet<DamageType>(List.of(DamageType.TAIL)))
+     *
+     * @effect every anchorpoint has a chance to get an Item
+     *      | createLoot()
+     *
+     * @post Capacity of monster is set
+     *      | this.setCapacity()
+     *
+     * @post DamageTypes of monster are set
+     *      | this.setDamageTypes(damageTypes)
+     *
+     * @post SkinType of monster is set
+     *      | this.setSkinType(skintype)
      */
     public Monster(String name, Long maxHP, ArrayList<AnchorPoint> anchorPoints, HashSet<DamageType> damageTypes, SkinType skintype) throws InvalidNameException, InvalidDamageTypesException, InvalidSkinTypeException {
         super(name, maxHP, anchorPoints, skintype, damageTypes);
-        this.setDamageTypes(damageTypes);
-        this.setSkinType(skintype);
+        if (damageTypes != null && areValidDamageTypes(damageTypes)) {
+            this.setDamageTypes(damageTypes);
+        } else this.setDamageTypes( new HashSet<DamageType>(List.of(DamageType.TAIL)));
+        if (skintype != null && isValidSkinType(skintype)) {
+            this.setSkinType(skintype);
+        } else this.setSkinType(SkinType.TOUGH);
         this.setCapacity();
         createLoot();
     }
@@ -94,6 +125,15 @@ public class Monster extends Entity {
      *
      * @param name
      *      name of the monster
+     *
+     * @effect monster is created using a more advanced monster constructor
+     *      | this(name, 997L, new ArrayList<>(Arrays.asList(
+     *      |           AnchorPoint.BELT,
+     *      |           AnchorPoint.BACK,
+     *      |           AnchorPoint.BODY,
+     *      |           AnchorPoint.LEFTHAND,
+     *      |           AnchorPoint.RIGHTHAND
+     *      |   )), new HashSet<>(List.of(DamageType.CLAWS)), SkinType.THICK )
      *
      */
     public Monster(String name) throws InvalidNameException, InvalidDamageTypesException, InvalidSkinTypeException {
@@ -116,7 +156,7 @@ public class Monster extends Entity {
      * @return the nameRegex
      * | this.nameRegex
      */
-    @Override
+    @Override @Raw
     public String getNameRegex() {
         return nameRegex;
     }
@@ -149,7 +189,7 @@ public class Monster extends Entity {
      *      |       capacity += this.getAnchorPointAt(index).getItem().getWeight()
      *      | result = capacity
      */
-    @Override
+    @Override @Raw
     protected long calculateCapacity() {
         long capacity = 0L;
         for (int index = 0; index < this.getAmountOfAnchorPoints(); index++) {
@@ -217,6 +257,7 @@ public class Monster extends Entity {
      *      | Item item = factory.createItem(this, anchorpoint);
      *
      */
+    @Raw
     private void createLoot(){
         for (int index = 0; index < this.getAmountOfAnchorPoints(); index++) {
             if (Math.random() < itemSpawnChance) {
@@ -255,7 +296,7 @@ public class Monster extends Entity {
      *      |       then result == true
      *      | result == false
      */
-    @Override
+    @Override @Raw
     public boolean areValidDamageTypes(HashSet<DamageType> damageTypes){
         if (damageTypes.size() != 1) return false;
         for (DamageType damageType : damageTypes){
@@ -275,7 +316,7 @@ public class Monster extends Entity {
      * @return true if different from Normal, false otherwise
      *      | result == (skinType != SkinType.NORMAL)
      */
-    @Override
+    @Override @Raw
     public boolean isValidSkinType(SkinType skinType){
         return skinType != SkinType.NORMAL;
     }

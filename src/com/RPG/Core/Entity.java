@@ -146,16 +146,34 @@ public abstract class Entity {
      *      | !hasValidDamageTypes
      *
      * @pre name must be Valid
-     * | isValidName()
+     *      | isValidName()
      *
      * @pre maxHP must be Valid
-     * | isValidHP()
+     *      | isValidHP()
      *
      * @pre SkinType must be Valid
-     * | isValidSkinType()
+     *      | isValidSkinType()
      *
      * @pre must have valid damageTypes
-     * | hasValidDamageTypes()
+     *      | areValidDamageTypes()
+     *
+     * @post name of entity is set
+     *      | this.name = name
+     *
+     * @post maxHp of entity is set
+     *      | this.maxHP = maxHP
+     *
+     * @post Hp of entity is set
+     *      | this.HP = maxHP
+     *
+     * @post AnchorPoints of entity are set
+     *      | this.AnchorPoints.addAll(Anchorpoints)
+     *
+     * @post skinType of entity is set
+     *      | this.skinType = skinType
+     *
+     * @post DamagesTypes of entity are set
+     *      | this.DamageTypes.addAll(damageTypes)
      */
     protected Entity(String name, Long maxHP, ArrayList<AnchorPoint> Anchorpoints, SkinType skinType, HashSet<DamageType> damageTypes) throws InvalidNameException, InvalidSkinTypeException, InvalidDamageTypesException {
         if (!isValidName(name)) {
@@ -186,6 +204,7 @@ public abstract class Entity {
      * @param strength
      *      Strength we want to set
      */
+    @Raw
     protected void setStrength(BigDecimal strength) {
         this.Strength = strength;
     }
@@ -196,6 +215,7 @@ public abstract class Entity {
      * @param protection
      *      protection we want to set
      */
+    @Raw
     protected void setProtection(int protection) {
         if (isValidProtection(protection)) {
             this.Protection = protection;
@@ -230,7 +250,7 @@ public abstract class Entity {
      * @return strength of hero
      *      | this.Strength
      */
-    @Basic
+    @Basic @Raw
     public BigDecimal getStrength() {
         return this.Strength;
     }
@@ -241,6 +261,7 @@ public abstract class Entity {
      * @param damageTypes
      *      the damageTypes we want to set
      */
+    @Raw
     protected void setDamageTypes(HashSet<DamageType> damageTypes) {
         DamageTypes = damageTypes;
     }
@@ -255,6 +276,7 @@ public abstract class Entity {
      *
      * @pre Index must be within range
      */
+    @Raw
     public AnchorPoint getAnchorPointAt(int index) {
         if (index >= this.getAmountOfAnchorPoints() || index < 0) {
             return null;
@@ -268,6 +290,7 @@ public abstract class Entity {
      * @return amount of anchorpoints
      *      | this.AnchorPoints.size()
      */
+    @Raw
     public int getAmountOfAnchorPoints() {
         return AnchorPoints.size();
     }
@@ -301,6 +324,7 @@ public abstract class Entity {
      * @return the nameRegex
      *      | this.nameRegex
      */
+    @Raw
     public abstract String getNameRegex();
 
     /**
@@ -383,6 +407,15 @@ public abstract class Entity {
         return 0;
     }
 
+    /**
+     * getter for an item at a certain anchorPoint
+     *
+     * @param anchorPoint
+     *      ancchorpoint we want the item of
+     *
+     * @return the Item at a certain anchorpoint
+     *      | result == equipment.get(anchorPoint)
+     */
     public Item getItemAt(AnchorPoint anchorPoint) {
         return equipment.get(anchorPoint);
     }
@@ -458,6 +491,7 @@ public abstract class Entity {
      *          |   items.add(item.getItemAt(Index))
      *          | result == items
      */
+    @Raw
     public ArrayList<Item> getAllItems() {
         ArrayList<Item> items = new ArrayList<>();
         for (Item item : equipment.values()) {
@@ -499,6 +533,7 @@ public abstract class Entity {
      *      |   totalweight += item.getTotalWeightweight()
      *      | result == totalweight
      */
+    @Raw
     public double getTotalWeight() {
         double TotalWeight = 0;
         ArrayList<Item> items = getAllItems();
@@ -582,6 +617,7 @@ public abstract class Entity {
      *      |       result == anchorpoint
      *      | result == null
      */
+    @Raw
     public AnchorPoint getAnchorPointWithItem(Item item) {
         if (item == null) return null;
 
@@ -768,6 +804,7 @@ public abstract class Entity {
      * @post Holder of the item is set to this entity
      *      | item.setHolder(this)
      */
+    @Raw
     public void equip(AnchorPoint anchorPoint, Item item) {
         if(!this.canEquip(item)){
             return;
@@ -825,6 +862,7 @@ public abstract class Entity {
      * @post Holder of Item must be set to null
      *      | item.setHolder(null)
      */
+    @Raw
     public void unequip(AnchorPoint anchorPoint, Item item) {
         if (!hasAnchorpoint(anchorPoint)) {
             return;
@@ -933,6 +971,7 @@ public abstract class Entity {
      *
      * @note we are sure the elements are unique because of the used datatype
      */
+    @Raw
     public abstract boolean areValidDamageTypes(HashSet<DamageType> damageTypes);
 
     /**
@@ -953,6 +992,7 @@ public abstract class Entity {
      *
      * @return true if SKinType is Valid, false otherwise
      */
+    @Raw
     public abstract boolean isValidSkinType(SkinType skinType);
 
     /**
@@ -1011,6 +1051,7 @@ public abstract class Entity {
      *      |       result == true
      *      | result == false
      */
+    @Raw
     public boolean hasAnchorpoint(AnchorPoint anchorPoint) {
         return AnchorPoints.contains(anchorPoint);
     }
@@ -1021,7 +1062,7 @@ public abstract class Entity {
      * @return true if Entity is terminated, false otherwise
      *      | this.Terminated
      */
-    @Basic
+    @Basic @Raw
     public boolean isTerminated() {
         return Terminated;
     }
@@ -1034,6 +1075,7 @@ public abstract class Entity {
      * @return true if protection is valid, otherwise false
      *      | result == (Protection >= 0)
      */
+    @Raw
     public boolean isValidProtection(int Protection) {
         return Protection >= 0;
     }
@@ -1077,6 +1119,7 @@ public abstract class Entity {
      *      | if (item == null) result == true
      *      | result == !(this.getTotalWeight() + item.getTotalWeight() > this.Capacity)
      */
+    @Raw
     public boolean canEquip(Item item) {
         if (item == null) return true;
         return !(this.getTotalWeight() + item.getTotalWeight() > this.Capacity);

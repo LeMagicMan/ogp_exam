@@ -1,6 +1,7 @@
 package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Raw;
 
 /**
  * an enumerator containing all types of Anchorpoints
@@ -60,7 +61,7 @@ public enum AnchorPoint {
      * @return the allowedItemType for that anchorpoint
      *      | this.allowedItemType
      */
-    @Basic
+    @Basic @Raw
     public ItemType getAllowedItemType() {
         return allowedItemType;
     }
@@ -75,6 +76,7 @@ public enum AnchorPoint {
      *      | if (ItemType == allowedItemType || allowedItemType == ANY)
      *      | then result == true
      */
+    @Raw
     public boolean canAttach(Item item) {
        return allowedItemType == ItemType.ANY || item.getItemType() == allowedItemType;
     }
