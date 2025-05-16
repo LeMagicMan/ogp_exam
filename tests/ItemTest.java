@@ -35,7 +35,7 @@ public class ItemTest {
     @Test
     public void testWeapon_HasValidHolder() throws Exception {
         Weapon weapon = new Weapon(entity, anchorPoint);
-        assertTrue(weapon.hasValidHolder(entity));
+        assertTrue(weapon.isValidHolder(entity));
     }
 
     @Test
