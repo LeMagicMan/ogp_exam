@@ -11,6 +11,10 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @invar Weapon must have a valid damage
  *      | isValidDamage
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public class Weapon extends Item {
     /**********************************************************

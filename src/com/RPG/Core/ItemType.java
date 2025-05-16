@@ -2,6 +2,10 @@ package com.RPG.Core;
 
 /**
  * enumerator containing all types of items
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public enum ItemType {
     /**

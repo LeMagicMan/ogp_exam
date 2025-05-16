@@ -4,6 +4,10 @@ import be.kuleuven.cs.som.annotate.Basic;
 
 /**
  * an enumerator containing all types of Anchorpoints
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public enum AnchorPoint {
 

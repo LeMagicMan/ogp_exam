@@ -7,6 +7,10 @@ import be.kuleuven.cs.som.annotate.Basic;
  *
  * @invar Each DamageType must have a baseDamage above or equal to 0
  *      | hasValidBaseDamage()
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public enum DamageType {
 

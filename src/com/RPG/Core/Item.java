@@ -16,6 +16,9 @@ import com.RPG.Exception.InvalidValueException;
  * @invar Value cannot exceed maxValue
  *      | isValidValue()
  *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public abstract class Item {
 

@@ -15,6 +15,9 @@ import java.util.*;
  * @invar A hero's skintype must be Normal
  *      | isValidSkinType()
  *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public class Hero extends Entity {
 

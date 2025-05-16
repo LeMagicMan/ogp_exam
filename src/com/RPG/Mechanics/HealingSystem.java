@@ -7,6 +7,10 @@ import java.util.Random;
 
 /**
  * A class representing how entity's heal
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public class HealingSystem {
 

@@ -8,6 +8,10 @@ import java.util.List;
 
 /**
  * A class representing the looting an entity can do
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public class TreasureManager {
 

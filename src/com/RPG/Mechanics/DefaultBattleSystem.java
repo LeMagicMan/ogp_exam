@@ -9,6 +9,10 @@ import java.util.Random;
 
 /**
  * A class representing a normal battle between entity's
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public class DefaultBattleSystem {
 

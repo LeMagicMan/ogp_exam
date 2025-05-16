@@ -39,6 +39,10 @@ import java.util.Map;
  *
  * @invar an entity can not hold more items than its capacity can hold
  *      | canHoldItems()
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public abstract class Entity {
 

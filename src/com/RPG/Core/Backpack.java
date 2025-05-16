@@ -22,6 +22,10 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @invar capacity of a backpack must be bigger than or equal to the combined weight of all its items
  *      | canHoldItems()
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public class Backpack extends Item {
     /**********************************************************

@@ -2,6 +2,10 @@ package com.RPG.Mechanics;
 
 /**
  * an enum representing ways entity's can loot
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public enum LootStrategy {
     /**

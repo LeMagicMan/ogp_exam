@@ -7,6 +7,10 @@ import be.kuleuven.cs.som.annotate.Basic;
  *
  * @invar ValueMultiplier must be Valid
  *      | isValidvalueMultiplier()
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public enum ShineLevel {
 

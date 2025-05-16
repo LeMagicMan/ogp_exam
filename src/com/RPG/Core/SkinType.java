@@ -4,6 +4,10 @@ import be.kuleuven.cs.som.annotate.Basic;
 
 /**
  * An enumerater representing the skintype of an entity
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public enum SkinType {
 

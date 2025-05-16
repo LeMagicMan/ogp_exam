@@ -16,6 +16,10 @@ import java.util.*;
  *
  * @invar monster must have valid SkinType
  *      | isValidSkinType()
+ *
+ * @author Ben Demets
+ *
+ * @version 1.0
  */
 public class Monster extends Entity {
     /**********************************************************
