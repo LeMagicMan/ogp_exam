@@ -587,8 +587,8 @@ public abstract class Entity {
      *
      * @param roll
      *      roll we need to adjust
-     * @return the original roll
-     *      | result == roll
+     *
+     * @return the adjusted roll
      */
     public int getAdjustedRoll(int roll) {
         return roll;
@@ -731,6 +731,8 @@ public abstract class Entity {
 
     /**
      * kills an entity
+     *
+     * @effect uses terminate method to kill an entity
      *      | terminate()
      */
     public void kill() {
@@ -745,6 +747,7 @@ public abstract class Entity {
      *
      * @effect Hp is the current Hp - Damage
      *      | this.getHP() - Damage
+     *
      * @post when HP hits 0 the entity needs to be killed
      *      | kill()
      */
@@ -762,6 +765,7 @@ public abstract class Entity {
      *      the amount we want to increase
      *
      * @pre entity must be healable
+     *      | this.isHealable()
      */
     public void increaseHP(long healingAmount) {
         if (healingAmount < 0) {
@@ -777,6 +781,7 @@ public abstract class Entity {
      *
      * @param anchorPoint
      *      the anchorpoint we want to equip the item to
+     *
      * @param item
      *      the item we want to equip to the anchorpoint
      *
@@ -890,8 +895,7 @@ public abstract class Entity {
      *
      * @return capacity of that entity
      */
-    @Model
-    @Raw
+    @Model @Raw
     protected abstract long calculateCapacity();
 
     /**
@@ -914,6 +918,7 @@ public abstract class Entity {
      *
      * @param HP
      *      The Hp that needs to be checked
+     *
      * @return true if HP is bigger han or equal to zero, is lower than or Equal to its max HP and the Hp is a Prime number
      *      | result == (this.getHP() >= 0 && this.getHP <= this.getMaxHP() && isPrime(getHP()))
      *
@@ -966,6 +971,7 @@ public abstract class Entity {
      *
      * @param damageTypes
      *      the damagetypes that need to be checked
+     *
      * @return true if damageTypes has a length of 1, false otherwise
      *      | result == (damageTypes.size() == 1)
      *
@@ -1072,6 +1078,7 @@ public abstract class Entity {
      *
      * @param Protection
      *      the protection that needs to be checked
+     *
      * @return true if protection is valid, otherwise false
      *      | result == (Protection >= 0)
      */
@@ -1085,6 +1092,7 @@ public abstract class Entity {
      *
      * @param Capacity
      *      the capacity we want to check
+     *
      * @return true if capacity is bigger than 0, false otherwise
      *      | capacity >= 0
      */
@@ -1105,7 +1113,7 @@ public abstract class Entity {
     /**
      * a checker that checks if a hero has all the needed anchorpoints exactly once
      *
-     * @return true if a hero has all the needed anchorpoints exactly once, false otherwise
+     * @return true if an entity has only allowed anchorpoints for that entity, false otherwise
      */
     public abstract boolean hasProperAnchorpoints();
 

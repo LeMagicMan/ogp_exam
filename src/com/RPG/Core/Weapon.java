@@ -1,6 +1,5 @@
 package com.RPG.Core;
 
-import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
 import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidValueException;
@@ -26,11 +25,6 @@ public class Weapon extends Item {
      * A variable Representing A thread-safe atomic counter used to generate unique IDs starting at 6
      */
     private static final AtomicLong idGenerator = new AtomicLong(6);
-
-    /**
-     * A variable representing the damage of a weapon
-     */
-    private int Damage;
 
     /**
      * A variable representing the value per Damage of a weapon
@@ -92,8 +86,8 @@ public class Weapon extends Item {
     public Weapon(double weight, Entity Holder, AnchorPoint anchorPoint, ShineLevel ShineLevel, int Damage) throws InvalidHolderException, InvalidValueException {
         super(weight, Damage, Holder, anchorPoint, ShineLevel, ItemType.WEAPON);
         if (!isValidDamage(Damage)){
-            this.Damage = defaultDamage;
-        } else this.Damage = Damage;
+            this.setDamage(defaultDamage);
+        } else this.setDamage(Damage);
     }
 
     /**
@@ -117,17 +111,6 @@ public class Weapon extends Item {
      **********************************************************/
 
     /**
-     * getter for the Damage of a weapon
-     *
-     * @return the Damage of this weapon
-     *      | this.Damage
-     */
-    @Override @Basic //TODO: basic, think about if override is nescesary
-    public int getDamage() {
-        return Damage;
-    }
-
-    /**
      * getter for the amount of items in a weapon
      *
      * @return 0
@@ -135,17 +118,6 @@ public class Weapon extends Item {
     @Override @Raw
     public int getAmountOfItems() {
         return 0;
-    }
-
-    /**
-     * returns the default damage of a weapon
-     *
-     * @return the defaultDamage
-     *      | this.defaultDamage
-     */
-    @Override
-    public int getDefaultDamage(){
-        return defaultDamage;
     }
 
     /**

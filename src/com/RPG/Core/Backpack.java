@@ -226,7 +226,7 @@ public class Backpack extends Item {
     }
 
     /**
-     * generates an unique id for every backpack
+     * generates a unique id for every backpack
      *
      * @return the uniquely created Id
      *      | nextId = IdGenerator
@@ -259,21 +259,11 @@ public class Backpack extends Item {
      * getter for the totalWeight of a backpack
      *
      * @return the weight of every item in the backpack combined plus the backpacks own weight
-     *      | TotalWeight == this.getWeight
-     *      | for each item in Content
-     *      |   TotalWeight += item.getWeight
-     *      | result == TotalWeight
+     *      | result == this.getWeight() + getContentWeight()
      */
     @Override @Raw
     public double getTotalWeight(){
-        double totalWeight = this.getWeight();
-        if (!(Content ==  null)){
-            for (Item item : Content){
-                totalWeight += item.getTotalWeight();
-            }
-            return totalWeight;
-        }
-        return totalWeight;
+        return this.getWeight() + getContentWeight();
     }
 
     /**
@@ -347,7 +337,7 @@ public class Backpack extends Item {
      * @post item is removed from the backpacks content
      *      | this.Content.remove(item);
      */
-    @Raw
+    @Raw @Model
     private void removeItem(Item item){
         if (!this.hasAsItem(item)){
             return;

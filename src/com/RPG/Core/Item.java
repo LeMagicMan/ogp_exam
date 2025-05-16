@@ -1,6 +1,7 @@
 package com.RPG.Core;
 
 import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 import com.RPG.Exception.InvalidHolderException;
 import com.RPG.Exception.InvalidValueException;
@@ -86,6 +87,17 @@ public abstract class Item {
      * the maximum weight an item can be
      */
     private static final double maxWeight = 150;
+
+    /**
+     * A variable representing the damage of a weapon
+     */
+    private int Damage = 0;
+
+    /**
+     * A variable representing the maxDamage of a weapon
+     */
+    private static final int maxDamage = 100;
+
 
     /**********************************************************
      * Constructors
@@ -237,10 +249,26 @@ public abstract class Item {
     /**
      * getter for the Damage of an Item
      *
-     * @return 0
+     * @return the Damage of this Item
+     *      | this.Damage
      */
-    public int getDamage(){
-        return 0;
+    @Basic
+    public int getDamage() {
+        return Damage;
+    }
+
+    /**
+     * setter for the damage of a weapon
+     *
+     * @param damage
+     *      damage we want to set
+     *
+     * @pre Damage must be valid
+     *      | isValidDamage(damage)
+     */
+    @Raw
+    protected void setDamage(int damage) {
+        this.Damage = damage;
     }
 
     /**
@@ -257,7 +285,7 @@ public abstract class Item {
     /**
      * abstract getter for the amount of Items an item holds
      *
-     * @return the amount of Items
+     * @return the amount of Items in the Item
      */
     @Raw
     public abstract int getAmountOfItems();
@@ -321,7 +349,7 @@ public abstract class Item {
      * @post the Holder of the Item is set to the given Holder
      *      | this.Holder = Holder
      */
-    @Raw
+    @Raw @Model
     protected void setHolder(Entity Holder) throws InvalidHolderException {
         if (isTerminated()){
             throw new InvalidHolderException("Holder cannot be terminated");
@@ -369,15 +397,14 @@ public abstract class Item {
      */
     protected void setWeight(double weight){
         if (!isValidWeight(weight)){
-            this.Weight = 10;
+            this.Weight = defaultWeight;
         } else this.Weight = weight;
     }
 
     /**
      * getter for the totalweight of an Item
      *
-     * @return the weight of an item
-     *      | this.getWeight
+     * @return the weight of an item and all items it contains
      */
     @Raw
     public double getTotalWeight(){
@@ -433,7 +460,7 @@ public abstract class Item {
      * @param backpack
      *      the backpack we want to add an item to
      */
-    @Raw
+    @Raw @Model
     protected void setBackpack(Backpack backpack){
         this.backpack = backpack;
     }
@@ -548,7 +575,7 @@ public abstract class Item {
      * @return true
      */
     public boolean isValidDamage(int Damage){
-        return true;
+        return Damage == 0;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.RPG.Core;
 
+import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
 import com.RPG.Exception.*;
 
@@ -148,7 +149,7 @@ public class Hero extends Entity {
      * @return the nameRegex
      *      | this.nameRegex
      */
-    @Override @Raw
+    @Override @Raw @Basic
     public String getNameRegex() {
         return nameRegex;
     }
@@ -175,13 +176,13 @@ public class Hero extends Entity {
     }
 
     /**
-     * a method to equip the heaviest starter item sto anchorpoints first and the rest to backpack if there is one
+     * a method to equip the heaviest starter item to anchorpoints first and the rest to backpack if there is one
      *
      * @param items
      *      items we want to equip
      *
-     * @throws InvalidItemsException
-     *      If there is no backpack to store remaining items
+     * @throws InvalidItemsException If there is no backpack to store remaining items
+     *      | (Backpack) findBackpack(items) == null
      */
     @Raw
     private void equipStarterItems(ArrayList<Item> items) throws InvalidItemsException {
@@ -246,6 +247,13 @@ public class Hero extends Entity {
      *      backpack we need to remove from list
      *
      * @return the sorted list
+     *      | for item1 in items
+     *      |   for item2 in items
+     *      |       if item1.getTotalWeight() < item2.getTotalWeight()
+     *      |           Item temp = item2
+     *      |           item2 = item1
+     *      |           item1 = temp
+     *      |       else break
      */
     @Raw
     private ArrayList<Item> sortItemsByWeight(List<Item> items, Backpack backpack) {
