@@ -35,7 +35,7 @@ public class Backpack extends Item {
     /**
      * An arraylist representing the content of the backpack
      */
-    private ArrayList<Item> Content;
+    private ArrayList<Item> Content = new ArrayList<>();
 
     /**
      * A variable representing the capacity of  a backpack
@@ -108,13 +108,13 @@ public class Backpack extends Item {
      */
     public Backpack(double weight, int Value, int Capacity, Entity Holder, AnchorPoint anchorPoint, ShineLevel shinelevel, ArrayList<Item> Content) throws InvalidHolderException, InvalidValueException, InvalidItemsException {
         super(weight, Value, shinelevel, ItemType.BACKPACK);
-        if (this.areProperItems(Content)){
-            throw new InvalidItemsException("all backpack items must belong to this backpack");
+        if (!this.areProperItems(Content)){
+            throw new InvalidItemsException("all backpack items must be non-terminated");
         }
+        this.setCapacity(Capacity);
         if (!canStoreAll(Content)){
             throw new InvalidItemsException("all items must fit in this backpack");
         }
-        this.setCapacity(Capacity);
         if (Holder != null && Holder.canEquip(this)) {
             Holder.equip(anchorPoint, this);
         }
@@ -250,7 +250,9 @@ public class Backpack extends Item {
      */
     @Raw
     public int getAmountOfItems(){
-        return Content.size();
+        if(Content == null){
+            return 0;
+        } else return Content.size();
     }
 
     /**
